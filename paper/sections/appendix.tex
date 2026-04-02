@@ -1,0 +1,26 @@
+% !TEX root = ../main.tex
+
+\section{Derivation of the Conditional Choice Probability}
+\label{appendix:rcdcm_probability}
+
+\begin{proof}[Proof of Proposition \ref{prop:rcdcmcondprop}]
+Let $v_{ikj} = \varepsilon_{ik} - \varepsilon_{ij}$ denote the difference in errors on choice $k$ and $j$ for individual $i$. 
+Then $v_{ikj} \overset{\text{i.i.d.}}{\sim} F_v$ with $F_v = F_\varepsilon * f_\varepsilon$, that is 
+\[
+\label{eq:rcdcmvdistributiofdsn} 
+    F_v(x) = \int_{-\infty}^{\infty}F_\varepsilon(x+t)\,\mathrm{d}F_\varepsilon(t). 
+\]
+We denote the probability of individual $i$ choosing choice $j$ conditional on $\bm{x}_{i}$ and ${\bm{\beta}_{i}}$ as $g_j(\bm{x}_{i},\bm{\beta}_{i})$. 
+We have 
+\begin{align*} 
+    g_j(\bm{x}_{i},\bm{\beta}_{i}) &\coloneq \mathbb{P}(y_{ij} = 1 \mid \bm{x}_i, \bm{\beta}_i) = \prod_{\substack{k=1;\\k\neq j}}^{J}\mathbb{P}(u_{ij} > u_{ik}\mid \bm{x}_i,\bm{\beta}_i) \\ 
+        &= \prod_{\substack{k=1;\\k\neq j}}^{J}\mathbb{P}(\bm{x}_{ij}^\prime \bm{\beta}_{ij} +\varepsilon_{ij} > \bm{x}_{ik}^\prime \bm{\beta}_{ik} +\varepsilon_{ik} \mid \bm{x}_i,\bm{\beta}_i) \\ 
+        &= \prod_{\substack{k=1;\\k\neq j}}^{J}\mathbb{P}(\varepsilon_{ik} - \varepsilon_{ij} < \bm{x}_{ij}^\prime \bm{\beta}_{ij}-\bm{x}_{ik}^\prime \bm{\beta}_{ik} \mid \bm{x}_i,\bm{\beta}_i) \\ 
+        &= \prod_{\substack{k=1;\\k\neq j}}^{J}F_v(\bm{x}_{ij}^\prime \bm{\beta}_{ij}-\bm{x}_{ik}^\prime \bm{\beta}_{ik}). 
+\end{align*}
+One then finds the probability of individual $i$ choosing choice $j$ conditional on $\bm{x}_i$ as 
+\[
+\label{eq:rcdcmconditionalprobabilityfdsf} 
+    \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i}) = \int_{\mathcal{B}} g_j(\bm{x}_{i}, \bm{\beta}) \, \mathrm{d}F_{\bm{\beta}}. 
+\]
+\end{proof}

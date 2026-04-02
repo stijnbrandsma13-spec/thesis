@@ -1,0 +1,65 @@
+% !TEX root = ../main.tex
+% --- Title page (page 1) -----------------------------------------------------
+\begin{titlepage}
+    \pagestyle{empty}
+    \begin{figure}[t]
+        \centering
+        \includegraphics[width=\textwidth]{other/rugr_feb_logoen-rood.eps}
+    \end{figure}
+    \centering
+    
+    \vfill
+    
+    % Top line
+    \rule{\textwidth}{0.4pt}
+
+    \vspace{1cm}
+
+    % Title
+    {\LARGE \TITLE}
+
+    \vspace{1cm}
+
+    % Author
+    {\large \AUTHOR}\\
+    {\small \STUDENTNUMBER}
+
+    \vspace{1cm}
+
+    % Bottom line
+    \rule{\textwidth}{0.4pt}
+
+    \vfill
+
+    {\small \today}
+\end{titlepage}
+
+% --- Back of title page (page 2) ---------------------------------------------
+\thispagestyle{empty}
+\noindent Bachelor's Thesis Econometrics and Operations Research \\
+\begin{tabular}{@{}ll}
+    Supervisor: & \SUPERVISOR \\
+    Second assessor: & \ASSESSOR
+\end{tabular}
+\vspace*{\fill}
+\newpage
+
+% --- Body starts here (page 1 of numbered pages) -----------------------------
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\begin{titlepage}
+
+\title{\TITLE}
+
+\author{\AUTHOR}
+
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+    ABSTRACT GOES HERE
+\end{abstract}
+
+\end{titlepage}

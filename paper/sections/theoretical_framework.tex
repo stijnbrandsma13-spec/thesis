@@ -1,0 +1,178 @@
+% !TEX root = ../main.tex
+\section{Theoretical Framework}
+\label{sec:theory}
+
+\subsection{Random Coefficient Models}
+\label{sec:rcm}
+Random coefficient models (RCMs) are a broad class of econometric models that explicitly model heterogeneity of agents by allowing coefficients to vary across individuals.
+In the most general case one might present random coefficient models as
+\begin{equation}
+\label{eq:rcmgeneral}
+    \bm{y}_{it} = f(\bm{x}_{it},\bm{\beta}_{it},\bm{\varepsilon}_{it}),
+\end{equation}
+where $f$ denotes a prespecified function. 
+Furthermore, for individual $i$ at time $t$ we have that $\bm{y}_{it} \in \mathbb{R}^{d_y}$ denotes the observed vector of dependent variables, $\bm{x}_{it} \in \mathbb{R}^K$ denotes the observed vector of regressors, $\bm{\beta}_{it} \in \mathbb{R}^{K}$ denotes the unobserved vector of random coefficients, with unobserved distribution $\bm{\beta}_{it} \sim F_{\bm{\beta}_{it}}$, and $\bm{\varepsilon}_{it} \in \mathbb{R}^{d_y}$ denotes the unobserved vector of errors, with $\bm{\varepsilon}_{it} \sim F_{\bm{\varepsilon}_i}$.
+
+One should notice that we always need more structure on the distribution of $\bm{\beta}_{it}$, as the most general case presented above leads to unidentifiability.
+Therefore, all useful RCMs impose $\bm{\beta}_{it} \sim F_{\bm{\beta}}$ for all $i,t$.
+Moreover, in most models we have $d_y = 1$.
+
+% \subsubsection{Linear random coefficient models}
+% \label{sec:lrcm}
+% The simplest example of RCMS are linear random coefficient models that have the following form:
+% \begin{equation}
+% \label{eq:rcmlinear}
+%     y_{it} = \bm{x}_{it}^\prime \bm{\beta}_{it} + \varepsilon_{it},
+% \end{equation}
+% where the variables mostly denote the same as in \eqref{eq:rcmgeneral}, with the exception of $y_{it}$ and $\varepsilon_{it}$ becoming one-dimensional. 
+% There are several ways to impose more structure on the distributions of $\bm{\beta}_{it}$. \citet{Swamy1970} uses the following basic structure:
+% \begin{equation}
+% \label{eq:swamyrep}
+%     \bm{\beta}_{it} = \bm{\beta} + \bm{\alpha}_{i},
+% \end{equation}
+% for all $i, t$, with $\mathbb{E}(\bm{\alpha}_i) = \bm{0}$, $\mathbb{E}(\bm{\alpha}_i,\bm{x}_{it}^\prime) = \bm{0}$, $\mathbb{E}(\bm{\alpha}_i \bm{\alpha}_j) = \bm{\Delta}$ for $i = j$ and $\mathbb{E}(\bm{\alpha}_i \bm{\alpha}_j) = \bm{0}$ for $i \neq j$.
+% This structure implies that $\bm{\beta}_{it}$ is stationary.
+
+% To be continued further...
+
+\subsubsection{Random coefficient discrete choice models}
+\label{sec:rcdcm}
+A common example of RCMs are random coefficient dicrete choice models (RCDCMs).
+This is also the model of interest in this thesis.
+In the model we assume that individual $i$, where $i = 1,\ldots,N$, makes a choice between $J$ alternatives.
+We model the latent utility $u_{ij}$ for individual $i$ for choice $j$ as
+\begin{equation}
+\label{eq:rcdcmlatent}
+    u_{ij} = \bm{x}_{ij}^\prime \bm{\beta}_{ij} + \varepsilon_{ij},
+\end{equation}
+where $\bm{\beta}_{ij} \overset{\text{i.i.d.}}{\sim} F_{\bm{\beta}}$ with support $\mathcal{B}$ and $\varepsilon_{ij} \overset{\text{i.i.d.}}{\sim} F_\varepsilon$.
+Let $y_{ij}$ denote the indicator of the event that individual $i$ chooses choice $j$. 
+If we assume individuals maximize utility this implies
+\begin{equation}
+\label{eq:rcdcmydef}
+    y_{ij} = \mathds{1}\{u_{ij} > u_{ik}, \text{ for all } j \neq k\} = \prod_{\substack{k=1; \\ k\neq j}}^{J}\mathds{1}\{u_{ij} > u_{ik}\}.
+\end{equation}
+A useful object of interest is the probability of $y_{ij} = 1$ conditional on $x_i$.
+\begin{proposition}
+\label{prop:rcdcmcondprop}
+    Consider the RCDCM as defined in Section \ref{sec:rcdcm}. 
+    Let
+    \begin{equation}
+    \label{eq:rcdcmgdef}
+        g_j(\bm{x}_{i},\bm{\beta}_{i}) \coloneq \mathbb{P}(y_{ij} = 1 \mid \bm{x}_i, \bm{\beta}_i) = \prod_{\substack{k=1;\\k\neq j}}^{J}F_v(\bm{x}_{ij}^\prime \bm{\beta}_{ij}-\bm{x}_{ik}^\prime \bm{\beta}_{ik}),
+    \end{equation}
+    with $\bm{x}_{i} = (\bm{x}_{i1},\ldots,\bm{x}_{iJ})$ and
+    \begin{equation}
+    \label{eq:rcdcmvdistribution}
+        F_v(x) = \int_{-\infty}^{\infty}F_\varepsilon(x+t)\,\mathrm{d}F_\varepsilon(t).
+    \end{equation}
+    It follows that
+    \begin{equation}
+    \label{eq:rcdcmconditionalprobability}
+        \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i}) = \int_{\mathcal{B}} g_j(\bm{x}_{i}, \bm{\beta}) \, \mathrm{d}F_{\bm{\beta}}.
+    \end{equation}
+\end{proposition}
+\begin{proof}
+    See Appendix~\ref{appendix:rcdcm_probability}.
+\end{proof}
+
+\subsection{Common Estimators}
+\label{sec:alternatives}
+\subsubsection{FKRB Estimator}
+A commonly used estimator for RCDCMs is the estimator proposed by \citet{FoxKimRyanBajari2011}, which is hereafter referred to as the FKRB estimator.
+They approximate the distribution of random coefficients by a finite mixture over fixed support points.
+Next they rewrite \eqref{eq:rcdcmconditionalprobability} such that the parameters of interest enter the equation linearly.
+Then they show that these parameters can be consistently estimated by means of (constrained) least squares.
+
+For some $R \in \mathbb{N}_+$, let $\tilde{\mathcal{B}} = \{\bm{\beta}^{(1)}, \bm{\beta}^{(2)}, \ldots, \bm{\beta}^{(R)}\}$.
+The $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified points. 
+We let $\theta_r$ denote the value of the probability mass function of $\bm{\beta}_{ij}$ at $\bm{\beta}^{(r)}$, i.e. $\theta_r = \mathbb{P}(\bm{\beta}_{ij} = \bm{\beta}^{(r)})$.
+Then under the assumption $\tilde{\mathcal{B}} \approx \mathcal{B}$ we have that \eqref{eq:rcdcmconditionalprobability} boils down to
+\begin{equation}
+\label{eq:FKRBpij}
+    \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{ij}) \approx \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right).
+\end{equation}
+We can then add $y_{ij}$ to both sides and move $\mathbb{P}(y_{ij}=1\mid \bm{x}_{ij})$ to the RHS:
+\begin{align}
+\label{eq:FKRBreg}
+    y_{ij} &\approx \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right) + \left(y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})\right) \\
+        &= \sum_{r = 1}^{R} \theta_r z_{ijr} + \zeta_{ij} = \bm{z}_{ij}^\prime \bm{\theta} + \zeta_{ij},
+\end{align}
+where $\bm{z}_{ij} = (z_{ij1}, z_{ij2}, \ldots, z_{ijR})$, with $z_{ijr} = g_j(\bm{x}_{i}, \bm{\beta}^{(r)})$ and $\zeta_{ij} = y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{ij})$.
+It is important to note that all approximate equalities above are exact equalities in the case that $\tilde{\mathcal{B}} = \mathcal{B}$.
+
+We notice that $\mathbb{E}(\zeta_{ij}) = 0$. Therefore, the OLS estimator
+\begin{equation}
+\label{eq:FKRBOLSest}
+    \hat{\bm{\theta}}^\mathrm{OLS} = \argmin_{\bm{\theta}}{\sum_{i=1}^{N}\sum_{j=1}^{J}(y_{ij}-\bm{z}^\prime_{ij}\bm{\theta})^2} = (\bm{Z}'\bm{Z})^{-1}\bm{Z}'\bm{y},
+\end{equation}
+where $\bm{y} = (y_{11}, y_{12}, \ldots, y_{1J}, y_{21}, y_{22}, \ldots, y_{2J}, \ldots, y_{N1},\ldots, y_{NJ})$ and
+\begin{equation}
+\label{eq:FKRBZdef}
+    \bm{Z} = \begin{pmatrix}
+    z_{111} & \cdots & z_{1J1} & z_{211} & \cdots & z_{2J1} & \cdots & z_{N11} & \cdots & z_{NJ1} \\
+    z_{112} & \cdots & z_{1J2} & z_{212} & \cdots & z_{2J2} & \cdots & z_{N12} & \cdots & z_{NJ2} \\
+    \vdots  &        & \vdots  & \vdots  &        & \vdots  &        & \vdots  &        & \vdots  \\
+    z_{11R} & \cdots & z_{1JR} & z_{21R} & \cdots & z_{2JR} & \cdots & z_{N1R} & \cdots & z_{NJR}
+    \end{pmatrix},
+\end{equation}
+is a consistent estimator for $\bm{\theta}$.\footnote{Look into how error independent from regressors condition is satisfied.}
+However, we know $\bm{\theta}$ resembles a probability measure. 
+This gives the following constraints:
+\begin{align}
+\label{eq:FKRBconstraint1}
+    &\sum_{r=1}^{R}\theta_r = 1, \\
+\label{eq:FKRBconstraint2}
+    &\theta_r \geq 0, \text{ for all } r = 1,\ldots,R.
+\end{align}
+In practice one often wants to abide to these constraints. 
+Therefore, \citet{FoxKimRyanBajari2011} suggest the following constrained least squares estimator
+\begin{equation}
+\label{eq:FKRBCLSest}
+    \begin{split}
+        \hat{\bm{\theta}}^{\mathrm{FKRB}} = &\argmin_{\bm{\theta}}{\sum_{i=1}^{N}\sum_{j=1}^{J}(y_{ij}-\bm{z}^\prime_{ij}\bm{\theta})^2}, \\
+            &\text{ subject to \eqref{eq:FKRBconstraint1} and \eqref{eq:FKRBconstraint2}}.
+    \end{split}
+\end{equation}
+Under some additional regularity conditions, this estimator is also consistent \citep{Liew1976}.
+One then tries to reconstruct $F_{\bm{\beta}}$ according to
+\begin{equation}
+\label{eq:FKRBest}
+    \hat{F}_{\bm{\beta}}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
+\end{equation}
+
+We call this the FKRB estimator.\footnote{In the literature, \eqref{eq:FKRBCLSest} and \eqref{eq:FKRBest} are interchangeably called the FKRB estimator.}
+The literature has provided some extensions to this estimator. 
+\citet{FoxKimRyanBajari2011} themselves have provided a more efficient extension of the estimator.
+It estimates $\bm{\theta}$ with generalized least squares, to account for the artificial heteroskedasticity in $\zeta_{ij}$.
+\citet{HeissHetzeneckerOsterhaus2022} show that the FKRB estimator\footnote{Here in the sense of \eqref{eq:FKRBCLSest}.} is a special case of the nonnegative LASSO estimator.
+They then generalize the FKRB estimator to a nonnegative elastic net estimator.
+This estimator avoids randomly estimating many weights to zero; this behavior was commonly seen in both simulation and application studies on the FKRB estimator.
+
+\subsection{The PSMD Estimator}
+\label{sec:psmd}
+We show that the FKRB estimator is also a special case of the PSMD estimator from \citet{ChenPouzo2012}.
+Let
+\begin{equation}
+\label{eq:PSMDrho}
+    \rho_{ij}(\bm{y},\bm{x};h) = y_{ij} - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h(\bm{\beta})\,\mathrm{d}\bm{\beta},
+\end{equation}
+It follows that
+\begin{equation}
+\label{eq:PSMDexprho}
+     \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h_0)\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}] - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta} = 0
+\end{equation}
+for all $i,j$, under the identification $h_0(b) = \frac{\mathrm{d}F_{\bm{\beta}}(b)}{\mathrm{d}b}$, since
+\begin{equation}
+\label{eq:PSMDexpplink}
+    \mathbb{E}[y_{ij}\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}_i] = \mathbb{P}(y_{ij}=1\mid \bm{x}_i) = \int_{\mathcal{B}}g_j(\bm{x}_{i},\bm{\beta})\,\mathrm{d}F_{\bm{\beta}} = \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta},
+\end{equation}
+by Proposition \ref{prop:rcdcmcondprop}.
+This is exactly the framework in which \citet{ChenPouzo2012} provided the PSMD estimator for estimating $h_0$.
+
+Define
+\begin{equation}
+\label{eq:PSMDmdef}
+    m_{ij}(\bm{x};h) \coloneq \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h)\mid \bm{x}].
+\end{equation}
+

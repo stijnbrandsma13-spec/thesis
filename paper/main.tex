@@ -1,0 +1,54 @@
+% !TEX root = main.tex
+\input{other/preamble}
+
+\begin{document}
+
+\input{sections/titlepage}
+
+\newpage
+
+% --- Table of contents -------------------------------------------------------
+\tableofcontents
+\newpage
+
+% --- Section 1: Introduction -------------------------------------------------
+\input{sections/introduction}
+
+% --- Section 2: Theoretical Framework ----------------------------------------
+\input{sections/theoretical_framework}
+
+% --- Section 3: Simulation Design --------------------------------------------
+\input{sections/simulation_design}
+
+% --- Section 4: Results ------------------------------------------------------
+\section{Results}
+\label{sec:results}
+
+\subsection{Baseline Performance}
+\label{sec:baseline}
+
+\subsection{Comparison to Alternative Estimators}
+\label{sec:comparison}
+
+\subsection{Sensitivity to DGP Conditions}
+\label{sec:sensitivity}
+
+% --- Section 5: Discussion ---------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+
+% --- Section 6: Conclusion ---------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+
+% --- References --------------------------------------------------------------
+\clearpage
+\bibliographystyle{references/rug-econometrics}
+\bibliography{references/references}
+
+% --- Appendices --------------------------------------------------------------
+\clearpage
+\appendix
+\input{sections/appendix}
+
+\end{document}

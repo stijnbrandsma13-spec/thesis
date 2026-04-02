@@ -1,0 +1,21 @@
+% !TEX root = ../main.tex
+\section{Simulation Design}
+\label{sec:simulation}
+
+\subsection{Data Generating Processes}
+\label{sec:dgp}
+For the DGP I will probably implement a DGP that follows \eqref{eq:rcmlinear}, \eqref{eq:swamyrep}.
+Maybe I find another type of RCM that either suits the problem better, or is just interesting to study.
+In that case I might simulate such a DGP as well. An example could be a binary choice model.
+
+Most interest lies in the distributions for $\bm{\beta}_{it}$.
+I will let $\bm{\beta}_{it}$ have the same distribution as in \citet{FoxKimRyanBajari2011} for nice comparability.
+This is a mixture distribution of two normals. 
+I might also try to estimate a couple more different distributions, but I have not yet thought about what distributions might be interesting.
+
+\subsection{Implementation Details}
+\label{sec:implementation}
+Right now I am planning on writing the code in Python and uploading it to GitHub.
+
+\subsection{Evaluation Criteria}
+\label{sec:criteria}

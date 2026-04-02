@@ -20,3 +20,6 @@ __pycache__/
 *.fls
 *.synctex.gz
 *.pdf
+
+# --- Figures ---
+*.eps
