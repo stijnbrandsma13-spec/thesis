@@ -1,105 +1,82 @@
 % !TEX root = ../main.tex
 \section{Theoretical Framework}
 \label{sec:theory}
+\subsection{Mixed logit}
+\label{sec:mxl}
+We start by introducing the mixed logit model in detail.
+This is the model of interest for this thesis.
+The MXL can be derived from various behaviour specifications \citep{Train2009}.
+We will show the derivation from a random coefficient discrete choice model.
 
-\subsection{Random Coefficient Models}
-\label{sec:rcm}
-Random coefficient models (RCMs) are a broad class of econometric models that explicitly model heterogeneity of agents by allowing coefficients to vary across individuals.
-In the most general case one might present random coefficient models as
+In the model we assume that individual $i$, where $i = 1,\ldots,N$, makes a choice $j$ between $J$ alternatives and one outside good ($j=0$).
+We model the latent utility $u_{ij}\in\mathbb{R}$ for individual $i$ for choice $j$ as
 \begin{equation}
-\label{eq:rcmgeneral}
-    \bm{y}_{it} = f(\bm{x}_{it},\bm{\beta}_{it},\bm{\varepsilon}_{it}),
+\label{eq:mxllatentutil}
+    u_{ij} = \bm{x}_{ij}^\prime \bm{\beta}_{i} + \varepsilon_{ij},
 \end{equation}
-where $f$ denotes a prespecified function. 
-Furthermore, for individual $i$ at time $t$ we have that $\bm{y}_{it} \in \mathbb{R}^{d_y}$ denotes the observed vector of dependent variables, $\bm{x}_{it} \in \mathbb{R}^K$ denotes the observed vector of regressors, $\bm{\beta}_{it} \in \mathbb{R}^{K}$ denotes the unobserved vector of random coefficients, with unobserved distribution $\bm{\beta}_{it} \sim F_{\bm{\beta}_{it}}$, and $\bm{\varepsilon}_{it} \in \mathbb{R}^{d_y}$ denotes the unobserved vector of errors, with $\bm{\varepsilon}_{it} \sim F_{\bm{\varepsilon}_i}$.
+where $\bm{x}_{ij} \in \mathbb{R}^K$ denotes the column vector with observed exogenous variables for individual $i$, choice $j$.
+Furthermore, $\bm{\beta}_{i}\in \mathbb{R}^K$ denotes the unobserved column vector of individual-specific random coefficients, for individual $i$. 
+The random coefficient vectors are are independent and identically distributed (i.i.d.) draws from a cumulative distribution function $F_0$ with support $\mathcal{B}$.\footnote{This means that for each individual $i$, the random coefficient vector $\bm{\beta}_{i}$ as a whole is jointly distributed as $F_0$. This does not mean that each element of a random coefficient vector is marginally distributed as $F_0$.}
+When the random coefficients have finite support (i.e. $\mathcal{B}$ has finite cardinality) we speak of a latent class model \citep{Train2009}.
+Specifically, we call then call this the latent class multinomial logit model (LC-MNL).
+The distribution function is not observed.
+Next, $\varepsilon_{ij}\in \mathbb{R}$ denotes the unobserved idiosyncratic error term for individual $i$, choice $j$. 
+The error terms are i.i.d. draws from a Type I extreme value distribution.
+Also, we assume strict exogeneity of the observed variables and independence of the unobserved components
+That is, $\mathbb{E}[\varepsilon_{ij}\mid \bm{x}_{i1}, \ldots,\bm{x}_{iJ}] = 0$ and $\bm{\beta}_i \perp \varepsilon_{ij}$ for all $i,j$.
+At last, for $j=0$ (the outside good) we impose $u_{i0} = \varepsilon_{i0}$.
 
-One should notice that we always need more structure on the distribution of $\bm{\beta}_{it}$, as the most general case presented above leads to unidentifiability.
-Therefore, all useful RCMs impose $\bm{\beta}_{it} \sim F_{\bm{\beta}}$ for all $i,t$.
-Moreover, in most models we have $d_y = 1$.
-
-% \subsubsection{Linear random coefficient models}
-% \label{sec:lrcm}
-% The simplest example of RCMS are linear random coefficient models that have the following form:
-% \begin{equation}
-% \label{eq:rcmlinear}
-%     y_{it} = \bm{x}_{it}^\prime \bm{\beta}_{it} + \varepsilon_{it},
-% \end{equation}
-% where the variables mostly denote the same as in \eqref{eq:rcmgeneral}, with the exception of $y_{it}$ and $\varepsilon_{it}$ becoming one-dimensional. 
-% There are several ways to impose more structure on the distributions of $\bm{\beta}_{it}$. \citet{Swamy1970} uses the following basic structure:
-% \begin{equation}
-% \label{eq:swamyrep}
-%     \bm{\beta}_{it} = \bm{\beta} + \bm{\alpha}_{i},
-% \end{equation}
-% for all $i, t$, with $\mathbb{E}(\bm{\alpha}_i) = \bm{0}$, $\mathbb{E}(\bm{\alpha}_i,\bm{x}_{it}^\prime) = \bm{0}$, $\mathbb{E}(\bm{\alpha}_i \bm{\alpha}_j) = \bm{\Delta}$ for $i = j$ and $\mathbb{E}(\bm{\alpha}_i \bm{\alpha}_j) = \bm{0}$ for $i \neq j$.
-% This structure implies that $\bm{\beta}_{it}$ is stationary.
-
-% To be continued further...
-
-\subsubsection{Random coefficient discrete choice models}
-\label{sec:rcdcm}
-A common example of RCMs are random coefficient dicrete choice models (RCDCMs).
-This is also the model of interest in this thesis.
-In the model we assume that individual $i$, where $i = 1,\ldots,N$, makes a choice between $J$ alternatives.
-We model the latent utility $u_{ij}$ for individual $i$ for choice $j$ as
-\begin{equation}
-\label{eq:rcdcmlatent}
-    u_{ij} = \bm{x}_{ij}^\prime \bm{\beta}_{ij} + \varepsilon_{ij},
-\end{equation}
-where $\bm{\beta}_{ij} \overset{\text{i.i.d.}}{\sim} F_{\bm{\beta}}$ with support $\mathcal{B}$ and $\varepsilon_{ij} \overset{\text{i.i.d.}}{\sim} F_\varepsilon$.
 Let $y_{ij}$ denote the indicator of the event that individual $i$ chooses choice $j$. 
-If we assume individuals maximize utility this implies
+We assume individuals maximize utility. Then this implies
 \begin{equation}
-\label{eq:rcdcmydef}
+\label{eq:mxlydef}
     y_{ij} = \mathds{1}\{u_{ij} > u_{ik}, \text{ for all } j \neq k\} = \prod_{\substack{k=1; \\ k\neq j}}^{J}\mathds{1}\{u_{ij} > u_{ik}\}.
 \end{equation}
-A useful object of interest is the probability of $y_{ij} = 1$ conditional on $x_i$.
-\begin{proposition}
-\label{prop:rcdcmcondprop}
-    Consider the RCDCM as defined in Section \ref{sec:rcdcm}. 
-    Let
-    \begin{equation}
-    \label{eq:rcdcmgdef}
-        g_j(\bm{x}_{i},\bm{\beta}_{i}) \coloneq \mathbb{P}(y_{ij} = 1 \mid \bm{x}_i, \bm{\beta}_i) = \prod_{\substack{k=1;\\k\neq j}}^{J}F_v(\bm{x}_{ij}^\prime \bm{\beta}_{ij}-\bm{x}_{ik}^\prime \bm{\beta}_{ik}),
-    \end{equation}
-    with $\bm{x}_{i} = (\bm{x}_{i1},\ldots,\bm{x}_{iJ})$ and
-    \begin{equation}
-    \label{eq:rcdcmvdistribution}
-        F_v(x) = \int_{-\infty}^{\infty}F_\varepsilon(x+t)\,\mathrm{d}F_\varepsilon(t).
-    \end{equation}
-    It follows that
-    \begin{equation}
-    \label{eq:rcdcmconditionalprobability}
-        \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i}) = \int_{\mathcal{B}} g_j(\bm{x}_{i}, \bm{\beta}) \, \mathrm{d}F_{\bm{\beta}}.
-    \end{equation}
-\end{proposition}
-\begin{proof}
-    See Appendix~\ref{appendix:rcdcm_probability}.
-\end{proof}
 
-\subsection{Common Estimators}
-\label{sec:alternatives}
-\subsubsection{FKRB Estimator}
-A commonly used estimator for RCDCMs is the estimator proposed by \citet{FoxKimRyanBajari2011}, which is hereafter referred to as the FKRB estimator.
+A useful object of interest is the probability of $y_{ij} = 1$ conditional on $\bm{x}_i$, where we denote $\bm{x}_i = (\bm{x}_{i1}^\prime,\ldots,\bm{x}_{iJ}^\prime)$ as the stacked row vector of the exogenous variables for individual $i$.
+Define
+\begin{equation}
+\label{eq:mxlgdef}
+    g_j(\bm{x}_{i},\bm{\beta}_{i}) \coloneq \mathbb{P}(y_{ij} = 1 \mid \bm{x}_i, \bm{\beta}_i).
+\end{equation}
+We can derive an analytical expression \citep[see][Chap.~3]{Maddala1983} in the form of
+\begin{equation}
+\label{eq:mxlganalytical}
+    g_j(\bm{x}_{i},\bm{\beta}_{i}) = \frac{\exp{(\bm{x}_{ij}^\prime \bm{\beta}_i)}}{1 + \sum_{k=1}^{J}\exp{(\bm{x}_{ik}^\prime \bm{\beta}_i)}}.
+\end{equation}
+The only difference with \citet{Maddala1983} is that $\bm{\beta}_i$ is stochastic in our model. 
+However, since we are also conditioning on $\bm{\beta}_i$, the derivation remains the same.
+It then follows that
+\begin{equation}
+\label{eq:mxlcondprob}
+    \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i}) = \int_{\mathcal{B}} g_j(\bm{x}_{i}, \bm{\beta}) \, \mathrm{d}F_{0}(\bm{\beta}).
+\end{equation}
+
+\subsection{FKRB Estimator}
+\label{sec:FKRBestimator}
+A commonly used estimator for MXL is the estimator proposed by \citet{FoxKimRyanBajari2011}, which is hereafter referred to as the FKRB estimator.
 They approximate the distribution of random coefficients by a finite mixture over fixed support points.
-Next they rewrite \eqref{eq:rcdcmconditionalprobability} such that the parameters of interest enter the equation linearly.
+Next they rewrite \eqref{eq:mxlcondprob} such that the parameters of interest enter the equation linearly.
 Then they show that these parameters can be consistently estimated by means of (constrained) least squares.
 
+\subsubsection{Derivation}
+\label{sec:FKRBderivation}
+For completeness, we first show the derivation of the estimator. 
 For some $R \in \mathbb{N}_+$, let $\tilde{\mathcal{B}} = \{\bm{\beta}^{(1)}, \bm{\beta}^{(2)}, \ldots, \bm{\beta}^{(R)}\}$.
 The $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified points. 
-We let $\theta_r$ denote the value of the probability mass function of $\bm{\beta}_{ij}$ at $\bm{\beta}^{(r)}$, i.e. $\theta_r = \mathbb{P}(\bm{\beta}_{ij} = \bm{\beta}^{(r)})$.
-Then under the assumption $\tilde{\mathcal{B}} \approx \mathcal{B}$ we have that \eqref{eq:rcdcmconditionalprobability} boils down to
+We let $\theta_r$ denote the value of the probability mass function of $\bm{\beta}_{i}$ at $\bm{\beta}^{(r)}$, i.e. $\theta_r = \mathbb{P}(\bm{\beta}_{i} = \bm{\beta}^{(r)})$.
+Then under the assumption $\tilde{\mathcal{B}} = \mathcal{B}$ we have that \eqref{eq:mxlcondprob} boils down to
 \begin{equation}
 \label{eq:FKRBpij}
-    \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{ij}) \approx \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right).
+    \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{ij}) = \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right).
 \end{equation}
-We can then add $y_{ij}$ to both sides and move $\mathbb{P}(y_{ij}=1\mid \bm{x}_{ij})$ to the RHS:
+We can then add $y_{ij}$ to both sides and move $\mathbb{P}(y_{ij}=1\mid \bm{x}_{ij})$ to the right-hand side:
 \begin{align}
 \label{eq:FKRBreg}
-    y_{ij} &\approx \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right) + \left(y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})\right) \\
+    y_{ij} &= \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right) + \left(y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})\right) \\
         &= \sum_{r = 1}^{R} \theta_r z_{ijr} + \zeta_{ij} = \bm{z}_{ij}^\prime \bm{\theta} + \zeta_{ij},
 \end{align}
-where $\bm{z}_{ij} = (z_{ij1}, z_{ij2}, \ldots, z_{ijR})$, with $z_{ijr} = g_j(\bm{x}_{i}, \bm{\beta}^{(r)})$ and $\zeta_{ij} = y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{ij})$.
-It is important to note that all approximate equalities above are exact equalities in the case that $\tilde{\mathcal{B}} = \mathcal{B}$.
+where $\bm{\theta}=(\theta_1,\theta_2,\ldots,\theta_R)$, $\bm{z}_{ij} = (z_{ij1}, z_{ij2}, \ldots, z_{ijR})$, with $z_{ijr} = g_j(\bm{x}_{i}, \bm{\beta}^{(r)})$ and $\zeta_{ij} = y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})$.
 
 We notice that $\mathbb{E}(\zeta_{ij}) = 0$. Therefore, the OLS estimator
 \begin{equation}
@@ -138,7 +115,7 @@ Under some additional regularity conditions, this estimator is also consistent \
 One then tries to reconstruct $F_{\bm{\beta}}$ according to
 \begin{equation}
 \label{eq:FKRBest}
-    \hat{F}_{\bm{\beta}}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
+    \hat{F}_{0}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
 \end{equation}
 
 We call this the FKRB estimator.\footnote{In the literature, \eqref{eq:FKRBCLSest} and \eqref{eq:FKRBest} are interchangeably called the FKRB estimator.}

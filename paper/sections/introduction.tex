@@ -2,10 +2,49 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Many econometric models of economic behavior allow for heterogeneity in individual responses to explanatory variables, which is often only captured in the error term.
-Random coefficient models provide a more flexible and structural framework to capture this heterogeneity, allowing parameters to vary across agents according to an unknown distribution.
-An extensive overview of random coefficient models is given by \citet{HsiaoPesaran2008}.
-These models are widely used in labor economics, industrial organization, and asset pricing \citep[e.g.][]{BerryLevinsohnPakes1995, CarneiroHeckmanVytlacil2011, BelzilHansen2007, KoijenYogo2019}.
+In many econometric models it is assumed that the aggregate behaves the same as the individual up to an error term.
+For example, a model for wage might specify that ones wage is expected to increase by a parameter $\beta$ with one extra year of schooling, where $\beta$ is the same for each individual.
+However, for some situations this assumption can be incorrect.
+The probability of buying a car increases when you paint it pink for some people, whereas for some people it will decrease.
+In this case it makes sense to model this heterogeneity in preferences.
+
+An example of models that incorporate this heterogeneity are called random coefficient models (RCMs).
+These models are widely used in many fields such as labor economics, industrial organization, and asset pricing \citep[e.g.][]{BerryLevinsohnPakes1995, CarneiroHeckmanVytlacil2011, BelzilHansen2007, KoijenYogo2019}.
+An extensive overview of RCMs in panel data is given by \citet{HsiaoPesaran2008}.
+A specific example of RCMs are random coefficient discrete choice models (RCDCMs).
+These often extend discrete choice models such as probit, logit and the multinomial logit \citep{CameronTrivedi2005}, see for example the mixed logit \citep[Chap.~6]{Train2009}.
+
+The mixed logit (MXL) is exactly the same as the multinomial logit (MNL), with the exception that the coefficients are random.
+One advantage of MXL over the MNL is the lack of the IIA (independence of irrelevant alternatives) assumption \citep{Train2009}.
+The mixed logit is applied in many studies \citep[e.g.][]{NicoletNegenbornAtasoy2022,YinCherchi2024,ZhouWangYangGanLiuZi2025}.
+When the mixing distribution of random coefficients is discrete, MXL becomes a latent class model, specifically the latent class multinomial logit (LC-MNL) \citep{Train2009}, as used in \citet{WangYangSongSia2014}, and \citet{LiGaoYangLiu2022}.
+LC-MNL will be the model of interest in this thesis.
+
+Many estimation procedures have been proposed for the LC-MNL. 
+\citet{Train2009} suggests a simulated maximum likelihood approach, as well as an expectation-maximization (EM) algorithm and a hierarchical Bayes method with Markov chain Monte Carlo (MCMC).
+\citet{Train2008} dives into the EM approach. \citet{BurdaHardingHausman2008} and \citet{Rossi2012} provide more on the hierarchical Bayes method.
+The literature has also used simulated method of moments \citep{McFadden1989} and minimum distance \citep{BeranMillar1994}.
+\citet{FoxKimRyanBajari2011} experencied problems to some degree with all the methods above.
+Therefore, they proposed a computationally simple estimator (commonly called the FKRB estimator).
+This estimator has been proven to be attractive to use in the recent literature \citep[e.g.][]{HoudeMyers2019,BlundellGowrisankaranLanger2020}.
+
+The key part to the approach of \citet{FoxKimRyanBajari2011} is that the LC-MNL can be rewritten such that the parameters enter linearly.
+Therefore, the parameters can be estimated with OLS. 
+However, the parameters have to abide to certain constraints.
+\citet{HeissHetzeneckerOsterhaus2022} show that these constraints make the FKRB estimator equivalent to a nonnegative LASSO (NNL) estimator.
+With this insight they extend the estimator to a nonnegative elastic net estimator.
+
+Another attempt of an improvement to the FKRB estimator has been done by \citet{Train2016}.
+He approximates the distribution of random coefficients with splines, polynomials or step functions, instead of with a discrete mixture as done by \citet{FoxKimRyanBajari2011}.
+This approach can decrease the dimensionality of the model significantly.
+Strictly speaking, this estimator is not estimating a LC-MNL anymore, since the distribution is not discrete here. 
+This estimator is still comparable to the others, as the other estimators are also used in a context where the researcher does not have the belief that the coefficients have a discrete distribution, but a continuous distribution. 
+In these cases the researcher chooses discrete mixture estimators for there computational properties.
+When the support of the discrete distribution becomes sufficiently dense, this distribution can approximate any distribution arbitrarily close \citep{McFaddenTrain2000}.
+
+Of course, in most of the cases, the researcher wants to conduct inference. 
+\citet{FoxKimRyanBajari2011} show multiple methods of constructing confidence intervals for their estimator.
+However, though their methods produce correct coverage,\footnote{We speak of correct coverage when, under the null, the probability of the estimator belonging to the $\alpha$\%-confidence interval is more than or equal to $\alpha$.} the confidence intervals are all quite conservative, in the sense that the confidence intervals cover more than they have to.
 
 In these models, we cannot estimate deterministic coefficients because they are inherently random.
 Instead, we estimate the distribution of the random coefficients to gain insight into the structure of the heterogeneity in the data.
