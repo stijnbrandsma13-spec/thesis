@@ -74,11 +74,11 @@ We can then add $y_{ij}$ to both sides and move $\mathbb{P}(y_{ij}=1\mid \bm{x}_
 \begin{align}
 \label{eq:FKRBreg}
     y_{ij} &= \sum_{r = 1}^{R} \theta_r g_j\! \left(\bm{x_i},\bm{\beta}^{(r)}\right) + \left(y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})\right) \\
+        \label{eq:FKRBzetadef}
         &= \sum_{r = 1}^{R} \theta_r z_{ijr} + \zeta_{ij} = \bm{z}_{ij}^\prime \bm{\theta} + \zeta_{ij},
 \end{align}
 where $\bm{\theta}=(\theta_1,\theta_2,\ldots,\theta_R)$, $\bm{z}_{ij} = (z_{ij1}, z_{ij2}, \ldots, z_{ijR})$, with $z_{ijr} = g_j(\bm{x}_{i}, \bm{\beta}^{(r)})$ and $\zeta_{ij} = y_{ij} - \mathbb{P}(y_{ij} = 1 \mid \bm{x}_{i})$.
-
-We notice that $\mathbb{E}(\zeta_{ij}) = 0$. Therefore, the OLS estimator
+We notice that $\mathbb{E}[\zeta_{ij}\mid \bm{z}_{ij}] = 0$. Therefore, the OLS estimator
 \begin{equation}
 \label{eq:FKRBOLSest}
     \hat{\bm{\theta}}^\mathrm{OLS} = \argmin_{\bm{\theta}}{\sum_{i=1}^{N}\sum_{j=1}^{J}(y_{ij}-\bm{z}^\prime_{ij}\bm{\theta})^2} = (\bm{Z}'\bm{Z})^{-1}\bm{Z}'\bm{y},
@@ -93,7 +93,8 @@ where $\bm{y} = (y_{11}, y_{12}, \ldots, y_{1J}, y_{21}, y_{22}, \ldots, y_{2J},
     z_{11R} & \cdots & z_{1JR} & z_{21R} & \cdots & z_{2JR} & \cdots & z_{N1R} & \cdots & z_{NJR}
     \end{pmatrix},
 \end{equation}
-is a consistent estimator for $\bm{\theta}$.\footnote{Look into how error independent from regressors condition is satisfied.}
+is a consistent estimator for $\bm{\theta}$ \citep{FoxKimRyanBajari2011}.
+
 However, we know $\bm{\theta}$ resembles a probability measure. 
 This gives the following constraints:
 \begin{align}
@@ -112,22 +113,49 @@ Therefore, \citet{FoxKimRyanBajari2011} suggest the following constrained least 
     \end{split}
 \end{equation}
 Under some additional regularity conditions, this estimator is also consistent \citep{Liew1976}.
-One then tries to reconstruct $F_{\bm{\beta}}$ according to
+One then tries to reconstruct $F_{0}$ according to
 \begin{equation}
 \label{eq:FKRBest}
     \hat{F}_{0}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
 \end{equation}
-
 We call this the FKRB estimator.\footnote{In the literature, \eqref{eq:FKRBCLSest} and \eqref{eq:FKRBest} are interchangeably called the FKRB estimator.}
-The literature has provided some extensions to this estimator. 
-\citet{FoxKimRyanBajari2011} themselves have provided a more efficient extension of the estimator.
-It estimates $\bm{\theta}$ with generalized least squares, to account for the artificial heteroskedasticity in $\zeta_{ij}$.
-\citet{HeissHetzeneckerOsterhaus2022} show that the FKRB estimator\footnote{Here in the sense of \eqref{eq:FKRBCLSest}.} is a special case of the nonnegative LASSO estimator.
-They then generalize the FKRB estimator to a nonnegative elastic net estimator.
-This estimator avoids randomly estimating many weights to zero; this behavior was commonly seen in both simulation and application studies on the FKRB estimator.
+\subsubsection{Inference}
+After having done the estimation procedure, the researcher often wants to conduct inference on $\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
+Because of the nonparametric nature of the estimator, it is hard to derive a finite-sample distribution of the estimator.
+For many estimators, the central limit theorem can do a lot of heavy lifting in establishing at least the asymptotic distribution, which is then often Gaussian.
+However, when the true parameter is on the boundary, asymptotic normality breaks down \citep{Andrews1999}.
+\citet{Andrews1999,Andrews2001,Andrews2002} give the asymptotic distribution for related cases with a true parameter on the boundary.
+\citet{AndrewsGuggenberger2010Applications} also propose a subsampling procedure for a related case.
+These results however are unfortunately not general enough to also apply to the FKRB estimator \citep{FoxKimRyanBajari2011}.
+
+\citet{FoxKimRyanBajari2011} have suggested an alternative approach.
+They construct an initial confidence interval $\mathrm{CI}^{\mathrm{OLS}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$ at the $\alpha$ significance level for $\hat{\theta}^{(r)}_{\mathrm{FKRB}}$ with heteroskedasticity-robust standard errors that arise from the unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ from \eqref{eq:FKRBOLSest}.
+The need of heteroskedasticity-robust standard errors comes from the inherent heteroskedasticity introduced by the construction of the error term $\zeta_{ij}$ in \eqref{eq:FKRBzetadef}.
+There are also clear clusters (each individual has one), so they also cluster the standard errors at the level of ``regression observations'' $j = 1,\ldots,J$ for each individual $i$.
+More formally we have
+\begin{equation}
+\label{eq:CIOLS}
+    \mathrm{CI}^{\mathrm{OLS}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right) = \left[\hat{\theta}^{(r)}_{\mathrm{FKRB}} - z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}^{(r)}_{\mathrm{OLS}}\right),\hat{\theta}^{(r)}_{\mathrm{FKRB}} + z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}^{(r)}_{\mathrm{OLS}}\right)\right],
+\end{equation}
+where $z_{1-\frac{\alpha}{2}} = \Phi^{-1}(1-\frac{\alpha}{2})$ denotes the $1-\frac{\alpha}{2}$ quantile of the standard normal distribution and $\mathrm{SE}(\hat{\theta}^{(r)}_{\mathrm{OLS}})$ denotes the clustered heteroskedasticity-robust standard error of $\hat{\theta}^{(r)}_{\mathrm{OLS}}$.
+Note that this acts as if the estimator is asymptotically normally distributed. 
+Although this is wrong, it still remains the best approximation we currently have.
+The only caveat is that this allows for confidence intervals that cross outside the $[0,1]$ region, while this is clearly not possible for the real parameters as illustrated by \eqref{eq:FKRBconstraint1} and \eqref{eq:FKRBconstraint2}.
+The final interval that \citet{FoxKimRyanBajari2011} arrive at is therefore clipped to this region, i.e. 
+\begin{equation}
+\label{eq:CIFKRB}
+    \mathrm{CI}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right) = [0,1] \cap \mathrm{CI}^{\mathrm{OLS}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right).
+\end{equation}
+% The literature has provided some extensions to this estimator. 
+% \citet{FoxKimRyanBajari2011} themselves have provided a more efficient extension of the estimator.
+% It estimates $\bm{\theta}$ with generalized least squares, to account for the artificial heteroskedasticity in $\zeta_{ij}$.
+% \citet{HeissHetzeneckerOsterhaus2022} show that the FKRB estimator\footnote{Here in the sense of \eqref{eq:FKRBCLSest}.} is a special case of the nonnegative LASSO estimator.
+% They then generalize the FKRB estimator to a nonnegative elastic net estimator.
+% This estimator avoids randomly estimating many weights to zero; this behavior was commonly seen in both simulation and application studies on the FKRB estimator.
 
 \subsection{The PSMD Estimator}
 \label{sec:psmd}
+THIS SECTION IS NOT FINISHED AT ALL
 We show that the FKRB estimator is also a special case of the PSMD estimator from \citet{ChenPouzo2012}.
 Let
 \begin{equation}

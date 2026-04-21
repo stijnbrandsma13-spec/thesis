@@ -1,11 +1,13 @@
 import numpy as np
 from scipy.special import softmax
+from scipy.stats import norm
 import cvxpy as cp
 
 class FKRBEstimator:
     def __init__(self, beta_support: np.ndarray):
         self.beta_support = beta_support
         self.theta = dict()
+        self.se = dict()
 
     def _calculate_Z(self, x: np.ndarray):
         N, J, K = x.shape
@@ -20,6 +22,7 @@ class FKRBEstimator:
         return Z
     
     def estimate(self, y: np.ndarray, x: np.ndarray, constrained: bool = True) -> np.ndarray:
+        N, J, K = x.shape
         R = self.beta_support.shape[0]
         
         Z = self._calculate_Z(x)
@@ -44,8 +47,39 @@ class FKRBEstimator:
             # Grab first item as this is the estimate, the rest are additional stuff such as residuals
             theta = np.linalg.lstsq(Z, y)[0]
             self.theta['unconstrained'] = theta
-        
+
+            u = y - (Z @ theta)
+            u_clustered = u.reshape(N, J - 1)
+            Z_clustered = Z.reshape(N, J - 1, R)
+
+            scores = np.einsum('ijr,ij->ir', Z_clustered, u_clustered)
+            omega_hat = scores.T @ scores
+
+            ZprimeZinv = np.linalg.inv(Z.T @ Z)
+            
+            bias_correction = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
+
+            vcov = bias_correction * ZprimeZinv @ omega_hat @ ZprimeZinv
+            se = np.sqrt(np.diag(vcov))
+            self.se['unconstrained'] = se
+
         return theta
+    
+    def confindence_interval(self, alpha: float = 0.05) -> np.ndarray:
+        theta_unconstrained = self.theta['unconstrained']
+        theta_constrained = self.theta['constrained']
+        se_ols = self.se['unconstrained']
+
+        z_score = norm.ppf(1 - alpha / 2)
+
+        lower_bound = theta_constrained - z_score * se_ols
+        upper_bound = theta_constrained + z_score * se_ols
+
+        ci_ols = np.column_stack((lower_bound, upper_bound))
+
+        ci_fkrb = np.clip(ci_ols, a_min=0.0, a_max=1.0)
+        return ci_fkrb
+        
     
     def get_cdf(self) -> callable:
         theta_unconstrained = self.theta['unconstrained']

@@ -21,13 +21,13 @@ def plot_cdf_3D(cdf: callable, x_range = (-2,2), y_range = (-2,2), n_grid = 50):
     fig = plt.figure(figsize=(7, 5))
     ax = fig.add_subplot(111, projection='3d')
 
-    surf = ax.plot_surface(
+    ax.plot_surface(
         X, Y, Z,
         cmap='jet',
         edgecolor='k',
         linewidth=0.5,
-        antialiased=False,
-        shade=False
+        antialiased=True,
+        shade=True
     )
 
     ax.set_xlabel(r'$\beta_1$')
@@ -35,14 +35,13 @@ def plot_cdf_3D(cdf: callable, x_range = (-2,2), y_range = (-2,2), n_grid = 50):
     ax.set_zlabel('CDF')
 
     ax.set_xlim(*x_range)
+    ax.invert_xaxis() # This is a nicer direction
     ax.set_ylim(*y_range)
     ax.set_zlim(0, 1)
 
     ax.xaxis.pane.fill = False
     ax.yaxis.pane.fill = False
     ax.zaxis.pane.fill = False
-
-    fig.colorbar(surf, shrink=0.6)
 
     plt.tight_layout()
     plt.show()
