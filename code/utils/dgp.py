@@ -19,7 +19,8 @@ class DataGenerator:
         probs = probs = np.full(2**self.K, 1 / 2**self.K)
         return support, probs
 
-    def _discrete_sampler_generator(self, support: np.ndarray, probs: np.ndarray, rng: np.random.Generator) -> callable:
+    def _discrete_sampler_generator(self, support: np.ndarray, probs: np.ndarray) -> callable:
+        rng = self.rng
         def draw(size):
             indices = rng.choice(len(probs), size=size[0], p=probs)
             return support[indices]
@@ -46,12 +47,15 @@ class DataGenerator:
         self.epsilon = epsilon
         return epsilon
     
-    def _generate_latent_utility(self, x_sampler: callable = None, beta_sampler: callable = None, epsilon_sampler: callable = None):
+    def _generate_latent_utility(self, x_sampler: callable = None, beta_sampler: callable = None, epsilon_sampler: callable = None, beta_support: np.ndarray = None, beta_probs: np.ndarray = None):
         if x_sampler is None:
             x_sampler = self.rng.normal
         if beta_sampler is None:
-            support, probs = self._default_discrete_distribution_generator()
-            beta_sampler = self._discrete_sampler_generator(support=support,probs=probs,rng=self.rng)
+            if beta_support is None or beta_probs is None:
+                support, probs = self._default_discrete_distribution_generator()
+                beta_sampler = self._discrete_sampler_generator(support=support,probs=probs)
+            else:
+                beta_sampler = self._discrete_sampler_generator(support=beta_support,probs=beta_probs)
         if epsilon_sampler is None:
             epsilon_sampler = self.rng.gumbel
 
@@ -74,9 +78,9 @@ class DataGenerator:
         self.u = u
         return u
     
-    def _generate_choices(self) -> np.ndarray:
+    def _generate_choices(self, x_sampler: callable = None, beta_sampler: callable = None, epsilon_sampler: callable = None, beta_support: np.ndarray = None, beta_probs: np.ndarray = None) -> np.ndarray:
         if self.u is None:
-            u = self._generate_latent_utility()
+            u = self._generate_latent_utility(x_sampler=x_sampler, beta_sampler=beta_sampler, epsilon_sampler=epsilon_sampler, beta_support=beta_support, beta_probs=beta_probs)
         else:
             u = self.u
         
@@ -86,10 +90,51 @@ class DataGenerator:
         self.y = y
         return y
 
-    def generate(self):
-        self._generate_choices()
+    def generate(self, x_sampler: callable = None, beta_sampler: callable = None, epsilon_sampler: callable = None, beta_support: np.ndarray = None, beta_probs: np.ndarray = None):
+        self._generate_choices(x_sampler=x_sampler, beta_sampler=beta_sampler, epsilon_sampler=epsilon_sampler, beta_support=beta_support, beta_probs=beta_probs)
 
         return self.y, self.x
+    
+def heiss_x_sampler(size=None):
+    # The class passes size=(N, J, K). 
+    # We unpack it to separate the observations/alternatives from the features (K)
+    *base_dims, K = size
+    
+    if K != 2:
+        raise ValueError(f"This specific sampler requires K=2, but got K={K}")
+        
+    result = np.zeros(size)
+    
+    # Fill the first feature with U(0, 5)
+    result[:,:, 0] = np.random.uniform(0, 5, size=base_dims)
+    
+    # Fill the second feature with U(-3, 1)
+    result[:,:, 1] = np.random.uniform(-3, 1, size=base_dims)
+    
+    return result
+
+def heiss_beta_support_probs(R: int):
+    # Determine points per dimension (r = sqrt(R))
+    r = int(np.sqrt(R))
+    
+    grid_1d = np.linspace(-4.5, 3.5, r)
+    beta_1, beta_2 = np.meshgrid(grid_1d, grid_1d)
+    
+    # Flatten and combine into an (R, 2) array of all possible coordinates
+    full_grid = np.column_stack((beta_1.ravel(), beta_2.ravel()))
+    
+    # Define the masks for the two target regions
+    in_region_1 = (full_grid[:, 0] <= -0.5) & (full_grid[:, 1] <= -0.5)
+    in_region_2 = (full_grid[:, 0] >= -0.5) & (full_grid[:, 1] >= -0.5)
+    
+    # Filter the grid to keep only points in Region 1 OR Region 2
+    support = full_grid[in_region_1 | in_region_2]
+    
+    # Calculate probabilities theta_s = 1/S
+    S = len(support)
+    probs = np.full(S, 1 / S)
+    
+    return full_grid, support, probs
 
 # Test
 if __name__ == '__main__':

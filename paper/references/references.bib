@@ -634,3 +634,63 @@ author = {Donald W.K. Andrews and Patrik Guggenberger},
 keywords = {Asymptotic size, Finite-sample size, Hybrid test, Instrumental variable, Over-rejection, Parameter near boundary, Size correction, Subsampling confidence interval, Subsampling test, Weak instrument},
 abstract = {This paper analyzes the properties of subsampling, hybrid subsampling, and size-correction methods in two non-regular models. The latter two procedures are introduced in Andrews and Guggenberger (2009a). The models are non-regular in the sense that the test statistics of interest exhibit a discontinuity in their limit distribution as a function of a parameter in the model. The first model is a linear instrumental variables (IV) model with possibly weak IVs estimated using two-stage least squares (2SLS). In this case, the discontinuity occurs when the concentration parameter is zero. The second model is a linear regression model in which the parameter of interest may be near a boundary. In this case, the discontinuity occurs when the parameter is on the boundary. The paper shows that in the IV model one-sided and equal-tailed two-sided subsampling tests and confidence intervals (CIs) based on the 2SLS t statistic do not have correct asymptotic size. This holds for both fully- and partially-studentized t statistics. But, subsampling procedures based on the partially-studentized t statistic can be size-corrected. On the other hand, symmetric two-sided subsampling tests and CIs are shown to have (essentially) correct asymptotic size when based on a partially-studentized t statistic. Furthermore, all types of hybrid subsampling tests and CIs are shown to have correct asymptotic size in this model. The above results are consistent with “impossibility” results of Dufour (1997) because subsampling and hybrid subsampling CIs are shown to have infinite length with positive probability. Subsampling CIs for a parameter that may be near a lower boundary are shown to have incorrect asymptotic size for upper one-sided and equal-tailed and symmetric two-sided CIs. Again, size-correction is possible. In this model as well, all types of hybrid subsampling CIs are found to have correct asymptotic size.}
 }
+
+@article{WuYangLiu2014,
+title = {Nonnegative-lasso and application in index tracking},
+journal = {Computational Statistics \& Data Analysis},
+volume = {70},
+pages = {116-126},
+year = {2014},
+issn = {0167-9473},
+doi = {https://doi.org/10.1016/j.csda.2013.08.012},
+url = {https://www.sciencedirect.com/science/article/pii/S0167947313003095},
+author = {Lan Wu and Yuehan Yang and Hanzhong Liu},
+keywords = {Index tracking, Nonnegative-lasso, Variable selection consistency, Multiplicative updates},
+abstract = {This paper proposes the nonnegative-lasso method for variable selection in high dimensional sparse linear regression models with the nonnegative constraints on the coefficients. This method is an extension of Lasso and is shown to have variable selection consistency and estimation consistency under certain condition similar to Irrepresentable Condition in Lasso. To get the solution of the nonnegative-lasso, many algorithms such as Lars, coordinate decent can be used, among which multiplicative updates approach is preferred since it is faster and simpler. The constrained index tracking problem in stock market without short sales is studied in the latter part. The tracking results indicate that nonnegative-lasso can get small tracking error and is successful in assets selection.}
+}
+
+@article{EfronHastieJohnstoneTibshirani2004,
+author = {Bradley Efron and Trevor Hastie and Iain Johnstone and Robert Tibshirani},
+title = {{Least angle regression}},
+volume = {32},
+journal = {The Annals of Statistics},
+number = {2},
+publisher = {Institute of Mathematical Statistics},
+pages = {407 -- 499},
+keywords = {boosting, coefficient paths, Lasso, Linear regression, Variable selection},
+year = {2004},
+doi = {10.1214/009053604000000067},
+URL = {https://doi.org/10.1214/009053604000000067}
+}
+
+@article{FriedmanHastieTibshirani2010,
+ title={Regularization Paths for Generalized Linear Models via Coordinate Descent},
+ volume={33},
+ url={https://www.jstatsoft.org/index.php/jss/article/view/v033i01},
+ doi={10.18637/jss.v033.i01},
+ abstract={We develop fast algorithms for estimation of generalized linear models with convex penalties. The models include linear regression, two-class logistic regression, and multi- nomial regression problems while the penalties include ℓ&amp;lt;sub&amp;gt;1&amp;lt;/sub&amp;gt; (the lasso), ℓ&amp;lt;sub&amp;gt;2&amp;lt;/sub&amp;gt; (ridge regression) and mixtures of the two (the elastic net). The algorithms use cyclical coordinate descent, computed along a regularization path. The methods can handle large problems and can also deal efficiently with sparse features. In comparative timings we find that the new algorithms are considerably faster than competing methods.},
+ number={1},
+ journal={Journal of Statistical Software},
+ author={Friedman, Jerome H. and Hastie, Trevor and Tibshirani, Rob},
+ year={2010},
+ pages={1--22}
+}
+@book{vanderVaart1998, 
+      place={Cambridge}, 
+      series={Cambridge Series in Statistical and Probabilistic Mathematics}, 
+      title={Asymptotic Statistics}, 
+      publisher={Cambridge University Press}, 
+      author={van der Vaart, A. W.}, year={1998}, 
+      collection={Cambridge Series in Statistical and Probabilistic Mathematics}}
+
+@article{scikitlearn2011,
+  title={Scikit-learn: Machine Learning in {P}ython},
+  author={Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V.
+          and Thirion, B. and Grisel, O. and Blondel, M. and Prettenhofer, P.
+          and Weiss, R. and Dubourg, V. and Vanderplas, J. and Passos, A. and
+          Cournapeau, D. and Brucher, M. and Perrot, M. and Duchesnay, E.},
+  journal={Journal of Machine Learning Research},
+  volume={12},
+  pages={2825--2830},
+  year={2011}
+}
