@@ -36,7 +36,7 @@ We assume individuals maximize utility. Then this implies
 As a researcher, the goal is often to estimate $F_0$ by $\hat{F}_0$, and possibly to conduct inference on this.
 Sometimes the researcher is only interested in a parameter $\bm{\eta}$ that is specified by a (possibly vector-valued) functional $T$ of $F_0$, i.e. $\bm{\eta} = T(F_0)$.
 A common estimator for $\bm{\eta}$ is the plug-in estimator $\hat{\bm{\eta}}$ defined by $\hat{\bm{\eta}} = T(\hat{F}_0)$ \citep[see][Chap.~23]{vanderVaart1998}.
-An example of such a parameter that is specified by a functional of $F_0$ is the population mean $\bm{\mu} = \mathbb{E}[\bm{\beta}]$.\footnote{To see that $\mu$ is indeed a parameter specified by a functional we notice that $\mu = T(F_0)$, where the functional $T: \mathcal{P} \to \mathbb{R}$ maps the distribution to the real line via the integration $T(F) = \int_{\mathcal{X}_F} x \, \mathrm{d}F(x)$, where $\mathcal{P}$ denotes the space of all distribution functions and $\mathcal{X}_F$ denotes the support of $x$ distributed by $F$.}
+An example of such a parameter that is specified by a functional of $F_0$ is the population mean $\bm{\mu} = \mathbb{E}[\bm{\beta}]$.\footnote{To see that $\mu$ is indeed a parameter specified by a functional we notice that $\mu = T(F_0)$, where the functional $T: \mathcal{P} \to \mathbb{R}$ maps the distribution to the real line continuously via the integration $T(F) = \int_{\mathcal{X}_F} x \, \mathrm{d}F(x)$, where $\mathcal{P}$ denotes the space of all distribution functions and $\mathcal{X}_F$ denotes the support of $x$ distributed by $F$.}
 
 A useful object of interest for estimation is the probability of $y_{ij} = 1$ conditional on $\bm{x}_i$, where we denote $\bm{x}_i = (\bm{x}_{i1}^\prime,\ldots,\bm{x}_{iJ}^\prime)$ as the stacked row vector of the exogenous variables for individual $i$.
 The usefulness will become clear in Section \ref{sec:FKRBestimator}.
@@ -127,6 +127,19 @@ One then tries to reconstruct $F_{0}$ according to
     \hat{F}_{0}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
 \end{equation}
 We call this the FKRB estimator.\footnote{In the literature, \eqref{eq:FKRBCLSest} and \eqref{eq:FKRBest} are interchangeably called the FKRB estimator.}
+
+Notice that we have assumed $\tilde{\mathcal{B}} = \mathcal{B}$.
+This assumption is quite strong, as often the researcher will not know $\mathcal{B}$.
+When this is the case, it might make sense for the researcher to choose a high $R$, so that $\tilde{\mathcal{B}}$ can at least approximate $\mathcal{B}$ well.
+However, the researcher should be cautious with choosing $R$ too large when $N$ is small, as then the curse of dimensionality makes the estimation harder.
+This leads to the idea of letting $R$ depend on $N$, where $R(N) \to \infty$ as $N\to \infty$.
+
+The standard FKRB estimator estimates $F_0$ by a fixed finite set of parameters, making it a parametric estimator.
+Because of this fixedness, the estimator is also referred to in the literature as the fixed grid FKRB estimator.
+This is in contrast to the nonparametric estimator with a non-fixed $R$.\footnote{Note that $R$ is in fact fixed when $N$ is fixed. The difference with the fixed grid estimator lies in the fact that $R$ changes if $N$ changes, in contrast to the fixed grid estimator.}
+\citet{FoxKimYang2016} explore the theoretical implications of the nonparametric approach.
+The nonparametric version of the FKRB estimator is a special case of a sieve estimator \citep[see][]{Chen2007}.
+\citet{FoxKimYang2016} use the general results of sieve estimators to prove that the nonparametric
 \subsubsection{Nonnegative LASSO}
 \label{sec:FKRBNNL}
 \citet{HeissHetzeneckerOsterhaus2022} show the FKRB estimator can also be expressed as a nonnegative LASSO (NNL) estimator \citep[see][]{WuYangLiu2014,EfronHastieJohnstoneTibshirani2004}.
@@ -189,7 +202,7 @@ However, when the true parameter is on the boundary, asymptotic normality breaks
 These results however are unfortunately not general enough to also apply to the FKRB estimator \citep{FoxKimRyanBajari2011}.
 
 \citet{FoxKimRyanBajari2011} have suggested an alternative approach.
-They construct an initial confidence interval $\mathrm{CI}^{\mathrm{OLS}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$ at the $\alpha$ significance level for $\hat{\theta}^{(r)}_{\mathrm{FKRB}}$ with heteroskedasticity-robust standard errors that arise from the unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ from \eqref{eq:FKRBOLSest}.
+They construct an initial confidence interval $\mathrm{CI}^{\mathrm{OLS}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$ at the $100\alpha$-\% significance level for $\hat{\theta}^{(r)}_{\mathrm{FKRB}}$ with heteroskedasticity-robust standard errors that arise from the unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ from \eqref{eq:FKRBOLSest}.
 The need of heteroskedasticity-robust standard errors comes from the inherent heteroskedasticity introduced by the construction of the error term $\zeta_{ij}$ in \eqref{eq:FKRBzetadef}.
 There are also clear clusters (each individual has one), so they also cluster the standard errors at the level of ``regression observations'' $j = 1,\ldots,J$ for each individual $i$.
 More formally we have
@@ -206,6 +219,25 @@ The final interval that \citet{FoxKimRyanBajari2011} arrive at is therefore clip
 \label{eq:CIFKRB}
     \mathrm{CI}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right) = [0,1] \cap \mathrm{CI}^{\mathrm{OLS}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right).
 \end{equation}
+
+When the researcher is interested in inference on a parameter $\hat{\eta}$ determined by a functional $T$ on $\hat{\theta}^{\mathrm{FKRB}}$, i.e. $\hat{\eta} = T(\hat{\theta}^{\mathrm{FKRB}})$, \citet{FoxKimRyanBajari2011} propose an adjusted procedure.
+They scale the clipping interval to be the interval between the minimum and the maximum of $T(\bm{\theta})$ on the constraint set $\mathcal{C} = \{\bm{\theta}\in\mathbb{R}^K\mid \bm{\theta} \text{ abides constraints } \eqref{eq:FKRBconstraint1} \text{ and } \eqref{eq:FKRBconstraint2}.\}$.
+Since $\mathcal{C}$ is compact, and $T$ is continuous (functionals are continuous by construction), the minimum and maximum are well-defined here because of the Weierstrass extreme value theorem.
+Furthermore they calculate $\mathrm{SE}(T(\hat{\bm{\theta}}^{\mathrm{OLS}}))$ with the multivariate delta method. That is
+\begin{equation}
+\label{eq:FKRBdeltamethod}
+    \mathrm{SE}\left(T(\hat{\bm{\theta}}^{\mathrm{OLS}})\right) = \left[\nabla T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)^\prime \widehat{\mathrm{Var}}\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right) \nabla T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right]^{\frac{1}{2}},
+\end{equation}
+where $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$ is the full variance-covariance matrix estimated in a clustered heteroskedasticity-robust way, in the same fashion as above. 
+The confidence interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\eta}\right)$ for $\hat{\eta}$ at the $100\alpha$-\% significance level then becomes
+\begin{multline}
+\label{eq:CIfunctional}
+    \widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\eta}\right) = \left[\min_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})},\max_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})}\right] \\
+        \cap \left[\hat{\eta} -  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right), \hat{\eta} +  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right)\right].
+\end{multline}
+Note that this acts as if the distribution of $\hat{\eta}$ is asymptotically normal again, just like above for $\mathrm{CI}^{\mathrm{FKRB}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$.
+One might think that this is only because of lack of better options again, but \citet{FoxKimYang2016} conjecture that asymptotic normality actually holds in this case.
+
 % The literature has provided some extensions to this estimator. 
 % \citet{FoxKimRyanBajari2011} themselves have provided a more efficient extension of the estimator.
 % It estimates $\bm{\theta}$ with generalized least squares, to account for the artificial heteroskedasticity in $\zeta_{ij}$.

@@ -1,15 +1,18 @@
 import numpy as np
+from math import sqrt
 from scipy.special import softmax
 from scipy.stats import norm
-from scipy.optimize import nnls
+from scipy.optimize import nnls, minimize
 from sklearn.linear_model import enet_path
+import numdifftools as nd
 import cvxpy as cp
 
 class FKRBEstimator:
     def __init__(self, beta_support: np.ndarray):
         self.beta_support = beta_support
         self.theta = dict()
-        self.se = dict()
+        self.se = None
+        self.vcov = None
         self.ci = None
 
     def _calculate_Z(self, x: np.ndarray):
@@ -38,13 +41,14 @@ class FKRBEstimator:
         scores = np.einsum('ijr,ij->ir', Z_clustered, u_clustered)
         omega_hat = scores.T @ scores
 
-        ZprimeZinv = np.linalg.inv(Z.T @ Z)
+        ZprimeZinv = np.linalg.pinv(Z.T @ Z)
         
         bias_correction = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
 
         vcov = bias_correction * ZprimeZinv @ omega_hat @ ZprimeZinv
         se = np.sqrt(np.diag(vcov))
-        self.se['unconstrained'] = se
+        self.se = se
+        self.vcov = vcov
 
         return theta
     
@@ -126,9 +130,62 @@ class FKRBEstimator:
 
         return theta
     
-    def confidence_interval(self, alpha: float = 0.05) -> np.ndarray:
+    def plug_in_estimate_functional(self, functional: callable, min: int = None, max: int = None, derivative: callable = None, ci: bool = False, alpha: int = 0.05):
+        theta = self.theta['constrained']
+        eta = functional(theta)
+        R = self.beta_support.shape[0]
+
+        if ci:
+            if derivative is None:
+                derivative = nd.Gradient(functional)
+
+            theta_OLS = self.theta['unconstrained']
+            vcov = self.vcov
+            nabla_T = derivative(theta_OLS)
+            
+            se = sqrt(nabla_T.T @ vcov @ nabla_T)
+
+            z_score = norm.ppf(1 - alpha / 2)
+
+            lower_bound = eta - z_score * se
+            upper_bound = eta + z_score * se
+
+            if min is None and max is None:
+                eq_cons = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0}
+                bnds = [(0.0, 1.0) for _ in range(R)]
+                x0 = np.ones(R) / R
+
+                min_solution = minimize(functional, x0, method='SLSQP', bounds=bnds, constraints=eq_cons)
+                max_solution = minimize(lambda x: -1 * functional(x), x0, method='SLSQP', bounds=bnds, constraints=eq_cons)
+                
+                min = min_solution.fun
+                max = -max_solution.fun
+            elif min is None:
+                eq_cons = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0}
+                bnds = [(0.0, 1.0) for _ in range(R)]
+                x0 = np.ones(R) / R
+
+                min_solution = minimize(functional, x0, method='SLSQP', bounds=bnds, constraints=eq_cons)
+
+                min = min_solution.fun
+            elif max is None:
+                eq_cons = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0}
+                bnds = [(0.0, 1.0) for _ in range(R)]
+                x0 = np.ones(R) / R
+
+                max_solution = minimize(lambda x: -1 * functional(x), objective, x0, method='SLSQP', bounds=bnds, constraints=eq_cons)
+                max = -max_solution.fun
+
+            ci = np.array((lower_bound, upper_bound))
+            ci = np.clip(ci, a_min=min, a_max=max)
+
+            return eta, ci
+        else:
+            return eta
+    
+    def get_confidence_interval(self, alpha: float = 0.05) -> np.ndarray:
         theta_constrained = self.theta['constrained']
-        se_ols = self.se['unconstrained']
+        se_ols = self.se
 
         z_score = norm.ppf(1 - alpha / 2)
 
@@ -141,7 +198,6 @@ class FKRBEstimator:
         
         self.ci = ci_fkrb
         return ci_fkrb
-        
     
     def get_cdf(self) -> callable:
         theta_unconstrained = self.theta['unconstrained']

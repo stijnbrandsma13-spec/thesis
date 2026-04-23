@@ -1,6 +1,15 @@
 import numpy as np
 
 class DataGenerator:
+    """
+    DataGenerator class.
+    This class can be used to generate data for the mixed logit model.
+    Arguments:
+        N: int: number of individuals in the model
+        J: int: number of choices (excluding outside choice) in the model
+        K: int: number of covariates per individual per choice in the model
+        rng: np.random.Generator: random number generator
+    """
     def __init__(self, N: int, J: int, K: int, rng: np.random.Generator):
         self.N = N
         self.J = J
@@ -12,7 +21,15 @@ class DataGenerator:
         self.u = None
         self.y = None
 
-    def _default_discrete_distribution_generator(self) -> np.ndarray:
+    def _default_discrete_distribution_generator(self) -> tuple:
+        """
+        _defualt_discrete_distribution_generator private method.
+        This private method is used to generate a support and a probability distribution as default for the random coefficients.
+        Returns:
+            tuple: with support array and probability array:
+                support: np.ndarray: numpy array with all elements of {0,1}^K, where {0,1}^K denotes the K-fold cartesian product of {0,1}
+                probs: np.ndarray: numpy array with equal probabilites p = 1/2^K, such that each element in the support has the same probability
+        """
         # Some black magic way to create {0,1}^K (cartesian product)
         support = np.array(np.meshgrid(*([np.array([0, 1])] * self.K))).T.reshape(-1, self.K)
         # Give each support point equal probability
@@ -20,8 +37,22 @@ class DataGenerator:
         return support, probs
 
     def _discrete_sampler_generator(self, support: np.ndarray, probs: np.ndarray) -> callable:
+        """
+        _discrete_sampler_generator private method.
+        This private method is used to generate a discrete sampler function given the support and probabilities of a discrete random variable.
+        For example, support = [0,1] and probs = [0.5, 0.5] returns a Bernoulli sampler.
+        Arguments:
+            support: np.ndarray: numpy array where each item in the array corresponds to one element in the support
+            probs: np.ndarray: numpy array where each item in the array corresponds to the probability the item with the same index in the support is drawn
+        Returns:
+            callable: function that draws from a distribution with pmf given by probs and support given by support.
+                Arguments:
+                size: tuple: size[0] denotes the number of draws to make. size[1:] do nothing, but can be given as input to match other methods
+                Returns:
+                np.ndarray: numpy array with size[0] draws of the distribution
+        """
         rng = self.rng
-        def draw(size):
+        def draw(size: tuple) -> np.ndarray:
             indices = rng.choice(len(probs), size=size[0], p=probs)
             return support[indices]
         return draw
@@ -95,6 +126,13 @@ class DataGenerator:
 
         return self.y, self.x
     
+    def reset(self):
+        self.x = None
+        self.beta = None
+        self.epsilon = None
+        self.u = None
+        self.y = None
+
 def heiss_x_sampler(size=None):
     # The class passes size=(N, J, K). 
     # We unpack it to separate the observations/alternatives from the features (K)
@@ -127,12 +165,21 @@ def heiss_beta_support_probs(R: int):
     in_region_1 = (full_grid[:, 0] <= -0.5) & (full_grid[:, 1] <= -0.5)
     in_region_2 = (full_grid[:, 0] >= -0.5) & (full_grid[:, 1] >= -0.5)
     
-    # Filter the grid to keep only points in Region 1 OR Region 2
-    support = full_grid[in_region_1 | in_region_2]
+    # The support is now the entire grid
+    support = full_grid
     
-    # Calculate probabilities theta_s = 1/S
-    S = len(support)
-    probs = np.full(S, 1 / S)
+    # Combine masks to find valid points
+    valid_mask = in_region_1 | in_region_2
+    
+    # Initialize probabilities to 0 for all points in the support
+    probs = np.zeros(len(support))
+    
+    # Count how many points are in Region 1 or 2
+    S = np.sum(valid_mask)
+    
+    # Assign the uniform probability (1/S) only to the valid points
+    if S > 0: # Safety check to avoid division by zero
+        probs[valid_mask] = 1.0 / S
     
     return full_grid, support, probs
 
