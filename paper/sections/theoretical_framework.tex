@@ -15,18 +15,20 @@ We model the latent utility $u_{ij}\in\mathbb{R}$ for individual $i$ for choice 
     u_{ij} = \bm{x}_{ij}^\prime \bm{\beta}_{i} + \varepsilon_{ij},
 \end{equation}
 where $\bm{x}_{ij} \in \mathbb{R}^K$ denotes the column vector with observed exogenous variables for individual $i$, choice $j$.
-Furthermore, $\bm{\beta}_{i}\in \mathbb{R}^K$ denotes the unobserved column vector of individual-specific random coefficients, for individual $i$. 
-The random coefficient vectors are are independent and identically distributed (i.i.d.) draws from a cumulative distribution function $F_0$ with support $\mathcal{B}$.\footnote{This means that for each individual $i$, the random coefficient vector $\bm{\beta}_{i}$ as a whole is jointly distributed as $F_0$. This does not mean that each element of a random coefficient vector is marginally distributed as $F_0$.}
+Furthermore, $\bm{\beta}_{i}\in \mathcal{B} \subset \mathbb{R}^K$ denotes the unobserved column vector of individual-specific random coefficients, for individual $i$. 
+Here, $\mathcal{B}$ denotes the support of the random coefficients.
 When the random coefficients have finite support (i.e. $\mathcal{B}$ has finite cardinality) we speak of a latent class model \citep{Train2009}.
-Specifically, we call then call this the latent class multinomial logit model (LC-MNL).
+Specifically, we then call this the latent class multinomial logit model (LC-MNL).
+In the LC-MNL, the elements of the support are often called ``types'', refering to the different types of individuals in the population.
+The random coefficient vectors are independent and identically distributed (i.i.d.) draws from a cumulative distribution function $F_0$.\footnote{This means that for each individual $i$, the random coefficient vector $\bm{\beta}_{i}$ as a whole is jointly distributed as $F_0$. This does not mean that each element of a random coefficient vector is marginally distributed as $F_0$.}
 The distribution function is not observed.
 Next, $\varepsilon_{ij}\in \mathbb{R}$ denotes the unobserved idiosyncratic error term for individual $i$, choice $j$. 
 The error terms are i.i.d. draws from a Type I extreme value distribution.
-Also, we assume strict exogeneity of the observed variables and independence of the unobserved components
+Also, we assume strict exogeneity of the observed variables and independence of the unobserved components.
 That is, $\mathbb{E}[\varepsilon_{ij}\mid \bm{x}_{i1}, \ldots,\bm{x}_{iJ}] = 0$ and $\bm{\beta}_i \perp \varepsilon_{ij}$ for all $i,j$.
 At last, for $j=0$ (the outside good) we impose $u_{i0} = \varepsilon_{i0}$.
 
-Let $y_{ij}$ denote the indicator of the event that individual $i$ chooses choice $j$. 
+Let $y_{ij} \in \{0,1\}$ denote the indicator of the event that individual $i$ chooses choice $j$. 
 We assume individuals maximize utility. Then this implies
 \begin{equation}
 \label{eq:mxlydef}
@@ -36,7 +38,7 @@ We assume individuals maximize utility. Then this implies
 As a researcher, the goal is often to estimate $F_0$ by $\hat{F}_0$, and possibly to conduct inference on this.
 Sometimes the researcher is only interested in a parameter $\bm{\eta}$ that is specified by a (possibly vector-valued) functional $T$ of $F_0$, i.e. $\bm{\eta} = T(F_0)$.
 A common estimator for $\bm{\eta}$ is the plug-in estimator $\hat{\bm{\eta}}$ defined by $\hat{\bm{\eta}} = T(\hat{F}_0)$ \citep[see][Chap.~23]{vanderVaart1998}.
-An example of such a parameter that is specified by a functional of $F_0$ is the population mean $\bm{\mu} = \mathbb{E}[\bm{\beta}]$.\footnote{To see that $\mu$ is indeed a parameter specified by a functional we notice that $\mu = T(F_0)$, where the functional $T: \mathcal{P} \to \mathbb{R}$ maps the distribution to the real line continuously via the integration $T(F) = \int_{\mathcal{X}_F} x \, \mathrm{d}F(x)$, where $\mathcal{P}$ denotes the space of all distribution functions and $\mathcal{X}_F$ denotes the support of $x$ distributed by $F$.}
+An example of such a parameter that is specified by a functional of $F_0$ is the population mean $\bm{\mu} = \mathbb{E}[\bm{\beta}]$.\footnote{Technically, we should specify that $\bm{\beta}\overset{\mathrm{d}}{=}\bm{\beta}_i$.}\footnote{To see that $\mu$ is indeed a parameter specified by a functional we notice that $\mu = T(F_0)$, where the functional $T: \mathcal{P} \to \mathbb{R}$ maps the distribution to the real line continuously via the integration $T(F) = \int_{\mathcal{X}_F} x \, \mathrm{d}F(x)$, where $\mathcal{P}$ denotes the space of all distribution functions and $\mathcal{X}_F$ denotes the support of $x$ distributed by $F$.}
 
 A useful object of interest for estimation is the probability of $y_{ij} = 1$ conditional on $\bm{x}_i$, where we denote $\bm{x}_i = (\bm{x}_{i1}^\prime,\ldots,\bm{x}_{iJ}^\prime)$ as the stacked row vector of the exogenous variables for individual $i$.
 The usefulness will become clear in Section \ref{sec:FKRBestimator}.
@@ -62,14 +64,15 @@ It then follows that
 \label{sec:FKRBestimator}
 A commonly used estimator for MXL is the estimator proposed by \citet{FoxKimRyanBajari2011}, which is hereafter referred to as the FKRB estimator.
 They approximate the distribution of random coefficients by a finite mixture over fixed support points.
-Next they rewrite \eqref{eq:mxlcondprob} such that the parameters of interest enter the equation linearly.
-Then they show that these parameters can be consistently estimated by means of (constrained) least squares.
+We then only need to find the probability mass at each support point to estimate $F_0$.
+They rewrite \eqref{eq:mxlcondprob} such that the probability masses enter the equation linearly.
+Then they show that these can be consistently estimated by means of (constrained) least squares.
 
 \subsubsection{Derivation}
 \label{sec:FKRBderivation}
 For completeness, we first show the derivation of the estimator. 
 For some $R \in \mathbb{N}_+$, let $\tilde{\mathcal{B}} = \{\bm{\beta}^{(1)}, \bm{\beta}^{(2)}, \ldots, \bm{\beta}^{(R)}\}$.
-The $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified points. 
+Both $R$ and $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified.\footnote{There exists an extension of the estimator where these do not have to be prespecified, but depend on the sample size $N$.} 
 We let $\theta_r$ denote the value of the probability mass function of $\bm{\beta}_{i}$ at $\bm{\beta}^{(r)}$, i.e. $\theta_r = \mathbb{P}(\bm{\beta}_{i} = \bm{\beta}^{(r)})$.
 Then under the assumption $\tilde{\mathcal{B}} = \mathcal{B}$ we have that \eqref{eq:mxlcondprob} boils down to
 \begin{equation}
@@ -127,25 +130,15 @@ One then tries to reconstruct $F_{0}$ according to
     \hat{F}_{0}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{i=1}^{K}\mathds{1}{\{\beta^{r}_i < b_i\}}\right].
 \end{equation}
 We call this the FKRB estimator.\footnote{In the literature, \eqref{eq:FKRBCLSest} and \eqref{eq:FKRBest} are interchangeably called the FKRB estimator.}
-
-Notice that we have assumed $\tilde{\mathcal{B}} = \mathcal{B}$.
-This assumption is quite strong, as often the researcher will not know $\mathcal{B}$.
-When this is the case, it might make sense for the researcher to choose a high $R$, so that $\tilde{\mathcal{B}}$ can at least approximate $\mathcal{B}$ well.
-However, the researcher should be cautious with choosing $R$ too large when $N$ is small, as then the curse of dimensionality makes the estimation harder.
-This leads to the idea of letting $R$ depend on $N$, where $R(N) \to \infty$ as $N\to \infty$.
-
-The standard FKRB estimator estimates $F_0$ by a fixed finite set of parameters, making it a parametric estimator.
-Because of this fixedness, the estimator is also referred to in the literature as the fixed grid FKRB estimator.
-This is in contrast to the nonparametric estimator with a non-fixed $R$.\footnote{Note that $R$ is in fact fixed when $N$ is fixed. The difference with the fixed grid estimator lies in the fact that $R$ changes if $N$ changes, in contrast to the fixed grid estimator.}
-\citet{FoxKimYang2016} explore the theoretical implications of the nonparametric approach.
-The nonparametric version of the FKRB estimator is a special case of a sieve estimator \citep[see][]{Chen2007}.
-\citet{FoxKimYang2016} use the general results of sieve estimators to prove that the nonparametric
-\subsubsection{Nonnegative LASSO}
+The FKRB estimator is a parametric estimator, since the estimator is determined merely by a $R$-dimensonial parameter vector, with prespecified $R < \infty$.
+\subsubsection{Nonnegative LASSO estimator}
 \label{sec:FKRBNNL}
 \citet{HeissHetzeneckerOsterhaus2022} show the FKRB estimator can also be expressed as a nonnegative LASSO (NNL) estimator \citep[see][]{WuYangLiu2014,EfronHastieJohnstoneTibshirani2004}.
 The NNL version is equivalent to the FKRB estimator, but does not need any quadratic programming to be computed, in contrast to the FKRB estimator.
 The NNL estimator can be computed with coordinate descent, which is considerably faster than common quadratic programming solving procedures \citep{FriedmanHastieTibshirani2010}.
+This makes it attractive to implement the FKRB estimator in the NNL form.
 
+For completeness, we will also show the derivation of the equality of the NNL and FKRB estimator.
 Consider constraints \eqref{eq:FKRBconstraint1} and \eqref{eq:FKRBconstraint2}.
 Since the weights $\theta_r$ need to sum to one and each individual weight is nonnegative, we know, without loss of generality, that 
 \begin{equation}
@@ -191,6 +184,22 @@ Note that $\hat{\bm{\theta}}^{\mathrm{NNL*}}$ only estimates the first $R-1$ ter
     \hat{\bm{\theta}}^{\mathrm{NNL}} = \left(\hat{\bm{\theta}}^{\mathrm{NNL*}}, 1 - \sum_{r=1}^{R-1}\hat{\theta}^{\mathrm{NNL*}}_r\right).
 \end{equation}
 Since all we did was just rewriting the FKRB estimator, we have that $\hat{\bm{\theta}}^{\mathrm{FKRB}} = \hat{\bm{\theta}}^{\mathrm{NNL}}$.
+\subsubsection{Nonparametric FKRB estimator}
+\label{sec:nonparametricFKRB}
+For the FKRB estimator proposed by \citet{FoxKimRyanBajari2011} the researcher prespecifies a fixed grid of $R$ support points.
+Because of the a priori choice of a fixed grid, the estimator from \citet{FoxKimRyanBajari2011} has sometimes been called the fixed grid FKRB estimator in the subsequent literature \citep[see][]{FoxKimYang2016,HeissHetzeneckerOsterhaus2022}.
+Since the performance of the estimator depends on the assumption $\tilde{\mathcal{B}} = \mathcal{B}$, the choice of the $R$ grid points should ideally equal the true support.
+However, it is not reasonable to assume the researcher knows the true support $\mathcal{B}$.
+When the researcher misspecifies the support, the fixed grid FKRB estimator becomes biased \citep{FoxKimYang2016}.
+
+This problem has been acknowledged by \citet{FoxKimYang2016} and they formulated an extension to the fixed grid FKRB estimator to solve this.
+This extension is often called the nonparametric FKRB estimator.
+For a fixed sample size $N$, their extension behaves the same as the fixed grid FKRB estimator.
+However, when the sample size increases, they allow $R$ to increase as well.
+This means that for their extension, the $R$ grid points are chosen a posteriori.
+
+
+
 \subsubsection{Inference}
 \label{sec:FKRBInference}
 After having done the estimation procedure, the researcher often wants to conduct inference on $\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
@@ -202,74 +211,104 @@ However, when the true parameter is on the boundary, asymptotic normality breaks
 These results however are unfortunately not general enough to also apply to the FKRB estimator \citep{FoxKimRyanBajari2011}.
 
 \citet{FoxKimRyanBajari2011} have suggested an alternative approach.
-They construct an initial confidence interval $\mathrm{CI}^{\mathrm{OLS}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$ at the $100\alpha$-\% significance level for $\hat{\theta}^{(r)}_{\mathrm{FKRB}}$ with heteroskedasticity-robust standard errors that arise from the unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ from \eqref{eq:FKRBOLSest}.
+They construct an initial confidence interval $\mathrm{CI}^{\mathrm{OLS}}_{1-\alpha, \theta_r}$ at the $\alpha$ significance level for $\theta_r$ with heteroskedasticity-robust standard errors that arise from the unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ from \eqref{eq:FKRBOLSest}.
 The need of heteroskedasticity-robust standard errors comes from the inherent heteroskedasticity introduced by the construction of the error term $\zeta_{ij}$ in \eqref{eq:FKRBzetadef}.
 There are also clear clusters (each individual has one), so they also cluster the standard errors at the level of ``regression observations'' $j = 1,\ldots,J$ for each individual $i$.
 More formally we have
 \begin{equation}
 \label{eq:CIOLS}
-    \mathrm{CI}^{\mathrm{OLS}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right) = \left[\hat{\theta}^{(r)}_{\mathrm{FKRB}} - z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}^{(r)}_{\mathrm{OLS}}\right),\hat{\theta}^{(r)}_{\mathrm{FKRB}} + z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}^{(r)}_{\mathrm{OLS}}\right)\right],
+    \mathrm{CI}^{\mathrm{OLS}}_{1-\alpha,\theta_r} = \left[\hat{\theta}_{r}^{\mathrm{FKRB}} - z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}_{r}^{\mathrm{OLS}}\right),\hat{\theta}_{r}^{\mathrm{FKRB}} + z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}_{r}^{\mathrm{OLS}}\right)\right],
 \end{equation}
-where $z_{1-\frac{\alpha}{2}} = \Phi^{-1}(1-\frac{\alpha}{2})$ denotes the $1-\frac{\alpha}{2}$ quantile of the standard normal distribution and $\mathrm{SE}(\hat{\theta}^{(r)}_{\mathrm{OLS}})$ denotes the clustered heteroskedasticity-robust standard error of $\hat{\theta}^{(r)}_{\mathrm{OLS}}$.
+where $z_{1-\frac{\alpha}{2}} = \Phi^{-1}(1-\frac{\alpha}{2})$ denotes the $1-\frac{\alpha}{2}$ quantile of the standard normal distribution and $\mathrm{SE}(\hat{\theta}_{r}^{\mathrm{OLS}})$ denotes the clustered heteroskedasticity-robust standard error of $\hat{\theta}_{r}^{\mathrm{OLS}}$.
 Note that this acts as if the estimator is asymptotically normally distributed. 
 Although this is wrong, it still remains the best approximation we currently have.
 The only caveat is that this allows for confidence intervals that cross outside the $[0,1]$ region, while this is clearly not possible for the real parameters as illustrated by \eqref{eq:FKRBconstraint1} and \eqref{eq:FKRBconstraint2}.
 The final interval that \citet{FoxKimRyanBajari2011} arrive at is therefore clipped to this region, i.e. 
 \begin{equation}
 \label{eq:CIFKRB}
-    \mathrm{CI}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right) = [0,1] \cap \mathrm{CI}^{\mathrm{OLS}}_{\alpha}\left(\hat{\theta}^{(r)}_{\mathrm{FKRB}}\right).
+    \mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r} = [0,1] \cap \mathrm{CI}^{\mathrm{OLS}}_{1-\alpha, \theta_r}.
 \end{equation}
 
-When the researcher is interested in inference on a parameter $\hat{\eta}$ determined by a functional $T$ on $\hat{\theta}^{\mathrm{FKRB}}$, i.e. $\hat{\eta} = T(\hat{\theta}^{\mathrm{FKRB}})$, \citet{FoxKimRyanBajari2011} propose an adjusted procedure.
+When the researcher is interested in inference on a parameter $\eta$ determined by a functional $T$ on $\bm{\theta}$, i.e. $\eta = T(\bm{\theta})$, \citet{FoxKimRyanBajari2011} propose an adjusted procedure.
 They scale the clipping interval to be the interval between the minimum and the maximum of $T(\bm{\theta})$ on the constraint set $\mathcal{C} = \{\bm{\theta}\in\mathbb{R}^K\mid \bm{\theta} \text{ abides constraints } \eqref{eq:FKRBconstraint1} \text{ and } \eqref{eq:FKRBconstraint2}.\}$.
-Since $\mathcal{C}$ is compact, and $T$ is continuous (functionals are continuous by construction), the minimum and maximum are well-defined here because of the Weierstrass extreme value theorem.
+Since $\mathcal{C}$ is compact, and $T$ is continuous (functionals are continuous by definitions), the minimum and maximum are well-defined here because of the Weierstrass extreme value theorem.
 Furthermore they calculate $\mathrm{SE}(T(\hat{\bm{\theta}}^{\mathrm{OLS}}))$ with the multivariate delta method. That is
 \begin{equation}
 \label{eq:FKRBdeltamethod}
     \mathrm{SE}\left(T(\hat{\bm{\theta}}^{\mathrm{OLS}})\right) = \left[\nabla T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)^\prime \widehat{\mathrm{Var}}\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right) \nabla T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right]^{\frac{1}{2}},
 \end{equation}
 where $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$ is the full variance-covariance matrix estimated in a clustered heteroskedasticity-robust way, in the same fashion as above. 
-The confidence interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\eta}\right)$ for $\hat{\eta}$ at the $100\alpha$-\% significance level then becomes
+The confidence interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha, \eta}$ for $\eta$ at the $\alpha$ significance level then becomes\footnote{We add a tilde to make clear that this is a different construction than $\mathrm{CI}_{\alpha,\theta_r}^{\mathrm{FKRB}}$.}
 \begin{multline}
 \label{eq:CIfunctional}
-    \widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{\alpha}\left(\hat{\eta}\right) = \left[\min_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})},\max_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})}\right] \\
-        \cap \left[\hat{\eta} -  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right), \hat{\eta} +  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right)\right].
+    \widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta} = \left[\min_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})},\max_{\bm{\theta}\in \mathcal{C}}{T(\bm{\theta})}\right] \\
+        \cap \left[\hat{\eta} -  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right), \hat{\eta} +  z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(T\left(\hat{\bm{\theta}}^{\mathrm{OLS}}\right)\right)\right],
 \end{multline}
-Note that this acts as if the distribution of $\hat{\eta}$ is asymptotically normal again, just like above for $\mathrm{CI}^{\mathrm{FKRB}}_{\alpha}(\hat{\theta}^{(r)}_{\mathrm{FKRB}})$.
+where $\hat{\eta} = T(\hat{\bm{\theta}}^\mathrm{FKRB})$ denotes the plug-in estimator for $\eta$.
+Note that this acts as if the distribution of $\hat{\eta}$ is asymptotically normal again, just like above for $\mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r}$.
 One might think that this is only because of lack of better options again, but \citet{FoxKimYang2016} conjecture that asymptotic normality actually holds in this case.
+\subsection{Confidence intervals}
+As seen in Section \ref{sec:FKRBInference}, inference on the FKRB estimator is done with confidence intervals.
+We will need a rigorous framework to analyze empirical confidence intervals in the upcoming sections.
+This subsection presents such a framework.
 
-% The literature has provided some extensions to this estimator. 
-% \citet{FoxKimRyanBajari2011} themselves have provided a more efficient extension of the estimator.
-% It estimates $\bm{\theta}$ with generalized least squares, to account for the artificial heteroskedasticity in $\zeta_{ij}$.
-% \citet{HeissHetzeneckerOsterhaus2022} show that the FKRB estimator\footnote{Here in the sense of \eqref{eq:FKRBCLSest}.} is a special case of the nonnegative LASSO estimator.
-% They then generalize the FKRB estimator to a nonnegative elastic net estimator.
-% This estimator avoids randomly estimating many weights to zero; this behavior was commonly seen in both simulation and application studies on the FKRB estimator.
+Let $\bm{X} = (X_1, X_2, \ldots, X_n)$ be a random sample from a distribution that depends on a parameter $\theta$.
+Let $L(\bm{X}), U(\bm{X})$ be two statistics such that $L(\bm{X}) \leq U(\bm{X})$. Then $\mathrm{CI}_{1-\alpha,\theta}(\bm{X}) = [L(\bm{X}),U(\bm{X})]$ is defined to be a confidence interval for $\theta$ at the $\alpha$ significance level and $1-\alpha$ confidence level if and only if\footnote{For brevity we will hereafter simply denote $\mathrm{CI}_{1-\alpha,\theta}(\bm{X}) = \mathrm{CI}_{1-\alpha,\theta}$.}
+\begin{equation}
+\label{eq:confidenceinterval}
+    \mathbb{P}(\theta \in \mathrm{CI}_{1-\alpha,\theta}) \geq 1- \alpha.
+\end{equation}
 
-\subsection{The PSMD Estimator}
-\label{sec:psmd}
-THIS SECTION IS NOT FINISHED AT ALL
-We show that the FKRB estimator is also a special case of the PSMD estimator from \citet{ChenPouzo2012}.
-Let
+Some authors impose an equality sign in \eqref{eq:confidenceinterval}.
+However, this would exclude the possibility of a conservative confidence interval.
+We call a confidence interval conservative if the inequality in \eqref{eq:confidenceinterval} is non-binding, that is
 \begin{equation}
-\label{eq:PSMDrho}
-    \rho_{ij}(\bm{y},\bm{x};h) = y_{ij} - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h(\bm{\beta})\,\mathrm{d}\bm{\beta},
+\label{eq:conservativeconfidenceinterval}
+    \mathbb{P}(\theta \in \mathrm{CI}_{1-\alpha,\theta}) > 1- \alpha.
 \end{equation}
-It follows that
-\begin{equation}
-\label{eq:PSMDexprho}
-     \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h_0)\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}] - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta} = 0
-\end{equation}
-for all $i,j$, under the identification $h_0(b) = \frac{\mathrm{d}F_{\bm{\beta}}(b)}{\mathrm{d}b}$, since
-\begin{equation}
-\label{eq:PSMDexpplink}
-    \mathbb{E}[y_{ij}\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}_i] = \mathbb{P}(y_{ij}=1\mid \bm{x}_i) = \int_{\mathcal{B}}g_j(\bm{x}_{i},\bm{\beta})\,\mathrm{d}F_{\bm{\beta}} = \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta},
-\end{equation}
-by Proposition \ref{prop:rcdcmcondprop}.
-This is exactly the framework in which \citet{ChenPouzo2012} provided the PSMD estimator for estimating $h_0$.
+The confidence intervals in \eqref{eq:CIFKRB} (and? \eqref{eq:CIfunctional}) are examples of conservative confidence intervals \citep{FoxKimRyanBajari2011}.
 
-Define
-\begin{equation}
-\label{eq:PSMDmdef}
-    m_{ij}(\bm{x};h) \coloneq \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h)\mid \bm{x}].
-\end{equation}
+Conservative confidence intervals are generally undesirable because they reduce statistical power. 
+In standard hypothesis testing, a researcher sets a nominal significance level and rejects the null hypothesis if the corresponding interval excludes the null value. 
+However, because conservative intervals are wider than exact intervals, they increase the risk of a Type II error.
+This means the researcher might fail to reject a null hypothesis that an exact interval would have successfully rejected.
+
+Therefore, we want to measure the ``conservativeness'' of confidence intervals.
+One way to do this is by comparing the nominal coverage probability $1 - \alpha$ with the true coverage $c_{\mathrm{CI}_{1-\alpha,\theta}}(\theta) = \mathbb{P}(\theta \in \mathrm{CI}_{1-\alpha,\theta})$ of $\mathrm{CI}_{1-\alpha,\theta}$ when $\theta$ is the true parameter.
+Note that $c$ can vary for different $\theta$ in the parameter space.
+We define two measures of the conservativeness of a confidence interval $\mathrm{CI}_{1-\alpha,\theta}$:
+\begin{align}
+\label{eq:confidenceintervalrelative}
+    \mathrm{ACD}_{\mathrm{CI}_{1-\alpha,\theta}}(\theta) &= c_{\mathrm{CI}_{1-\alpha,\theta}}(\theta) - (1-\alpha), \\
+    \mathrm{RCD}_{\mathrm{CI}_{1-\alpha,\theta}}(\theta) &= \frac{c_{\mathrm{CI}_{1-\alpha,\theta}}(\theta) - (1-\alpha)}{1-\alpha},
+\end{align}
+where $\mathrm{ACD}_{\mathrm{CI}_{1-\alpha,\theta}}(\theta)$ denotes the Absolute Coverage Difference of $\mathrm{CI}_{1-\alpha,\theta}$ when $\theta$ is the true parameter and $\mathrm{RCD}_{\mathrm{CI}_{1-\alpha,\theta}}(\theta)$ the Relative Coverage Difference.
+
+% \subsection{The PSMD Estimator}
+% \label{sec:psmd}
+% THIS SECTION IS NOT FINISHED AT ALL
+% We show that the FKRB estimator is also a special case of the PSMD estimator from \citet{ChenPouzo2012}.
+% Let
+% \begin{equation}
+% \label{eq:PSMDrho}
+%     \rho_{ij}(\bm{y},\bm{x};h) = y_{ij} - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h(\bm{\beta})\,\mathrm{d}\bm{\beta},
+% \end{equation}
+% It follows that
+% \begin{equation}
+% \label{eq:PSMDexprho}
+%      \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h_0)\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}] - \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta} = 0
+% \end{equation}
+% for all $i,j$, under the identification $h_0(b) = \frac{\mathrm{d}F_{\bm{\beta}}(b)}{\mathrm{d}b}$, since
+% \begin{equation}
+% \label{eq:PSMDexpplink}
+%     \mathbb{E}[y_{ij}\mid \bm{x}] = \mathbb{E}[y_{ij}\mid \bm{x}_i] = \mathbb{P}(y_{ij}=1\mid \bm{x}_i) = \int_{\mathcal{B}}g_j(\bm{x}_{i},\bm{\beta})\,\mathrm{d}F_{\bm{\beta}} = \int_{\mathcal{B}}g_j(\bm{x}_i,\bm{\beta})h_0(\bm{\beta})\,\mathrm{d}\bm{\beta},
+% \end{equation}
+% by Proposition \ref{prop:rcdcmcondprop}.
+% This is exactly the framework in which \citet{ChenPouzo2012} provided the PSMD estimator for estimating $h_0$.
+
+% Define
+% \begin{equation}
+% \label{eq:PSMDmdef}
+%     m_{ij}(\bm{x};h) \coloneq \mathbb{E}[\rho_{ij}(\bm{y},\bm{x};h)\mid \bm{x}].
+% \end{equation}
 

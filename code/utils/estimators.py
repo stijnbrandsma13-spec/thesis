@@ -176,7 +176,7 @@ class FKRBEstimator:
                 max_solution = minimize(lambda x: -1 * functional(x), objective, x0, method='SLSQP', bounds=bnds, constraints=eq_cons)
                 max = -max_solution.fun
 
-            ci = np.array((lower_bound, upper_bound))
+            ci = np.array([lower_bound, upper_bound])
             ci = np.clip(ci, a_min=min, a_max=max)
 
             return eta, ci

@@ -1,8 +1,17 @@
 % !TEX root = ../main.tex
-\section{Simulation Design}
+\section{Simulation}
 \label{sec:simulation}
+To study the coverage of the confidence intervals we consider a Monte Carlo procedure.
+We will generate data according to a known data generating process (DGP).
+This means we know the true parameters of the model (and of functionals of the parameters).
+
+Confidence intervals are to be interpreted as follows:
+the probability a confidence interval for a parameter $\theta$ at the $\alpha$ confidence level contains $\theta$ equals $\alpha$, when the confidence interval is constructed from a random sample.
+As a consequence, when a random sample is drawn repeatedly, on average, the corresponding confidence interval at the $\alpha$ confidence level should contain the true parameter in a proportion of $\alpha$ of the total samples.
+When the probability that a confidence interval contains the true parameter equals $\alpha +\epsilon$, where $\epsilon \in (0, \alpha - 1]$, we say the confidence interval is too conservative, and we call $\alpha + \epsilon$ the true coverage probability.
 \subsection{Data Generating Processes}
 \label{sec:dgp}
+The data generating process (DGP) is copied from from Section \ref{sec:mxl}
 
 \subsection{Implementation Details}
 \label{sec:implementation}
