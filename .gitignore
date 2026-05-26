@@ -1,6 +1,7 @@
 # --- General / OS ---
 Thumbs.db
 .vscode/
+.env
 
 # --- Python / uv (scripts/ subfolder) ---
 .venv/
@@ -27,3 +28,8 @@ __pycache__/
 
 # --- Figures ---
 *.eps
+*.png
+
+# --- Claude ---
+CLAUDE.md
+.claude

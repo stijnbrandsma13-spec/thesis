@@ -1,0 +1,247 @@
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.99904,
+        ACD: 0.049040000000000084,      RCD: 0.05162105263157904
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.99488,
+        ACD: 0.04488000000000003,       RCD: 0.04724210526315793
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.91008,
+        ACD: 0.41008,   RCD: 0.82016
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.948,
+        ACD: 0.44799999999999995,       RCD: 0.8959999999999999
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.92,
+        ACD: 0.42000000000000004,       RCD: 0.8400000000000001
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.9047999999999999,
+        ACD: 0.40479999999999994,       RCD: 0.8095999999999999
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.916,
+        ACD: 0.41600000000000004,       RCD: 0.8320000000000001
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 0.88,
+        ACD: 0.38,      RCD: 0.76
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bimodal_support_probs at 0x00000259080CA820>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.99968,
+        ACD: 0.04968000000000006,       RCD: 0.052294736842105324
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.9979199999999999,
+        ACD: 0.04791999999999996,       RCD: 0.05044210526315786
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.9403199999999999,
+        ACD: 0.44031999999999993,       RCD: 0.8806399999999999
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.996,
+        ACD: 0.496,     RCD: 0.992
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.8904,
+        ACD: 0.39039999999999997,       RCD: 0.7807999999999999
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.996,
+        ACD: 0.496,     RCD: 0.992
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 0.936,
+        ACD: 0.43600000000000005,       RCD: 0.8720000000000001
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_bivariate_normal_support_probs at 0x00000259080CA560>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 0.98688,
+        ACD: 0.48688,   RCD: 0.97376
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 0.9753599999999999,
+        ACD: 0.4753599999999999,        RCD: 0.9507199999999998
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 0.98,
+        ACD: 0.48,      RCD: 0.96
+Conservative measures for CI for theta at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_1) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for mean(beta_2) at the 0.5 significance level, with DGP R: 225 N, 10000, beta distribution <function beta_concentrated_spike_support_probs at 0x00000259080CAAE0>:
+        Empirical coverage: 1.0,
+        ACD: 0.5,       RCD: 1.0
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 0.9998400000000001,
+        ACD: 0.049840000000000106,      RCD: 0.052463157894736955
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+C:\Users\stijn\Documents\RUG EOR BSc\Thesis\.venv\Lib\site-packages\sklearn\linear_model\_coordinate_descent.py:701: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 1.071e-01, tolerance: 1.060e-01
+  model = cd_fast.enet_coordinate_descent_gram(
+C:\Users\stijn\Documents\RUG EOR BSc\Thesis\.venv\Lib\site-packages\sklearn\linear_model\_coordinate_descent.py:701: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations, check the scale of the features or consider increasing regularisation. Duality gap: 1.225e-01, tolerance: 1.060e-01
+  model = cd_fast.enet_coordinate_descent_gram(
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 225 N, 1000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for theta at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 0.9969600000000001,
+        ACD: 0.04696000000000011,       RCD: 0.04943157894736854
+Conservative measures for CI for mean(beta_1) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474
+Conservative measures for CI for mean(beta_2) at the 0.05 significance level, with DGP R: 25 N, 10000, beta distribution <function beta_diffuse_support_probs at 0x00000259080CA980>:
+        Empirical coverage: 1.0,
+        ACD: 0.050000000000000044,      RCD: 0.052631578947368474

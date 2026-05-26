@@ -2,67 +2,88 @@
 \section{Introduction}
 \label{sec:introduction}
 
-In many econometric models it is assumed that the aggregate behaves the same as the individual up to an error term.
-For example, a model for wage might specify that ones wage is expected to increase by a parameter $\beta$ with one extra year of schooling, where $\beta$ is the same for each individual.
-However, for some situations this assumption can be incorrect.
-The probability of buying a car increases when you paint it pink for some people, whereas for some people it will decrease.
-In this case it makes sense to model this heterogeneity in preferences.
+In many standard econometric models, it is assumed that aggregate behavior mirrors individual behavior (up to a random error term). 
+For instance, a traditional wage equation might specify that an individual's expected wage increases by a population-constant parameter $\beta$ for each additional year of schooling, assuming homogeneous returns to education across the population. 
+However, this assumption of parameter homogeneity is often overly restrictive. 
+Consumer preferences, for example, exhibit significant variation; while a specific vehicle attribute (such as a distinct color) might increase the purchase probability for some consumers, it could deter others. 
+Consequently, accurately modeling such unobserved preference heterogeneity is crucial.
 
-An example of models that incorporate this heterogeneity are called random coefficient models (RCMs).
-These models are widely used in many fields such as labor economics, industrial organization, and asset pricing \citep[e.g.][]{BerryLevinsohnPakes1995, CarneiroHeckmanVytlacil2011, BelzilHansen2007, KoijenYogo2019}.
-An extensive overview of RCMs in panel data is given by \citet{HsiaoPesaran2008}.
-A specific example of RCMs are random coefficient discrete choice models (RCDCMs).
-These often extend discrete choice models such as probit, logit and the multinomial logit \citep{CameronTrivedi2005}, see for example the mixed logit \citep[Chap.~6]{Train2009}.
+Random coefficient models (RCMs) provide a robust framework for incorporating this heterogeneity. 
+These models have become foundational across various disciplines, including labor economics, industrial organization, and asset pricing \citep[e.g.][]{BerryLevinsohnPakes1995, CarneiroHeckmanVytlacil2011, BelzilHansen2007, KoijenYogo2019}. 
+For a comprehensive overview of RCMs in the context of panel data, see \citet{HsiaoPesaran2008}. 
+Another prominent class within the RCM framework consists of random coefficient discrete choice models (RCDCMs), which extend traditional discrete choice frameworks like the probit, logit, and multinomial logit models \citep[see][]{CameronTrivedi2005}. 
+A standard example is the mixed logit model \citep[Chapter~6]{Train2009}.
 
-The mixed logit (MXL) is exactly the same as the multinomial logit (MNL), with the exception that the coefficients are random.
-One advantage of MXL over the MNL is the lack of the IIA (independence of irrelevant alternatives) assumption \citep{Train2009}.
-The mixed logit is applied in many studies \citep[e.g.][]{NicoletNegenbornAtasoy2022,YinCherchi2024,ZhouWangYangGanLiuZi2025}.
-When the mixing distribution of random coefficients is discrete, MXL becomes a latent class model, specifically the latent class multinomial logit (LC-MNL) \citep{Train2009}, as used in \citet{WangYangSongSia2014}, and \citet{LiGaoYangLiu2022}.
-LC-MNL will be the model of interest in this thesis.
+The mixed logit (MXL) generalizes the standard multinomial logit (MNL) by allowing the marginal utility coefficients to vary randomly across individuals. 
+A major theoretical advantage of the MXL over the MNL is that it relaxes the restrictive independence of irrelevant alternatives (IIA) assumption \citep{Train2009}. 
+As a result, the MXL has seen widespread empirical application \citep[e.g.][]{NicoletNegenbornAtasoy2022,YinCherchi2024,ZhouWangYangGanLiuZi2025}. 
+When the mixing distribution of these random coefficients is assumed to be discrete, the MXL simplifies to a latent class multinomial logit (LC-MNL) model \citep{Train2009}, as utilized by \citet{WangYangSongSia2014} and \citet{LiGaoYangLiu2022}. 
+The LC-MNL framework serves as the primary model of interest in this thesis.
 
-Many estimation procedures have been proposed for the LC-MNL. 
-\citet{Train2009} suggests a simulated maximum likelihood approach, as well as an expectation-maximization (EM) algorithm and a hierarchical Bayes method with Markov chain Monte Carlo (MCMC).
-\citet{Train2008} dives into the EM approach. \citet{BurdaHardingHausman2008} and \citet{Rossi2012} provide more on the hierarchical Bayes method.
-The literature has also used simulated method of moments \citep{McFadden1989} and minimum distance \citep{BeranMillar1994}.
-\citet{FoxKimRyanBajari2011} experencied problems to some degree with all the methods above.
-Therefore, they proposed a computationally simple estimator (commonly called the FKRB estimator).
-This estimator has been proven to be attractive to use in the recent literature \citep[e.g.][]{HoudeMyers2019,BlundellGowrisankaranLanger2020}.
+The literature proposes numerous estimation procedures for the LC-MNL. 
+\citet{Train2009} outlines simulated maximum likelihood, the expectation-maximization (EM) algorithm \citep[further detailed in][]{Train2008}, and hierarchical Bayes methods using Markov chain Monte Carlo (MCMC) \citep[see also][]{BurdaHardingHausman2008,Rossi2012}. 
+Other approaches include the simulated method of moments \citep{McFadden1989} and minimum distance estimators \citep{BeranMillar1994}. 
+However, as highlighted by \citet{FoxKimRyanBajari2011}, many of these traditional methods suffer from computational burdens and convergence issues. 
+To address this, after a preliminary paper by \citet{BajariFoxRyan2007}, \citet{FoxKimRyanBajari2011} proposed a computationally tractable estimator—commonly referred to as the FKRB estimator—which has gained significant traction in the recent literature \citep[see for example][]{HoudeMyers2019,BlundellGowrisankaranLanger2020}.
 
-The key part to the approach of \citet{FoxKimRyanBajari2011} is that the LC-MNL can be rewritten such that the parameters enter linearly.
-Therefore, the parameters can be estimated with OLS. 
-However, the parameters have to abide to certain constraints.
-\citet{HeissHetzeneckerOsterhaus2022} show that these constraints make the FKRB estimator equivalent to a nonnegative LASSO (NNL) estimator.
-With this insight they extend the estimator to a nonnegative elastic net estimator.
+The fundamental insight of the FKRB approach is that the LC-MNL can be recast such that the parameters enter the model linearly. 
+Consequently, these parameters can be estimated using ordinary least squares (OLS).
+However, the parameters have to abide some constraints. 
+Building on this, \citet{HeissHetzeneckerOsterhaus2022} demonstrated that the constraints inherent to the FKRB framework render it mathematically equivalent to a non-negative LASSO (NNL) estimator. 
+Leveraging this equivalence, they further extended the approach to a non-negative elastic net estimator.
 
-Another attempt of an improvement to the FKRB estimator has been done by \citet{Train2016}.
-He approximates the distribution of random coefficients with splines, polynomials or step functions, instead of with a discrete mixture as done by \citet{FoxKimRyanBajari2011}.
-This approach can decrease the dimensionality of the model significantly.
-Strictly speaking, this estimator is not estimating a LC-MNL anymore, since the distribution is not discrete here. 
-This estimator is still comparable to the others, as the other estimators are also used in a context where the researcher does not have the belief that the coefficients have a discrete distribution, but a continuous distribution. 
-In these cases the researcher chooses discrete mixture estimators for there computational properties.
-When the support of the discrete distribution becomes sufficiently dense, this distribution can approximate any distribution arbitrarily close \citep{McFaddenTrain2000}.
+\citet{Train2016} proposed an alternative refinement to the FKRB estimator by approximating the distribution of random coefficients using splines, polynomials, or step functions, rather than relying on a discrete mixture. 
+While this significantly reduces the dimensionality of the estimation problem, it departs from the strict LC-MNL framework by assuming a continuous, rather than discrete, underlying distribution. 
+Nonetheless, this approach remains highly comparable; researchers frequently employ discrete mixture estimators primarily for their computational tractability, even when the true underlying distribution is believed to be continuous. 
+As shown by \citet{McFaddenTrain2000}, a discrete distribution with a sufficiently dense support can approximate any well-behaved continuous distribution to an arbitrary degree of accuracy.
 
-Of course, in most of the cases, the researcher wants to conduct inference. 
-\citet{FoxKimRyanBajari2011} show multiple methods of constructing confidence intervals for their estimator.
-They first propose clipping the intervals generated from clustered heteroskedasticity-robust standard errors, from the unconstrained OLS procedure, inside the $[0,1]$ interval.
-However, though this produces correct coverage,\footnote{We speak of correct coverage when, under the null, the probability of the estimator belonging to the $\alpha$\%-confidence interval is more than or equal to $\alpha$.} the confidence interval is observed to be quite conservative, in the sense that the confidence interval covers more than it has to.
-Then they discuss resampling methods such as the standard bootstrap \citep[see][]{Efron1979} or the $m$-out-of-$n$ bootstrap.
-They find, however, little evidence that this produces correct coverage.
-Lastly, they consider Tikhonov regularization.
-They do observe a slight improvement in that approach.
-This thesis will explore other forms of regularization, to see if there is an improvement, in the sense that the confidence intervals might shrink closer to their exact correct coverage.
-
-The natural paradigm for regularization for this estimator lies in the theory of penalized sieve minimum distance estimators (PSMDs).
-As also recognized by \citet{HeissHetzeneckerOsterhaus2022}, the FKRB estimator is a specific example of a sieve estimator.
-This thesis will also explicitly show the connection between the FKRB estimator and PSMD estimators.
-
+It can be shown that the FKRB estimator is a sieve estimator \citep{HeissHetzeneckerOsterhaus2022, FoxKimYang2016}, specifically the (penalized) sieve minimum distance ((P)SMD) estimator.
+The SMD estimator has been described by \citet{AiChen2003,NeweyPowell2003}.
+\citet{ChenPouzo2012} introduced the PSMD estimator, which is a generalization of the SMD estimator.
 Sieves have first been mentioned by \citet{Grenander1981}.
-A sieve space is a space of approximations of sets of a bigger set, where the approximations become dense in the limit.
 Many papers have used some form of sieve estimation, including \citet{GallantNychka1987}, who proposed an estimator that can be written as a sieve maximum likelihood estimator; \citet{WhiteWooldridge1991} and \citet{ChenShen1998}, who developed theory on sieve estimation in the context of dependent data; and \citet{Andrews1991} and \citet{Newey1997}, who developed much of the asymptotic theory on series estimators.
-
 An extensive overview of sieve estimation is given by \citet{Chen2007}.
-\citet{AiChen2003} and \citet{NeweyPowell2003} laid the groundwork for PSMD estimators by describing the sieve minimum distance (SMD) estimator.
-This was extended to PSMD estimators by \citet{ChenPouzo2012} by adding a penalty term, which can be seen as a regularization term.
-The usefulness of such estimators in inference for nonparametric instrumental variable (NPIV) models has been illustrated by \citet{ChenPouzo2015}.
 
-To be continued further...
+Beyond estimation, conducting valid statistical inference remains a primary concern. 
+\citet{FoxKimRyanBajari2011} explore several methods for constructing confidence intervals for their estimator. 
+They initially suggest utilizing clustered heteroskedasticity-robust standard errors derived from an unconstrained OLS procedure, clipping the resulting intervals to ensure they remain within the $[0,1]$ bound. 
+While this guarantees correct asymptotic coverage, the resulting intervals are often highly conservative, covering the true parameter more frequently than strictly necessary, which results in too many type II errors. 
+They also evaluate resampling techniques, such as the standard bootstrap \citep{Efron1979} and the $m$-out-of-$n$ bootstrap, but find limited evidence that these yield accurate coverage. 
+Finally, they try Tikhonov regularization, noting a marginal improvement in inference quality. 
+This essentially extends the estimator to that of \citet{HeissHetzeneckerOsterhaus2022}.
+However, \citet{HeissHetzeneckerOsterhaus2022} lacks further results on inference.
+
+\citet{FoxKimRyanBajari2011} indicate that an explanation for the conservativeness of their inference procedures may lie in the fact that the true parameters are often close to the boundary of the parameter space.
+On this boundary, asymptotic normality breaks down \citep{Andrews1999}.
+\citet{Andrews1999,Andrews2001,Andrews2002} give the asymptotic distribution for related cases with a true parameter on the boundary.
+\citet{AndrewsGuggenberger2010Applications} propose a subsampling procedure for another related case.
+According to \citet{FoxKimRyanBajari2011}, these results however are unfortunately enough to cover the FKRB estimator.
+\citet{Li2025The,Li2025Inference} develops bootstrapping methods for constrained extremum estimators and give the FKRB estimator as an example.
+
+\citet{ChenPouzo2015} established theoretical results for inference on a very broad class of PSMD estimators.
+A downside of their results is that they mostly only hold when the true parameter is in the interior of the parameter space.
+Therefore, the answer to the boundary problem may not lie in \citet{ChenPouzo2015}.
+Also, the FKRB estimator is not contained in the broad class of PSMD estimators for which \citet{ChenPouzo2015} develop theory, even when the true parameter is perfectly in the interior.
+
+Although we acknowledge that the FKRB estimator does not belong to the class of \citet{ChenPouzo2015}, we note that it is conjectured by \citet{FoxKimYang2016} that similar results to those of \citet{ChenPouzo2015} hold for the FKRB estimator.
+Therefore, this thesis investigates the performance of the sieve Wald and quasi-likelihood ratio (QLR) statistics from \citet{ChenPouzo2015} for conducting inference on the FKRB estimator.
+We will compare to the inference procedures originally proposed by \citet{FoxKimRyanBajari2011}.
+
+The thesis studies the coverages of confidence intervals stemming from the above mentioned procedures using a Monte Carlo simulation.
+We consider five different data generating processes (DGPs).
+These DGPs differ merely in the distribution of random coefficients.
+The different distributions are chosen to investigate multiple levels of boundary problems.
+We will examine how the inference procedures hold up in two scenarios.
+In one scenario we estimate the whole distribution, in the other we only estimate the mean of the distribution.
+
+The simulation reveals that the standard FKRB inference procedure is indeed highly conservative, especially at the boundary of the parameter space.
+Although specific characterestics of the DGP seem to have an influence on the severity of this, the problem is always extremely substantial.
+The procedure coming from the QLR statistic does a better job in a scenario where only the mean is estimated, but this procedure is also still noticeably on the conservative side.
+When evaluating this procedure on the whole distribution, however, this procedure results in too many type I errors when the true parameter lies deeply in the interior.
+
+The thesis will procede as follows. 
+\Cref{sec:theory} lays down the theoretical framework in which the FKRB estimator resides.
+\Cref{sec:mxl} explains the mixed logit model, \cref{sec:FKRBestimator} derives the FKRB estimator, alongside some of its extensions and equivalent forms, and \cref{sec:Inference} formulates the inference procedures that are researched in this thesis.
+\Cref{sec:simulation} describes the Monte Carlo simulation procedure.
+\Cref{sec:dgp} lays out the DGPs, including the different random coefficient distributions, and \cref{sec:implementation} gives all the details on how the whole procedure is implemented.
+\Cref{sec:results} gathers all the results and \cref{sec:conclusion} concludes the thesis.
