@@ -1,0 +1,51 @@
+{
+  "timestamp": "20260612_014757",
+  "seed": 42,
+  "repetitions": 250,
+  "workers": 8,
+  "J": 4,
+  "K": 2,
+  "N_set": [
+    1000,
+    10000
+  ],
+  "R_set": [
+    25,
+    225
+  ],
+  "alphas": [
+    0.05,
+    0.5
+  ],
+  "dgps": [
+    "beta_bimodal_support_probs",
+    "beta_tight_normal_support_probs",
+    "beta_wide_normal_support_probs",
+    "beta_strictly_uniform_support_probs",
+    "beta_almost_single_type_support_probs",
+    "beta_single_type_support_probs",
+    "beta_four_types_support_probs"
+  ],
+  "methods": [
+    "fkrb",
+    "cp_wald",
+    "qlr"
+  ],
+  "method_labels": {
+    "fkrb": "FKRB (OLS centre, OLS-residual sandwich, clipped)",
+    "cp_wald": "CP Wald (constrained-residual sandwich, no clip)",
+    "qlr": "CP QLR (studentised)"
+  },
+  "quantities": [
+    "theta",
+    "mean_1",
+    "mean_2"
+  ],
+  "quantity_labels": {
+    "theta": "theta (support points)",
+    "mean_1": "mean(beta_1)",
+    "mean_2": "mean(beta_2)"
+  },
+  "optimal_weighting": true,
+  "qlr_tol": 0.001
+}

@@ -1,27 +1,45 @@
 % !TEX root = ../main.tex
 \section{Simulation}
 \label{sec:simulation}
-To study the conservativeness of the confidence intervals we consider a Monte Carlo procedure.
-We generate data according to multiple known data generating processes.
-This means we know the true parameters of the model (and of functionals of the parameters).
+To study the conservativeness of the confidence intervals we run a Monte Carlo experiment of $M = 250$ repetitions.
+In each repetition we draw a dataset from a known data generating process (DGP) and fit the FKRB estimator once.
+Because the DGP is known, we know the true support-point probabilities $\bm{\theta}$ and every functional of them, so we can check directly whether each interval covers the truth.
+All DGPs place the random coefficients in two dimensions, which keeps interpretation and visualization clean while still exercising the multidimensional nature of the FKRB estimator.
 
-We will study confidence intervals at two significance levels: $\alpha = 0.05$ and $\alpha=0.5$.
-The former level is set to match the common significance level in the literature.
-The latter level is set to get a better idea of the severity of the conservativeness.
-As we will see in \Cref{sec:results}, the empirical coverage is often very close to $1$ at $\alpha=0.05$.
-Also looking at $\alpha=0.5$ gives us more insight into how severe the problem is.
+We compare the three interval constructions of \cref{sec:Inference}: the original FKRB interval \cref{eq:CIFKRB,eq:CIfunctional}, the sieve Wald interval \cref{eq:CIChenPouzo}, and the studentized sieve QLR interval \cref{eq:CIQLR}.
+We build all three for every support-point probability $\theta_r$ and for the two coordinate means $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$, forming the mean intervals separately for each coordinate.
 
-The distributions in our DGPs are two-dimensional.
-This allows for a cleaner interpretation and visualization, while still appealing to the multidimensional power of the FKRB estimator.
+We fit every construction under the feasible GLS weighting of \cref{sec:FKRBGLS} rather than the identity weighting of the original FKRB criterion.
+The FKRB regression is heteroskedastic by construction, because the error $\zeta_{ij}$ carries the variance of a binary choice indicator, and the feasible GLS weights recover this efficiency at no asymptotic cost \citep{Greene2019}.
+The same weighting makes the estimator the optimally-weighted sieve estimator of \citet{ChenPouzo2015}, which is the setting under which the sieve Wald and QLR intervals are designed to be valid.
+Standard errors throughout come from the individual-clustered, heteroskedasticity-robust sandwich of \cref{eq:FKRBclustervcov}.
 
-We will estimate and calculate confidence intervals for all support points $\theta_r$.
-Furthermore, we will also look at the mean of the distributions.
-The confidence intervals will be generated per coordinate.
-That is, both $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$ will get their own confidence intervals.
+We evaluate every interval at two significance levels, $\alpha = 0.05$ and $\alpha = 0.5$.
+The former matches the level most common in the literature.
+The latter is deliberately large; as \cref{sec:results} shows, coverage at $\alpha = 0.05$ is often close to one, and the higher level gives a more complete picture on how severe the conservativeness is.
+
+The details on the numerical implementation of the simulation can be found in \cref{sec:implementation}.
+We highlight a couple things here.
+We use a suboptimal GLS weighting, even though the optimal weighting is known.
+The suboptimal weighting matrix is a diagonal matrix, which simplifies the matrix inversion of \cref{eq:FKRBGLSest}.
+
+We use the nonnegative LASSO formulation of the FKRB estimator of \citet{HeissHetzeneckerOsterhaus2022}.
+We first try solving it with only the nonnegative constraint \eqref{eq:FKRBNNLconstraint2}, removing the sum-to-one constraint \eqref{eq:FKRBNNLconstraint1}.
+This allows us to use the fast active-set algorithm \citep{LawsonHanson1995}.
+If this solution does not satisfy the sum-to-one constraint we trace the full path of the coordinate descent algorithm of \citet{FriedmanHastieTibshirani2010}.
+We estimate the unique point where constraint \eqref{eq:FKRBNNLconstraint1} is binding by linear interpolation between the two points on the path that cross the constraint.
+This strategy is the same as \citet{Brand2023}.
+
+Especially on the bigger grid $R=225$, some matrices can be severely ill-conditioned.
+Therefore, when there is a risk of ill-conditionedness we we use the Moore-Penrose pseudoinverse instead of a regular inverse.
+
+To invert the QLR statistic we use Brent's method \citep{Brent1973}.
+This part is the most expensive of the simulation.
+In each iteration of Brent's algorithm we call the nonnegative LASSO solver, which can already be expensive in and of itself.
 
 \subsection{Data Generating Processes}
 \label{sec:dgp}
-We generate data according to the random coefficient discrete choice model from \Cref{sec:mxl}.
+We generate data according to the random coefficient discrete choice model from \cref{sec:mxl}.
 The DGPs are partially inspired by \citet{HeissHetzeneckerOsterhaus2022}.
 We copy their sampling of the exogenous $\bm{x}_{ij}$ uniformly from $[0,5]\times[-3,1]$, i.e. $\bm{x}_{ij} \sim \mathcal{U}([0,5]\times[-3,1])$.
 This is the same across all DGPs.
@@ -31,215 +49,234 @@ We differ in our choice of $R \in \{25, 225\}$.
 In contrast to \citeauthor{HeissHetzeneckerOsterhaus2022} we only repeat our analysis for two grid sizes, where our big grid size is slightly smaller than theirs because of numerical instability issues.
 
 The biggest difference with \citeauthor{HeissHetzeneckerOsterhaus2022} is the choice of distributions for the random coefficients.
-We consider five different distributions for $\bm{\beta}_{i}$.
-Each of them is a discrete distribution supported on the same regular $\sqrt{R}\times\sqrt{R}$ grid $\tilde{\mathcal{B}}\subset[-4.5, 3.5]^2$.
+We consider seven different distributions for $\bm{\beta}_{i}$.
+Each of them is a discrete distribution supported on the same regular equally-spaced $\sqrt{R}\times\sqrt{R}$ grid $\tilde{\mathcal{B}}\subset[-4.5, 3.5]^2$.
 This is also the same grid that we feed to the FKRB estimator as the prespecified support.
 That means $\tilde{\mathcal{B}} = \mathcal{B}$ holds by construction, so any conservativeness we observe is not driven by grid misspecification.
 
-The five distributions are chosen to vary the prevalence of the boundary problem mentioned in \Cref{sec:Inference}.
+The seven distributions are chosen to vary the prevalence of the boundary problem mentioned in \cref{sec:Inference}.
 Whenever the true mass $\theta_r$ at a support point is zero, the parameter sits on the boundary of $\Delta_R$.
-By picking distributions ranging from ``no support point on the boundary'' to ``almost all support points on the boundary'', we get a more complete picture of the conservativeness of the FKRB confidence intervals.
-
-\paragraph{Bivariate normal}
-\label{sec:dgp:bvn}
-The first distribution is a discretized bivariate normal distribution with mean $\bm{0}$ and identity covariance matrix.
-That is, we set $\theta_r$ proportional to $\phi_{\bm{0},\bm{I}}(\bm{\beta}^{(r)})$ at each grid point $\bm{\beta}^{(r)} \in \tilde{\mathcal{B}}$ and renormalize so that \cref{eq:FKRBconstraint1} holds.
-Here, $\phi_{\bm{\mu},\bm{\Sigma}}$ denotes the density of a bivariate normal distribution with mean $\bm{\mu}$ and covariance matrix $\bm{\Sigma}$.
-Since the normal density is positive everywhere, all $\theta_r$ are strictly positive.
-This means that none of the true parameters lie on the boundary.
-We use this distribution as a baseline against which the other distributions can be compared.
-See \Cref{fig:dgp:bvn}.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../output/figures/pmf_beta_bivariate_normal_R225.png}
-    \end{minipage}\hfill
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../output/figures/cdf_beta_bivariate_normal_R225.png}
-    \end{minipage}
-    \caption{Probability mass function (left) and cumulative distribution function (right) of the bivariate normal DGP on the $15\times 15$ grid ($R=225$).}
-    \label{fig:dgp:bvn}
-\end{figure}
+By picking distributions ranging from ``no support point on the boundary'' to ``every support point on the boundary'', we get a more complete picture of the conservativeness of the FKRB confidence intervals.
 
 \paragraph{Bimodal}
 \label{sec:dgp:bimodal}
-The second distribution is a discretized mixture of two bivariate normal distributions.
+The first distribution is a discretized mixture of two bivariate normal distributions.
 The two components have means $(-2.2, -2.2)$ and $(1.3, 1.3)$ and a common covariance matrix $\scriptsize\begin{pmatrix}
     0.8 & 0.15 \\ 0.15 & 0.8
 \end{pmatrix}$, with equal mixture weights.
 This places interior mass at two well-separated modes, with near-zero mass in the valley between them.
 This distribution is identical to the one used in the second Monte Carlo experiment in \citet{HeissHetzeneckerOsterhaus2022}.
-See \Cref{fig:dgp:bimodal}.
+See \cref{fig:dgp:bimodal}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/pmf_beta_bimodal_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_bimodal_R225.png}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/cdf_beta_bimodal_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_bimodal_R225.png}
     \end{minipage}
     \caption{Probability mass function (left) and cumulative distribution function (right) of the bimodal DGP on the $15\times 15$ grid ($R=225$).}
     \label{fig:dgp:bimodal}
 \end{figure}
 
-\paragraph{Diffuse}
-\label{sec:dgp:diffuse}
-The third distribution is a discretized bivariate normal distribution with mean $\bm{0}$ and covariance matrix $4\bm{I}$.
-The increased variance spreads the mass over the entire grid.
-Compared to the baseline in \Cref{sec:dgp:bvn}, the renormalized probabilities at each grid point are more uniform and smaller in magnitude.
-This puts all $\theta_r$ close to, but not exactly on, the boundary.
-The point of this distribution is to study the behaviour of the confidence intervals in a globally near-boundary setting.
-See \Cref{fig:dgp:diffuse}.
+\paragraph{Tight normal}
+\label{sec:dgp:tight}
+The second distribution is a discretized bivariate normal distribution with mean $\bm{0}$ and identity covariance matrix.
+That is, we set $\theta_r$ proportional to $\phi_{\bm{0},\bm{I}}(\bm{\beta}^{(r)})$ at each grid point $\bm{\beta}^{(r)} \in \tilde{\mathcal{B}}$ and renormalize so that \cref{eq:FKRBconstraint1} holds.
+Here, $\phi_{\bm{\mu},\bm{\Sigma}}$ denotes the density of a bivariate normal distribution with mean $\bm{\mu}$ and covariance matrix $\bm{\Sigma}$.
+We call this distribution the tight normal because its mass concentrates around the mean, in contrast to the wide normal.
+Since the normal density is positive everywhere, all $\theta_r$ are strictly positive.
+This means that none of the true parameters lie on the boundary.
+We use this distribution as a baseline against which the other distributions can be compared.
+See \cref{fig:dgp:tight}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/pmf_beta_diffuse_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_tight_normal_R225.png}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/cdf_beta_diffuse_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_tight_normal_R225.png}
     \end{minipage}
-    \caption{Probability mass function (left) and cumulative distribution function (right) of the diffuse DGP on the $15\times 15$ grid ($R=225$).}
-    \label{fig:dgp:diffuse}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the tight normal DGP on the $15\times 15$ grid ($R=225$).}
+    \label{fig:dgp:tight}
 \end{figure}
 
-\paragraph{Concentrated spike}
-\label{sec:dgp:spike}
-The fourth distribution puts $90\%$ of the mass on a single grid point near $\bm{0}$.
+\paragraph{Wide normal}
+\label{sec:dgp:wide}
+The third distribution is a discretized bivariate normal distribution with mean $\bm{0}$ and covariance matrix $4\bm{I}$.
+The increased variance spreads the mass over the entire grid, which is why we call this distribution the wide normal.
+Compared to the tight normal, the renormalized probabilities at each grid point are more uniform and smaller in magnitude.
+In constrast to the tight normal, there are more grid points decently away from the boundary, but fewer grid points far away from the boundary.
+The structure is the same however.
+This distribution allows us to compare two structurally-identical distributions with different boundary problems.
+See \cref{fig:dgp:wide}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_wide_normal_R225.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_wide_normal_R225.png}
+    \end{minipage}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the wide normal DGP on the $15\times 15$ grid ($R=225$).}
+    \label{fig:dgp:wide}
+\end{figure}
+
+\paragraph{Strictly uniform}
+\label{sec:dgp:strictuniform}
+The fourth distribution puts the exact same mass $\theta_r = 1/R$ on every grid point.
+It is the limiting case of the wide normal in \Cref{sec:dgp:wide}, with the mass spread as evenly over the grid as possible.
+All $\theta_r$ are strictly positive, so none of the true parameters lie on the boundary, but every parameter approaches the boundary at rate $1/R$ as the grid grows.
+The point of this distribution is to study the globally near-boundary setting in its most extreme form, where the true distribution carries no shape information at all.
+See \Cref{fig:dgp:strictuniform}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_strictly_uniform_R225.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_strictly_uniform_R225.png}
+    \end{minipage}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the strictly uniform DGP on the $15\times 15$ grid ($R=225$).}
+    \label{fig:dgp:strictuniform}
+\end{figure}
+
+\paragraph{Almost single type}
+\label{sec:dgp:ast}
+The fifth distribution puts $90\%$ of the mass on a single grid point near $\bm{0}$.
 The remaining $10\%$ is spread uniformly over all other grid points.
+Almost every individual thus shares the same coefficient vector, which is why we call this distribution the almost single type.
 This creates a single dominant interior parameter and $R-1$ small parameters that lie arbitrarily close to the boundary as $R$ grows.
 Note that this distribution still has full support on $\tilde{\mathcal{B}}$, so none of the $\theta_r$ are exactly on the boundary.
 The point of this distribution is to push the boundary problem to the extreme while keeping the simplex constraint non-binding.
-See \Cref{fig:dgp:spike}.
+See \cref{fig:dgp:ast}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/pmf_beta_concentrated_spike_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_almost_single_type_R225.png}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/cdf_beta_concentrated_spike_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_almost_single_type_R225.png}
     \end{minipage}
-    \caption{Probability mass function (left) and cumulative distribution function (right) of the concentrated spike DGP on the $15\times 15$ grid ($R=225$).}
-    \label{fig:dgp:spike}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the almost single type DGP on the $15\times 15$ grid ($R=225$).}
+    \label{fig:dgp:ast}
 \end{figure}
 
-\paragraph{Discrete uniform}
-\label{sec:dgp:uniform}
-The fifth distribution puts equal mass on $k=4$ grid points and zero mass on all remaining $R - k$ grid points.
-The $k$ active points are selected uniformly at random from the grid before the simulation starts, but stay fixed across all repetitions.
-In contrast to the four previous distributions, this distribution has $R - k$ structurally zero probabilities.
-This means that $R-k$ of the true parameters $\theta_r$ are exactly on the boundary.
-The choice of a small $k$ matches the latent class setting where each individual is one of a small number of types.
-The point of this distribution is to study the behaviour of the confidence intervals when the boundary problem is most severe.
-See \Cref{fig:dgp:uniform}.
+\paragraph{Single type}
+\label{sec:dgp:singletype}
+The sixth distribution is the degenerate version of the almost single type: it puts all mass on the same grid point near $\bm{0}$ and zero mass on every other grid point.
+Every individual now has the same coefficient vector, so no heterogeneity remains and the population consists of a single type.
+All $R$ parameters lie exactly on the boundary of $\Delta_R$: $R-1$ of them at $\theta_r = 0$ and the spike itself at $\theta_r = 1$.
+The point of this distribution is to study the behaviour of the confidence intervals when every single parameter is on the boundary.
+See \cref{fig:dgp:singletype}.
 
 \begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/pmf_beta_discrete_uniform_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_single_type_R225.png}
     \end{minipage}\hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{../output/figures/cdf_beta_discrete_uniform_R225.png}
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_single_type_R225.png}
     \end{minipage}
-    \caption{Probability mass function (left) and cumulative distribution function (right) of the discrete uniform DGP on the $15\times 15$ grid ($R=225$), with $k=4$ active support points.}
-    \label{fig:dgp:uniform}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the single type DGP on the $15\times 15$ grid ($R=225$).}
+    \label{fig:dgp:singletype}
 \end{figure}
 
-\subsection{Implementation Details}
-\label{sec:implementation}
-We run the entire simulation on Lenovo IdeaPad 5 Pro 14ACN6 equipped with an AMD Ryzen 7 5800U CPU and 16 GB RAM running Windows 11 Home.
-The simulation is implemented in Python 3.14.3.
-We rely on NumPy 2.4.2 \citep{numpy2020}, SciPy 1.17.1 \citep{scipy2020}, scikit-learn 1.8.0 \citep{scikitlearn2011}, and numdifftools 0.9.42 for the numerical work.
-The full code is available at a \href{https://github.com/stijnbrandsma13-spec/thesis}{GitHub repo}.\footnote{\url{https://github.com/stijnbrandsma13-spec/thesis}}
-Our implementation of the FKRB estimator is partly inspired by the Julia package \texttt{FKRB.jl} by \citet{Brand2023}.
+\paragraph{Four types}
+\label{sec:dgp:fourtypes}
+The seventh distribution puts unequal mass on four fixed grid points and zero mass on all remaining $R - 4$ grid points.
+The masses are $0.37$, $0.29$, $0.21$, and $0.13$, placed at the grid points closest to $(-3.2,\, 1.6)$, $(-1.0,\, -2.9)$, $(0.6,\, 2.3)$, and $(2.4,\, -0.7)$, respectively.
+We drew these four locations and masses at random once and hardcoded them, so they are identical across all repetitions; snapping each location to its nearest grid point keeps the active points on $\tilde{\mathcal{B}}$ for both grid sizes.
+Each individual is thus one of four latent types, which is why we call this distribution the four types, matching the latent class setting with a small number of types.
+Like the single type, this distribution has structural zeros: $R - 4$ of the true parameters $\theta_r$ are exactly on the boundary.
+The point of this distribution is to study the behavior at a realistic latent class distribution.
+See \Cref{fig:dgp:fourtypes}.
 
-The full simulation is driven by a single seed.
-At the start of each $(\text{DGP}, N, R)$ block we instantiate one \texttt{DataGenerator} that owns the NumPy bit-generator; before each repetition we call \texttt{reset()} on this generator, which clears the cached design $\bm{x}$, the latent draws $\bm{\beta}_{i}$, and the idiosyncratic errors $\varepsilon_{ij}$ but leaves the bit-generator state untouched.
-Successive repetitions therefore continue to consume entropy from the same stream, so the full trajectory of repetitions is reproducible from the seed alone, regardless of which DGP, $N$, or $R$ is active.
-Within each repetition we fit the FKRB estimator once and reuse the fit for both significance levels $\alpha \in \{0.05,\,0.5\}$, since neither the point estimate nor the variance-covariance matrix depends on $\alpha$; only the confidence interval endpoints do.
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/pmf_beta_four_types_R225.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/true/cdf_beta_four_types_R225.png}
+    \end{minipage}
+    \caption{Probability mass function (left) and cumulative distribution function (right) of the four types DGP on the $15\times 15$ grid ($R=225$), with four active support points.}
+    \label{fig:dgp:fourtypes}
+\end{figure}
 
-\subsubsection{FKRB estimation}
-\label{sec:implementation:fkrb}
-The moment matrix $\bm{Z}$ in \cref{eq:FKRBOLSest,eq:FKRBZdef} is assembled by evaluating the softmax in \cref{eq:mxlganalytical} at every $(i,j,r)$-triple, with the outside-good column ($j=0$) dropped because it carries no information about $\bm{\theta}$ and would otherwise make the design matrix rank-deficient by introducing a redundant row that is implied by the others.
+\subsection{Analysis}
+\label{sec:analysis}
+We judge each interval construction by its empirical coverage, estimated across the $M = 250$ Monte Carlo repetitions.
+For a target parameter $\psi$ and repetition $m$, the hit indicator $H^{(m)}(\psi) = \mathds{1}\{\psi \in \mathrm{CI}^{(m)}_{1-\alpha,\psi}\}$ records whether the interval from that repetition contains the truth.
+The Monte Carlo coverage estimate is the hit frequency
+\begin{equation}
+\label{eq:mc_coverage}
+    \hat{c}_{1-\alpha}(\psi) = \frac{1}{M}\sum_{m=1}^{M} H^{(m)}(\psi),
+\end{equation}
+a consistent estimate of the true coverage $c_{\mathrm{CI}_{1-\alpha,\psi}}(\psi)$ from \cref{sec:confidenceintervals}.
+Under exact coverage \cref{eq:mc_coverage} equals $1-\alpha$ in expectation; values above $1-\alpha$ signal conservativeness and values below it signal under-coverage.
 
-We run the simulation under the feasible GLS weighting of \Cref{sec:FKRBGLS} rather than the identity weighting of the original FKRB criterion.
-This requires a first-stage constrained least squares fit on the unweighted design to obtain plug-in choice probabilities $\hat{p}_{ij} = \bm{z}_{ij}^\prime \hat{\bm{\theta}}^{\mathrm{FKRB,(1)}}$, which we clip to $[10^{-6}, 1-10^{-6}]$ for numerical safety and use to form the row-wise weights $w_{ij} = 1/\sqrt{\hat{p}_{ij}(1 - \hat{p}_{ij})}$.
-We then replace $\bm{Z}$ and $\bm{y}$ by their row-wise rescaled versions $w_{ij}\bm{z}_{ij}$ and $w_{ij}\,y_{ij}$.
-This reduces feasible GLS to ordinary least squares on the rescaled design \citep[see][Chap.~9]{Greene2019} and is exactly equivalent to forming the block-diagonal $\hat{\bm{\Omega}}$ of \cref{eq:FKRBFGLSest} from the diagonal entries of $\hat{\bm{\Omega}}_i$, treating cross-alternative covariances as zero --- a simplification that costs efficiency but avoids the $J\times J$ matrix inversion of \cref{eq:FKRBzetacov} and remains valid for inference because the cluster-robust sandwich below absorbs the residual within-individual dependence.\footnote{In the implementation, this weighting is toggled by a single boolean flag \texttt{optimal\_weighting}. With the flag off the simulation falls back to the identity weighting of \cref{eq:FKRBCLSest}, which is useful as a sanity check but not the configuration we report on.}
-All downstream objects --- the unconstrained OLS estimator, the constrained estimator, the cluster-robust sandwich, and the QLR criterion --- operate on this rescaled $(\bm{Z}, \bm{y})$.
+We compute \cref{eq:mc_coverage} for three target parameters and the three interval constructions of \cref{sec:Inference}: the original FKRB interval in \cref{eq:CIFKRB,eq:CIfunctional}, the sieve Wald interval in \cref{eq:CIChenPouzo}, and the studentized sieve QLR interval in \cref{eq:CIQLR}.
+For the two means each repetition yields one interval, so the estimate is a single hit frequency per cell.
+For $\theta_r$ each repetition yields $R$ intervals, one per grid point, and we report the coverage averaged over both repetitions and grid points,
+\begin{equation}
+\label{eq:mc_coverage_theta}
+    \bar{c}_{1-\alpha} = \frac{1}{MR}\sum_{m=1}^{M}\sum_{r=1}^{R} H^{(m)}(\theta_r).
+\end{equation}
+The grid-level maps that resolve \cref{eq:mc_coverage_theta} point by point appear for every DGP in the figure appendix.
 
-We then compute both the unconstrained and the constrained estimator on the rescaled design.
-The unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ is computed by \texttt{numpy.linalg.lstsq}.
-We need it because the FKRB confidence interval in \cref{eq:CIOLS} centres its width on the OLS variance, not on the constrained variance, and because the studentization factor in \cref{eq:QLRstudentisation} likewise calls on $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$.
+Because $M$ is finite, each reported coverage is itself an estimate, so we attach a $95\%$ confidence interval to it.
+The $95\%$ level is fixed and is not the nominal level $1-\alpha$ of the interval under study.
+The interval separates genuine conservativeness from Monte Carlo noise: an estimated coverage of $0.97$ counts as over-covering at $\alpha = 0.05$ only when its confidence interval lies above $0.95$.
 
-For the constrained estimator $\hat{\bm{\theta}}^{\mathrm{FKRB}}$ we use the nonnegative LASSO reparametrization of \Cref{sec:FKRBNNL} rather than a generic quadratic programming solver.
-We solve the reparametrized problem in two stages.
-First we drop the budget constraint $\sum_{r=1}^{R-1}\theta_r \leq 1$ and solve the resulting nonnegative least squares problem with the active-set algorithm of \citet{LawsonHanson1995}, as implemented in \texttt{scipy.optimize.nnls}.
-If the resulting solution already satisfies the dropped constraint, we are done.
-Otherwise, we compute the full nonnegative LASSO path with the coordinate descent algorithm of \citet{FriedmanHastieTibshirani2010} as implemented in scikit-learn's \texttt{enet\_path}.
-On this path the coefficient sum is monotonically increasing in the penalty parameter, so we can locate the unique point where $\sum_{r=1}^{R-1}\theta_r = 1$ by linear interpolation between two consecutive grid points.
-The recovered $R$-th coordinate is then $\hat{\theta}_{R}^{\mathrm{FKRB}} = 1 - \sum_{r=1}^{R-1}\hat{\theta}_r^{\mathrm{FKRB}}$ in line with \cref{eq:FKRBNNLthetaR}.
-This entirely avoids calling a quadratic programming solver, which is considerably faster than the standard FKRB implementation.
-This is the same strategy as in \texttt{FKRB.jl} \citep{Brand2023}.
+We bootstrap this interval for $\theta_r$.
+The indicators $H^{(m)}(\theta_r)$ are dependent across grid points within a repetition, since all $R$ intervals come from the same dataset and the same fit, so the $MR$ summands in \cref{eq:mc_coverage_theta} are not independent and a binomial interval would understate the variance of $\bar{c}$.
+The repetitions are mutually independent, however, because each draws a fresh dataset.
+We therefore resample whole repetitions with replacement, treat the repetition as the independent sampling unit, recompute $\bar{c}$ on each of $B = 9{,}999$ resamples, and read off the $2.5$th and $97.5$th percentiles of the resampled coverages \citep{Efron1979,CameronMiller2015}.
+Resampling at the repetition level preserves the within-repetition dependence across grid points, and the percentile construction respects the $[0,1]$ range of a coverage even when the hit frequency sits close to one, where a symmetric normal interval would not.
 
-\subsubsection{Variance estimation}
-\label{sec:implementation:vcov}
-The cluster-robust sandwich variance $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$ of \cref{eq:FKRBclustervcov} is assembled from the unconstrained residuals $\hat{\zeta}^{\mathrm{OLS}}_{ij}$ and the cluster scores $\bm{s}_i = \sum_{j=1}^{J}\bm{z}_{ij}\,\hat{\zeta}^{\mathrm{OLS}}_{ij}$, with the CR1 finite-sample correction (see \cref{eq:FKRBclusterbc}) of \citet[][\S2.3]{CameronMiller2015}.
-Because the moment matrix $\bm{Z}^\prime\bm{Z}$ can be severely ill-conditioned for the large grid ($R=225$) --- many columns of $\bm{Z}$ are nearly collinear when neighbouring grid points produce nearly identical softmax weights --- we invert it with the Moore-Penrose pseudoinverse \texttt{numpy.linalg.pinv}.
-The pseudoinverse coincides with the ordinary inverse whenever $\bm{Z}^\prime\bm{Z}$ is well-conditioned and falls back to a least-norm generalised inverse otherwise, which prevents the variance estimator from blowing up because of numerical rank deficiency.
+For the two means we do not have to resort to bootstrapping methods.
+We use the analytical Wilson score interval \citep{Wilson1927}.
+Each repetition now contributes a single Bernoulli hit, so the estimate in \cref{eq:mc_coverage} is a genuine binomial proportion from $M$ independent draws, for which a binomial interval is appropriate.
+Writing $\hat{c}$ for the hit frequency \cref{eq:mc_coverage} and $z = \Phi^{-1}(0.975)$, the Wilson interval centres on the shrunken proportion $\tilde{c}$ and extends by the half-width $w$,
+\begin{equation}
+\label{eq:wilson_parts}
+    \tilde{c} = \frac{\hat{c} + z^{2}/(2M)}{1 + z^{2}/M},
+    \qquad
+    w = \frac{z}{1 + z^{2}/M}\sqrt{\frac{\hat{c}(1-\hat{c})}{M} + \frac{z^{2}}{4M^{2}}},
+\end{equation}
+so that
+\begin{equation}
+\label{eq:wilson}
+    \mathrm{CI}^{\mathrm{Wilson}}_{0.95,\,c} = \left[\tilde{c} - w,\; \tilde{c} + w\right].
+\end{equation}
 
-For the sieve-Wald sandwich $||\hat{v}^*_n||^2_\mathrm{sd}/N$ implied by \cref{eq:CPsievevariance} we reuse the same code path but replace the unconstrained residuals by the constrained residuals $\hat{\zeta}^{\mathrm{FKRB}}_{ij} = y_{ij} - \bm{z}^\prime_{ij}\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
-Everything else is identical.
-
-\subsubsection{FKRB Wald confidence interval}
-\label{sec:implementation:fkrbci}
-For the per-support-point interval $\mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r}$ in \cref{eq:CIFKRB} we read the standard error $\mathrm{SE}(\hat{\theta}_r^{\mathrm{OLS}})$ off the diagonal of $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$, centre the interval at $\hat{\theta}_r^{\mathrm{FKRB}}$, and clip the endpoints to $[0,1]$.
-
-For the functional interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta}$ in \cref{eq:CIfunctional} we need both the gradient $\nabla T$ and the clipping range $[\min_{\bm{\theta}\in\Delta_R}T(\bm{\theta}),\,\max_{\bm{\theta}\in\Delta_R}T(\bm{\theta})]$.
-We compute the gradient by central finite differences via the \texttt{numdifftools} package, so that the construction is functional-agnostic and the caller never needs to supply a closed-form derivative.\footnote{For the linear functionals studied in this thesis --- the select-$r$ functional and the population means $\mathbb{E}(\beta_k) = \sum_{r=1}^R \theta_r\,\beta_k^{(r)}$ --- closed-form gradients are trivial, but the same machinery transparently handles nonlinear functionals such as quantiles.}
-The clipping range is the simultaneous solution of two simplex-constrained optimisation problems $\min_{\bm{\theta}\in\Delta_R}T(\bm{\theta})$ and $\max_{\bm{\theta}\in\Delta_R}T(\bm{\theta})$, which we solve with sequential least squares programming \citep[SLSQP, see][]{Kraft1988} as implemented in \texttt{scipy.optimize.minimize}, treating the maximization problem as the negative of a minimization problem.
-
-\subsubsection{Sieve Wald confidence interval}
-\label{sec:implementation:cpwald}
-The sieve Wald interval $\mathrm{CI}^{\mathrm{CP}}_{1-\alpha, \eta}$ in \cref{eq:CIChenPouzo} uses the same code as the FKRB interval with two changes that reflect the two implementation differences identified below \cref{eq:CPsievevariance}.
-First, we evaluate the sandwich on the constrained residuals, so we substitute $\widehat{\mathrm{Var}}_{\mathrm{CP}}(\hat{\bm{\theta}}^{\mathrm{FKRB}})$ from \Cref{sec:implementation:vcov} for $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$, and we evaluate the gradient at the constrained estimator $\hat{\bm{\theta}}^{\mathrm{FKRB}}$ rather than at $\hat{\bm{\theta}}^{\mathrm{OLS}}$.
-Second, we omit the intersection with the feasible range $[\min_{\Delta_R}T,\,\max_{\Delta_R}T]$ and the clipping to $[0,1]$, in keeping with the construction of \citet{ChenPouzo2015}.
-
-\subsubsection{Sieve QLR confidence interval}
-\label{sec:implementation:qlr}
-The sieve QLR interval $\mathrm{CI}^{\mathrm{QLR}}_{1-\alpha,\eta}$ in \cref{eq:CIQLR} is built by inverting the studentised statistic $\|\hat{u}^*_n\|^2 \, \mathrm{QLR}_N(\eta_0)$ over the feasible range of $\eta$.
-Three numerical sub-problems arise: computing the studentization factor, evaluating the restricted SMD criterion $Q_N(F_{\hat{\bm{\theta}}^R(\eta_0)})$ at any candidate $\eta_0$, and locating the two endpoints of the acceptance region.
-
-The studentization factor $\|\hat{u}^*_n\|^2$ from \cref{eq:QLRstudentisation} is computed once per repetition and per linear coefficient $\bm{c}$.
-Its numerator $\bm{c}^\prime(\bm{Z}^\prime\bm{Z})^{-1}\bm{c}$ uses the same pseudoinverse already cached in \Cref{sec:implementation:vcov}, and its denominator $\bm{c}^\prime\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})\bm{c}$ reuses the cluster-robust sandwich.
-For per-support-point intervals we take $\bm{c} = \bm{e}_r$; for $\mathbb{E}(\beta_k)$ we take $\bm{c}$ equal to the $k$-th coordinate of the support grid.
-
-The restricted criterion $Q_N(F_{\hat{\bm{\theta}}^R(\eta_0)})$ requires the constrained minimizer of the FKRB objective subject to the additional null restriction $T(\bm{\theta}) = \eta_0$.
-The shape of this sub-problem depends on the functional.
-\begin{itemize}
-    \item For the per-support-point inversion ($\bm{c} = \bm{e}_r$ and $\eta_0 = \phi_0$) we exploit that pinning $\theta_r = \phi_0$ eliminates one coordinate and leaves the remaining $R-1$ coordinates on a scaled simplex of size $1-\phi_0$.
-    Writing $\theta_{-r} = (1-\phi_0)\bm{u}$ with $\bm{u}$ on the unit simplex of dimension $R-1$ turns the restricted objective into $\|(\bm{y} - \phi_0 \bm{z}_{\cdot,r}) - (1-\phi_0)\bm{Z}_{\cdot,-r}\bm{u}\|^2$, which is a standard constrained least squares problem in $\bm{u}$.
-    We solve it by reusing the NNLS+LASSO-path solver of \Cref{sec:implementation:fkrb}, so the restricted fit costs essentially the same as the unrestricted FKRB fit.
-    \item For a generic linear functional $\bm{c}^\prime\bm{\theta} = \phi_0$ that is not a single-coordinate pin --- such as the population mean restriction $\sum_{r}\beta_k^{(r)}\theta_r = \phi_0$ --- we hand the problem to SLSQP with two equality constraints (the simplex constraint and the functional restriction) and unit-interval bounds on each coordinate.
-    SLSQP is slower than the NNLS+LASSO solver but accommodates the general affine constraint set without further reparametrization.
-    \item For a nonlinear functional, SLSQP can absorb the nonlinear restriction $T(\bm{\theta}) = \phi_0$ in the same way; we do not exercise this path for the population means but the procedure is in place for future extensions to nonlinear functionals such as quantiles.
-\end{itemize}
-
-To locate the endpoints of $\mathrm{CI}^{\mathrm{QLR}}_{1-\alpha,\eta}$ we exploit that, in $\eta_0$, the studentized QLR statistic is zero at $\eta_0 = \hat{\eta}$ and grows as $\eta_0$ moves away.
-We therefore bracket each endpoint by the corresponding side of $\hat{\eta}$ in the feasible range $[\min_{\Delta_R}T,\,\max_{\Delta_R}T]$ and use Brent's bisection algorithm \citep[\texttt{scipy.optimize.brentq}; see][]{Brent1973} to solve $\|\hat{u}^*_n\|^2\,\mathrm{QLR}_N(\eta_0) - \chi^2_{1,1-\alpha} = 0$ to a tolerance of $10^{-3}$ on each side.
-If the QLR statistic at the feasibility boundary already lies below the critical value, we accept the boundary as the corresponding endpoint without further root-finding.
-This automatically realises the feasibility clip noted below \cref{eq:CIQLR} without an explicit intersection step.\footnote{The reparametrized restricted least squares solver may leave a small positive residual at $\eta_0 = \hat{\eta}$ where the true QLR is identically zero.
-We absorb this by subtracting the QLR value at the centre from every subsequent evaluation, which preserves the location of the root but prevents the bracket from collapsing because of numerical noise.}
+We prefer Wilson over the textbook Wald interval
+\begin{equation}
+\label{eq:wald}
+    \mathrm{CI}^{\mathrm{Wald}}_{0.95,\,c} = \left[\hat{c} - z\sqrt{\frac{\hat{c}(1-\hat{c})}{M}},\; \hat{c} + z\sqrt{\frac{\hat{c}(1-\hat{c})}{M}}\right],
+\end{equation}
+because the mean-coverage estimates are routinely close to one, exactly where the Wald interval is least reliable.
+The Wald interval can extend above one, and its actual coverage degrades for proportions near the boundary \citep{BrownCaiDasGupta2001}.
+The Wilson interval instead stays inside $[0,1]$ and keeps actual coverage close to nominal even for small $M$ and extreme proportions \citep{BrownCaiDasGupta2001}.
+It also avoids the systematic over-coverage of the exact Clopper-Pearson interval \citep{ClopperPearson1934} noted in \cref{sec:confidenceintervals}, a desirable property when conservativeness is the object of study.
+These reasons are also among those given by \citet{Newcombe1998}.

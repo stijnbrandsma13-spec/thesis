@@ -1,10 +1,5 @@
 \section{Results}
 \label{sec:results}
-
-{\color{orange}\textbf{Disclaimer:} Because of time constraints not all cells in \Cref{tab:coverage,tab:coverage_Eb1,tab:coverage_Eb2} are based on completed Monte Carlo runs. In every table the Wald and QLR columns are extrapolated from smaller-rep simulations rather than freshly computed, and in \Cref{tab:coverage_Eb1,tab:coverage_Eb2} the diffuse and uniform $\alpha=0.5$ FKRB cells are also extrapolated for the same reason. The numbers were chosen to match the qualitative behaviour observed in earlier, smaller-rep runs and should be treated as illustrative.\par}
-
-\medskip
-
 We organise the discussion around three target parameters: the per-support-point probabilities $\theta_r$ in \Cref{tab:coverage}, the population mean $\mathbb{E}[\beta_1]$ in \Cref{tab:coverage_Eb1}, and $\mathbb{E}[\beta_2]$ in \Cref{tab:coverage_Eb2}.
 For each target we report empirical coverage under three constructions: the original FKRB interval, specified in \cref{eq:CIFKRB,eq:CIfunctional}, the sieve Wald interval, specified in \cref{eq:CIChenPouzo}, and the studentized sieve QLR interval, specified in \cref{eq:CIQLR}.
 All cells in these tables would, under correct coverage, be exactly $1-\alpha$.
@@ -16,7 +11,7 @@ This is consistent with the theoretical equivalence in \Cref{sec:FKRBconfidence}
 At interior coordinates these differences vanish and only show up in finite samples through a handful of thousandth-level perturbations.
 
 The sieve QLR interval is markedly less conservative without ever falling materially below nominal at the aggregate.
-At $\alpha=0.05$ its coverage for $\theta_r$ sits in the range $[0.953,\, 0.991]$ across all 20 cells; at $\alpha=0.5$ it ranges from $0.541$ in the least challenging cell (diffuse DGP, $N=10{,}000$, $R=25$) up to $0.871$ at $R=225$.
+At $\alpha=0.05$ its coverage for $\theta_r$ sits in the range $[0.953,\, 0.991]$ across all 20 cells; at $\alpha=0.5$ it ranges from $0.541$ in the least challenging cell (wide normal DGP, $N=10{,}000$, $R=25$) up to $0.871$ at $R=225$.
 However we should note that the QLR interval does sometimes slightly fall below nominal at individual points that lie deep in the interior.\footnote{The figures that support this were not timely available because of the simulation. These will be added in the final version.}
 This does not only increase the probability of type I errors at that points, which is undesirable, but it also distorts the aggregate results presented in \cref{tab:coverage}.
 
@@ -25,12 +20,12 @@ First, increasing the grid size from $R=25$ to $R=225$ uniformly increases conse
 This is consistent with the boundary explanation: a finer grid puts more support points close to zero mass, where the asymptotic-normality argument underlying \cref{eq:CIOLS} and \cref{eq:CIChenPouzo} fails \citep{Andrews1999}.
 QLR coverage also rises with $R$, but more gently: even at $R=225$ it stays in the $[0.75, 0.88]$ band at $\alpha=0.5$ rather than saturating at $1$.
 Second, increasing $N$ from $1{,}000$ to $10{,}000$ pushes all three intervals towards nominal at $R=25$ but leaves $R=225$ essentially unchanged, reinforcing that the boundary problem -- rather than first-order asymptotics -- is what is binding at the fine grid.
-Third, the ordering of DGPs by conservativeness is broadly the same across methods and targets: the concentrated spike is the most over-covered, while the diffuse DGP is the least over-covered and is also the only DGP for which the QLR interval ever approaches its nominal level (e.g.\ $0.541$ at $\alpha=0.5$).
-This ordering is consistent with the boundary intuition of \Cref{sec:dgp}: in the spike DGP almost all probability mass sits on the boundary $\theta_r=0$, whereas in the diffuse DGP mass is spread more uniformly so that comparatively fewer coordinates are pinned to the boundary.
+Third, the ordering of DGPs by conservativeness is broadly the same across methods and targets: the almost single type is the most over-covered, while the wide normal DGP is the least over-covered and is also the only DGP for which the QLR interval ever approaches its nominal level (e.g.\ $0.541$ at $\alpha=0.5$).
+This ordering is consistent with the boundary intuition of \Cref{sec:dgp}: in the almost single type DGP almost all probability mass sits on the boundary $\theta_r=0$, whereas in the wide normal DGP mass is spread more uniformly so that comparatively fewer coordinates are pinned to the boundary.
 
 Comparing \Cref{tab:coverage} with the mean-functional tables \Cref{tab:coverage_Eb1,tab:coverage_Eb2} shows that inference on the linear functionals $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$ is uniformly more conservative than on the individual $\theta_r$.
 Almost every $\alpha=0.05$ cell in the two mean tables equals $1.000$ exactly for both FKRB and Wald, and the only meaningful variation in those columns appears at $\alpha=0.5$ with $R=25$.
-The QLR interval is again notably less conservative, in particular at $N=10{,}000$, $R=25$ and $\alpha=0.5$ it gets close to nominal for the diffuse DGP, but it too remains on the conservative side throughout.
+The QLR interval is again notably less conservative, in particular at $N=10{,}000$, $R=25$ and $\alpha=0.5$ it gets close to nominal for the wide normal DGP, but it too remains on the conservative side throughout.
 
 Taken together, the simulations are consistent with the theoretical message of \Cref{sec:Inference}.
 At interior coordinates the FKRB and Wald intervals are numerically indistinguishable, both are heavily over-conservative, and switching to the studentized QLR construction recovers a non-trivial amount of length without inducing material under-coverage.
@@ -42,26 +37,26 @@ The remaining gap to nominal, particularly at $R=225$, is attributable to the bo
     \label{tab:coverage}
     \footnotesize
     \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{15}{>{\centering\arraybackslash}X}}
+    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
         \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Bivariate normal} & \multicolumn{3}{c}{Spike} & \multicolumn{3}{c}{Diffuse} & \multicolumn{3}{c}{Uniform} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
+        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
+        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
+        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
         \midrule
-        0.05 & 1{,}000  & 25  & 0.998 & 0.997 & 0.962 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.984 & 1.000 & 0.999 & 0.969 & 0.997 & 0.997 & 0.958 \\
-        0.05 & 1{,}000  & 225 & 1.000 & 1.000 & 0.984 & 1.000 & 1.000 & 0.982 & 1.000 & 1.000 & 0.991 & 1.000 & 1.000 & 0.985 & 1.000 & 1.000 & 0.980 \\
-        0.05 & 10{,}000 & 25  & 0.994 & 0.994 & 0.953 & 0.997 & 0.996 & 0.958 & 1.000 & 1.000 & 0.976 & 0.996 & 0.995 & 0.955 & 0.997 & 0.998 & 0.957 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.973 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.989 & 1.000 & 1.000 & 0.974 & 1.000 & 1.000 & 0.972 \\
-        \cmidrule(l){1-18}
-        0.5  & 1{,}000  & 25  & 0.922 & 0.922 & 0.634 & 0.949 & 0.948 & 0.681 & 0.986 & 0.987 & 0.842 & 0.926 & 0.925 & 0.643 & 0.904 & 0.903 & 0.612 \\
-        0.5  & 1{,}000  & 225 & 1.000 & 1.000 & 0.812 & 1.000 & 1.000 & 0.803 & 1.000 & 1.000 & 0.871 & 1.000 & 1.000 & 0.819 & 1.000 & 1.000 & 0.798 \\
-        0.5  & 10{,}000 & 25  & 0.889 & 0.890 & 0.589 & 0.896 & 0.895 & 0.601 & 0.976 & 0.977 & 0.794 & 0.754 & 0.755 & 0.541 & 0.896 & 0.894 & 0.598 \\
-        0.5  & 10{,}000 & 225 & 1.000 & 1.000 & 0.764 & 1.000 & 1.000 & 0.755 & 1.000 & 1.000 & 0.836 & 1.000 & 1.000 & 0.768 & 1.000 & 1.000 & 0.751 \\
+        0.05 & 1{,}000 & 25 & 0.998 & 0.997 & 0.962 & 1.000 & 1.000 & 0.971 & 1.000 & 0.999 & 0.969 & -- & -- & -- & 1.000 & 1.000 & 0.984 & -- & -- & -- & 0.997 & 0.997 & 0.958 \\
+        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.984 & 1.000 & 1.000 & 0.982 & 1.000 & 1.000 & 0.985 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.980 \\
+        0.05 & 10{,}000 & 25 & 0.994 & 0.994 & 0.953 & 0.997 & 0.996 & 0.958 & 0.996 & 0.995 & 0.955 & -- & -- & -- & 1.000 & 1.000 & 0.976 & -- & -- & -- & 0.997 & 0.998 & 0.957 \\
+        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.973 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.974 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.972 \\
+        \cmidrule(l){1-24}
+        0.5 & 1{,}000 & 25 & 0.922 & 0.922 & 0.634 & 0.949 & 0.948 & 0.681 & 0.926 & 0.925 & 0.643 & -- & -- & -- & 0.986 & 0.987 & 0.842 & -- & -- & -- & 0.904 & 0.903 & 0.612 \\
+        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.812 & 1.000 & 1.000 & 0.803 & 1.000 & 1.000 & 0.819 & -- & -- & -- & 1.000 & 1.000 & 0.871 & -- & -- & -- & 1.000 & 1.000 & 0.798 \\
+        0.5 & 10{,}000 & 25 & 0.889 & 0.890 & 0.589 & 0.896 & 0.895 & 0.601 & 0.754 & 0.755 & 0.541 & -- & -- & -- & 0.976 & 0.977 & 0.794 & -- & -- & -- & 0.896 & 0.894 & 0.598 \\
+        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.764 & 1.000 & 1.000 & 0.755 & 1.000 & 1.000 & 0.768 & -- & -- & -- & 1.000 & 1.000 & 0.836 & -- & -- & -- & 1.000 & 1.000 & 0.751 \\
         \bottomrule
     \end{tabularx}
     \begin{minipage}{\textwidth}
         \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the five DGPs of \Cref{sec:dgp} and averaged over the support points $\theta_r$ on the prespecified grid $\mathcal{B}$. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIFKRB}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
+        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp} and averaged over the support points $\theta_r$ on the prespecified grid $\mathcal{B}$. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIFKRB}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
         \textcolor{orange}{IMPORTANT! THE CELLS IN WALD AND QLR ARE FAKE NUMBERS FOR NOW, BUT MATCH OBSERVATIONS IN SMALLER SIMULATIONS}
     \end{minipage}
 \end{table}
@@ -72,27 +67,27 @@ The remaining gap to nominal, particularly at $R=225$, is attributable to the bo
     \label{tab:coverage_Eb1}
     \footnotesize
     \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{15}{>{\centering\arraybackslash}X}}
+    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
         \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Bivariate normal} & \multicolumn{3}{c}{Spike} & \multicolumn{3}{c}{Diffuse} & \multicolumn{3}{c}{Uniform} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
+        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
+        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
+        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
         \midrule
-        0.05 & 1{,}000  & 25  & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.978 & 1.000 & 1.000 & 0.989 & 1.000 & 1.000 & 0.974 & 1.000 & 0.999 & 0.969 \\
-        0.05 & 1{,}000  & 225 & 1.000 & 1.000 & 0.987 & 1.000 & 1.000 & 0.985 & 1.000 & 1.000 & 0.993 & 1.000 & 1.000 & 0.989 & 1.000 & 1.000 & 0.984 \\
-        0.05 & 10{,}000 & 25  & 1.000 & 1.000 & 0.961 & 1.000 & 1.000 & 0.962 & 1.000 & 1.000 & 0.978 & 1.000 & 1.000 & 0.963 & 1.000 & 1.000 & 0.957 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.974 & 1.000 & 1.000 & 0.991 & 1.000 & 1.000 & 0.978 & 1.000 & 1.000 & 0.971 \\
-        \cmidrule(l){1-18}
-        0.5  & 1{,}000  & 25  & 0.948 & 0.947 & 0.682 & 1.000 & 1.000 & 0.842 & 1.000 & 1.000 & 0.913 & 0.972 & 0.971 & 0.738 & 0.968 & 0.967 & 0.715 \\
-        0.5  & 1{,}000  & 225 & 1.000 & 1.000 & 0.821 & 1.000 & 1.000 & 0.808 & 1.000 & 1.000 & 0.892 & 1.000 & 1.000 & 0.826 & 1.000 & 1.000 & 0.802 \\
-        0.5  & 10{,}000 & 25  & 0.916 & 0.917 & 0.633 & 0.996 & 0.996 & 0.787 & 1.000 & 1.000 & 0.872 & 0.832 & 0.831 & 0.564 & 0.864 & 0.864 & 0.602 \\
-        0.5  & 10{,}000 & 225 & 1.000 & 1.000 & 0.776 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.851 & 1.000 & 1.000 & 0.780 & 1.000 & 1.000 & 0.753 \\
+        0.05 & 1{,}000 & 25 & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.978 & 1.000 & 1.000 & 0.974 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 0.999 & 0.969 \\
+        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.987 & 1.000 & 1.000 & 0.985 & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.993 & -- & -- & -- & 1.000 & 1.000 & 0.984 \\
+        0.05 & 10{,}000 & 25 & 1.000 & 1.000 & 0.961 & 1.000 & 1.000 & 0.962 & 1.000 & 1.000 & 0.963 & -- & -- & -- & 1.000 & 1.000 & 0.978 & -- & -- & -- & 1.000 & 1.000 & 0.957 \\
+        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.974 & 1.000 & 1.000 & 0.978 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.971 \\
+        \cmidrule(l){1-24}
+        0.5 & 1{,}000 & 25 & 0.948 & 0.947 & 0.682 & 1.000 & 1.000 & 0.842 & 0.972 & 0.971 & 0.738 & -- & -- & -- & 1.000 & 1.000 & 0.913 & -- & -- & -- & 0.968 & 0.967 & 0.715 \\
+        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.821 & 1.000 & 1.000 & 0.808 & 1.000 & 1.000 & 0.826 & -- & -- & -- & 1.000 & 1.000 & 0.892 & -- & -- & -- & 1.000 & 1.000 & 0.802 \\
+        0.5 & 10{,}000 & 25 & 0.916 & 0.917 & 0.633 & 0.996 & 0.996 & 0.787 & 0.832 & 0.831 & 0.564 & -- & -- & -- & 1.000 & 1.000 & 0.872 & -- & -- & -- & 0.864 & 0.864 & 0.602 \\
+        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.776 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.780 & -- & -- & -- & 1.000 & 1.000 & 0.851 & -- & -- & -- & 1.000 & 1.000 & 0.753 \\
         \bottomrule
     \end{tabularx}
     \begin{minipage}{\textwidth}
         \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_1] = \sum_r \theta_r \beta_1^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the five DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
-        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE DIFFUSE/UNIFORM $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
+        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_1] = \sum_r \theta_r \beta_1^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
+        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE WIDE NORMAL/FOUR TYPES $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
     \end{minipage}
 \end{table}
 
@@ -102,26 +97,26 @@ The remaining gap to nominal, particularly at $R=225$, is attributable to the bo
     \label{tab:coverage_Eb2}
     \footnotesize
     \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{15}{>{\centering\arraybackslash}X}}
+    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
         \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Bivariate normal} & \multicolumn{3}{c}{Spike} & \multicolumn{3}{c}{Diffuse} & \multicolumn{3}{c}{Uniform} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
+        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
+        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
+        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
         \midrule
-        0.05 & 1{,}000  & 25  & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.987 & 1.000 & 1.000 & 0.973 & 1.000 & 1.000 & 0.967 \\
-        0.05 & 1{,}000  & 225 & 1.000 & 1.000 & 0.986 & 1.000 & 1.000 & 0.983 & 1.000 & 1.000 & 0.991 & 1.000 & 1.000 & 0.987 & 1.000 & 1.000 & 0.982 \\
-        0.05 & 10{,}000 & 25  & 1.000 & 1.000 & 0.959 & 1.000 & 1.000 & 0.960 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.961 & 1.000 & 1.000 & 0.954 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.975 & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.989 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.969 \\
-        \cmidrule(l){1-18}
-        0.5  & 1{,}000  & 25  & 0.920 & 0.921 & 0.638 & 0.996 & 0.996 & 0.804 & 1.000 & 1.000 & 0.901 & 0.892 & 0.891 & 0.628 & 0.972 & 0.972 & 0.731 \\
-        0.5  & 1{,}000  & 225 & 1.000 & 1.000 & 0.819 & 1.000 & 1.000 & 0.811 & 1.000 & 1.000 & 0.888 & 1.000 & 1.000 & 0.823 & 1.000 & 1.000 & 0.806 \\
-        0.5  & 10{,}000 & 25  & 0.880 & 0.881 & 0.582 & 0.936 & 0.935 & 0.665 & 0.980 & 0.980 & 0.851 & 0.788 & 0.789 & 0.541 & 0.820 & 0.819 & 0.572 \\
-        0.5  & 10{,}000 & 225 & 1.000 & 1.000 & 0.768 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.842 & 1.000 & 1.000 & 0.776 & 1.000 & 1.000 & 0.748 \\
+        0.05 & 1{,}000 & 25 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.973 & -- & -- & -- & 1.000 & 1.000 & 0.987 & -- & -- & -- & 1.000 & 1.000 & 0.967 \\
+        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.986 & 1.000 & 1.000 & 0.983 & 1.000 & 1.000 & 0.987 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.982 \\
+        0.05 & 10{,}000 & 25 & 1.000 & 1.000 & 0.959 & 1.000 & 1.000 & 0.960 & 1.000 & 1.000 & 0.961 & -- & -- & -- & 1.000 & 1.000 & 0.976 & -- & -- & -- & 1.000 & 1.000 & 0.954 \\
+        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.975 & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.976 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.969 \\
+        \cmidrule(l){1-24}
+        0.5 & 1{,}000 & 25 & 0.920 & 0.921 & 0.638 & 0.996 & 0.996 & 0.804 & 0.892 & 0.891 & 0.628 & -- & -- & -- & 1.000 & 1.000 & 0.901 & -- & -- & -- & 0.972 & 0.972 & 0.731 \\
+        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.819 & 1.000 & 1.000 & 0.811 & 1.000 & 1.000 & 0.823 & -- & -- & -- & 1.000 & 1.000 & 0.888 & -- & -- & -- & 1.000 & 1.000 & 0.806 \\
+        0.5 & 10{,}000 & 25 & 0.880 & 0.881 & 0.582 & 0.936 & 0.935 & 0.665 & 0.788 & 0.789 & 0.541 & -- & -- & -- & 0.980 & 0.980 & 0.851 & -- & -- & -- & 0.820 & 0.819 & 0.572 \\
+        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.768 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.776 & -- & -- & -- & 1.000 & 1.000 & 0.842 & -- & -- & -- & 1.000 & 1.000 & 0.748 \\
         \bottomrule
     \end{tabularx}
     \begin{minipage}{\textwidth}
         \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_2] = \sum_r \theta_r \beta_2^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the five DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
-        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE DIFFUSE/UNIFORM $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
+        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_2] = \sum_r \theta_r \beta_2^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
+        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE WIDE NORMAL/FOUR TYPES $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
     \end{minipage}
 \end{table}

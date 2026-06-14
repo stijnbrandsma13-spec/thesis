@@ -26,30 +26,34 @@
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{graphicx}
+\usepackage{subcaption}  % subfigures with (a)/(b)/... panel labels
+\usepackage{pdflscape}   % rotated (landscape) pages for the appendix figures
 
 \usepackage{tikz}
 
 % --- Bibliography ------------------------------------------------------------
 \usepackage[sort&compress]{natbib}
+\renewcommand{\bibfont}{\small}
+\setlength{\bibsep}{0pt}
 
 % --- Typography & links ------------------------------------------------------
 \usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
 
 % --- Cross-references (cleveref must follow hyperref and \newtheorem) --------
-% APA 7: noun followed by a number is capitalized ("Table 1", "Figure 2",
-% "Equation 3", "Section 4"); no abbreviations ("Figure", not "Fig.");
-% equation numbers without surrounding parentheses ("Equation 3", not "(3)").
-\usepackage[capitalize, nameinlink, noabbrev]{cleveref}
-\crefname{equation}{Equation}{Equations}
+% Chicago 17th ed.: floats and numbered environments are capitalized
+% ("Table 1", "Figure 2", "Assumption 1"); sections and equations are
+% lowercase ("section 3", "equation (2.1)"); no abbreviations.
+\usepackage[nameinlink, noabbrev]{cleveref}
+\crefname{equation}{equation}{equations}
 \Crefname{equation}{Equation}{Equations}
-\crefname{section}{Section}{Sections}
+\crefname{section}{section}{sections}
 \Crefname{section}{Section}{Sections}
-\crefname{subsection}{Section}{Sections}
+\crefname{subsection}{section}{sections}
 \Crefname{subsection}{Section}{Sections}
-\crefname{subsubsection}{Section}{Sections}
+\crefname{subsubsection}{section}{sections}
 \Crefname{subsubsection}{Section}{Sections}
-\crefname{paragraph}{Section}{Sections}
+\crefname{paragraph}{section}{sections}
 \Crefname{paragraph}{Section}{Sections}
 \crefname{figure}{Figure}{Figures}
 \Crefname{figure}{Figure}{Figures}
@@ -63,8 +67,9 @@
 \Crefname{definition}{Definition}{Definitions}
 \crefname{footnote}{footnote}{footnotes}
 \Crefname{footnote}{Footnote}{Footnotes}
-% Strip the default parentheses around equation references
-\creflabelformat{equation}{#2#1#3}
+
+% autonum must follow both hyperref and cleveref
+\usepackage{autonum}
 
 \numberwithin{equation}{subsection}
 

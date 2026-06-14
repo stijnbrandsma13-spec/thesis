@@ -1,1 +1,232 @@
 % !TEX root = ../main.tex
+
+% ===========================================================================
+% Helper macros for the landscape figure grids.
+%
+% Each page is one (R, N) combination: a single figure of six panels in a
+% 2 x 3 grid, with one shared caption and per-panel (a)/(b)/... labels.
+% \appcell includes a panel if its PNG exists and otherwise drops in a small
+% "not yet generated" placeholder, so the appendix compiles even before every
+% figure has been produced; each PNG appears automatically once generated.
+% (To hard-disable a panel, replace its \appcell line with a comment.)
+% ===========================================================================
+\newcommand{\appcell}[1]{%
+  \begin{subfigure}[t]{0.31\textwidth}%
+    \centering
+    \IfFileExists{#1}%
+      {\includegraphics[width=\linewidth, height=0.48\textheight, keepaspectratio]{#1}}%
+      {\fbox{\parbox[c][0.78\linewidth][c]{0.9\linewidth}{\centering\small (figure not\\[2pt] yet generated)}}}%
+    \caption{}%
+  \end{subfigure}%
+}
+
+% PMF/CDF page.  Optional [#1] = subsection title (see below); #2 = DGP key
+% (e.g. beta_bimodal), #3 = grid size R, #4 = sample size N (1000 or 10000),
+% #5 = display name (e.g. bimodal).
+% The optional title, when given, is typeset at the top of THIS landscape page,
+% inside the float.  We do this rather than a bare \subsection before the page
+% because every figure here is a [p] float, so a preceding heading would be
+% stranded alone on a separate page -- and that lone page rendered wrong (it
+% carried the /Rotate of the landscape block but its near-empty body was not
+% rotated with it, so the heading read upright while the figures read sideways).
+% Folding the heading into the first figure page removes that page and keeps the
+% title with its figures.
+\newcommand{\pmfcdfpage}[5][]{%
+  \begin{figure}[p]
+    \def\pmfcdfhead{#1}%
+    \ifx\pmfcdfhead\empty\else\subsection{#1}\fi
+    \centering
+    \setcounter{subfigure}{0}%
+    \vspace*{\fill}
+    % Row 1 -- PMFs: true, FKRB, OLS.
+    \appcell{../output/figures/true/pmf_#2_R#3.png}\hfill
+    \appcell{../output/figures/estimated/pmf_fkrb_#2_N#4_R#3.png}\hfill
+    \appcell{../output/figures/estimated/pmf_ols_#2_N#4_R#3.png}\par
+    \vspace{2em}
+    % Row 2 -- CDFs: true, FKRB, OLS.
+    \appcell{../output/figures/true/cdf_#2_R#3.png}\hfill
+    \appcell{../output/figures/estimated/cdf_fkrb_#2_N#4_R#3.png}\hfill
+    \appcell{../output/figures/estimated/cdf_ols_#2_N#4_R#3.png}\par
+    \vspace{1.5em}
+    \caption{Probability mass functions and cumulative distribution functions
+      of the #5 distribution for $N=\ifnum#4=1000 1{,}000\else 10{,}000\fi$ on
+      the $R=#3$ grid. The top row (panels (a)--(c)) shows the PMFs and the
+      bottom row (panels (d)--(f)) the CDFs. In both rows the columns are, from
+      left to right, the true distribution, the FKRB-estimated distribution,
+      and the OLS-estimated distribution. The unconstrained OLS weights need not
+      form a valid distribution, so the OLS-estimated CDF can climb above one or
+      fall below zero.}%
+    \label{fig:app-pmfcdf-#2-R#3-N#4}
+    \vspace*{\fill}
+  \end{figure}
+  \clearpage
+}
+
+% Coverage page.  #1 = full DGP name (e.g. beta_bimodal_support_probs),
+% #2 = grid size R, #3 = sample size N, #4 = display name.
+\newcommand{\coveragepage}[4]{%
+  \begin{figure}[p]
+    \centering
+    \setcounter{subfigure}{0}%
+    \vspace*{\fill}
+    % Row 1 -- nominal level 1-alpha = 0.95: FKRB, Wald, QLR.
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p05_N#3_R#2_fkrb.png}\hfill
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p05_N#3_R#2_cp_wald.png}\hfill
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p05_N#3_R#2_qlr.png}\par
+    \vspace{2em}
+    % Row 2 -- nominal level 1-alpha = 0.5.
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p50_N#3_R#2_fkrb.png}\hfill
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p50_N#3_R#2_cp_wald.png}\hfill
+    \appcell{../output/figures/coverage/coverage_#1_alpha0p50_N#3_R#2_qlr.png}\par
+    \vspace{1.5em}
+    \caption{Per-support-point empirical coverage maps for the #4 distribution
+      for $N=\ifnum#3=1000 1{,}000\else 10{,}000\fi$ on the $R=#2$ grid. The
+      top row (panels (a)--(c)) uses nominal level $1-\alpha=0.95$ and the
+      bottom row (panels (d)--(f)) uses $1-\alpha=0.5$. In both rows the
+      columns are, from left to right, the FKRB, Wald and QLR confidence
+      intervals.}%
+    \label{fig:app-cov-#1-R#2-N#3}
+    \vspace*{\fill}
+  \end{figure}
+  \clearpage
+}
+
+% One distribution = eight landscape pages: the four PMF/CDF pages (R then N)
+% followed by the four coverage pages, in the same (R, N) order.
+% #1 = key, #2 = full key (..._support_probs), #3 = display name,
+% #4 = subsection title.  The title rides on the first PMF/CDF page (see
+% \pmfcdfpage) instead of a standalone \subsection, which would be stranded on
+% its own mis-rotated page.
+\newcommand{\distpages}[4]{%
+  \pmfcdfpage[#4]{#1}{25}{1000}{#3}%
+  \pmfcdfpage{#1}{25}{10000}{#3}%
+  \pmfcdfpage{#1}{225}{1000}{#3}%
+  \pmfcdfpage{#1}{225}{10000}{#3}%
+  \coveragepage{#2}{25}{1000}{#3}%
+  \coveragepage{#2}{25}{10000}{#3}%
+  \coveragepage{#2}{225}{1000}{#3}%
+  \coveragepage{#2}{225}{10000}{#3}%
+}
+
+\section{Implementation}
+\label{sec:implementation}
+We run the entire simulation on a Lenovo IdeaPad 5 Pro 14ACN6 with an AMD Ryzen 7 5800U CPU (eight physical cores) and 16 GB of RAM under Windows 11 Home.
+The code is written in Python 3.14.3 and relies on NumPy 2.4.2 \citep{numpy2020}, SciPy 1.17.1 \citep{scipy2020}, scikit-learn 1.8.0 \citep{scikitlearn2011}, and threadpoolctl 3.6.0 \citep{threadpoolctl2025}.
+The full code is available in a \href{https://github.com/stijnbrandsma13-spec/thesis}{GitHub repository}.\footnote{\url{https://github.com/stijnbrandsma13-spec/thesis}}
+Our implementation of the FKRB estimator is partly inspired by the Julia package \texttt{FKRB.jl} of \citet{Brand2023}.
+
+\subsection{Reproducibility and parallel execution}
+\label{sec:implementation:reproducibility}
+The entire simulation is reproducible from a single integer seed.
+We derive every random draw from one NumPy \texttt{SeedSequence}: the master sequence spawns one child sequence per $(\text{DGP}, N, R)$ block, and each block child in turn spawns one independent sequence per repetition, which seeds the bit-generator for that repetition's dataset.
+Each repetition's seed is fixed by its position in this tree rather than by the order of execution, so the draws are identical for a given seed no matter how the repetitions are scheduled.
+
+The repetitions within a block are independent, so we run them in parallel across worker processes, one per physical core.
+Each worker pins its linear-algebra thread pool to a single thread: the repetitions are already spread across processes, so a multi-threaded pool inside every worker would oversubscribe the CPU.
+The position-based seeding keeps the results bit-identical regardless of the number of workers.
+Within each repetition we fit the FKRB estimator once and reuse the fit for both significance levels $\alpha \in \{0.05,\,0.5\}$, since neither the point estimate nor the variance-covariance matrix depends on $\alpha$; only the confidence interval endpoints do.
+We write each block's per-repetition results to disk as soon as it finishes, so an interrupted run can be resumed from the last completed block and every figure and table can be regenerated from the saved hit indicators without re-simulating.
+
+\subsection{FKRB estimation}
+\label{sec:implementation:fkrb}
+The moment matrix $\bm{Z}$ in \cref{eq:FKRBOLSest,eq:FKRBZdef} is assembled by evaluating the softmax choice probabilities of \cref{eq:mxlganalytical} at every individual-alternative-support triple $(i,j,r)$.
+We drop the outside good ($j=0$) from the stacked rows: the choice probabilities sum to one across alternatives, so the outside-good row equals the negative sum of the others and would make $\bm{Z}$ rank-deficient.
+
+We run the simulation under the feasible GLS weighting of \cref{sec:FKRBGLS} rather than the identity weighting of the original FKRB criterion.
+This needs a first-stage constrained least squares fit on the unweighted design to obtain plug-in choice probabilities $\hat{p}_{ij} = \bm{z}_{ij}^\prime \hat{\bm{\theta}}^{\mathrm{FKRB,(1)}}$, which we clip to $[10^{-6}, 1-10^{-6}]$ for numerical safety and use to form the row-wise weights $w_{ij} = 1/\sqrt{\hat{p}_{ij}(1 - \hat{p}_{ij})}$.
+We then replace $\bm{Z}$ and $\bm{y}$ by their rescaled versions $w_{ij}\bm{z}_{ij}$ and $w_{ij}\,y_{ij}$.
+This reduces feasible GLS to ordinary least squares on the rescaled design \citep[see][chap.~9]{Greene2019} and is equivalent to forming the block-diagonal $\hat{\bm{\Omega}}$ of \cref{eq:FKRBFGLSest} from the diagonal entries of $\hat{\bm{\Omega}}_i$ alone, treating cross-alternative covariances as zero.
+This simplification costs efficiency but avoids the $J\times J$ matrix inversion of \cref{eq:FKRBGLSest}, and it remains valid for inference because the cluster-robust sandwich below absorbs the residual within-individual dependence.
+
+We solve every least squares problem through one thin QR factorization of the rescaled design.
+Writing $\bm{Z} = \bm{Q}\bm{R}_{f}$ with $\bm{Q}$ orthonormal and $\bm{R}_{f}$ upper-triangular of size $R\times R$, and setting $\bm{z} = \bm{Q}^\prime\bm{y}$, the residual sum of squares satisfies $\|\bm{y} - \bm{Z}\bm{\theta}\|^2 = \|\bm{z} - \bm{R}_{f}\bm{\theta}\|^2 + c$, where the constant $c$ does not depend on $\bm{\theta}$.
+Every point estimate, every simplex-constrained fit, and every difference of residual sums of squares that enters the QLR statistic can therefore be computed from the compact $R\times R$ factor $\bm{R}_{\!f}$ and the projected response $\bm{z}$ instead of the tall $N(J-1)\times R$ design.
+We compute this factorization once per repetition and cache it together with the Gram matrix $\bm{Z}^\prime\bm{Z} = \bm{R}_{\!f}^\prime\bm{R}_{\!f}$ and its Moore-Penrose pseudoinverse, so the cost of each solve no longer grows with the sample size $N$.
+
+The unconstrained OLS estimator $\hat{\bm{\theta}}^{\mathrm{OLS}}$ is the least squares solution of $\bm{R}_{\!f}\bm{\theta} = \bm{z}$, computed with \texttt{numpy.linalg.lstsq}.
+We need it because the FKRB confidence interval in \cref{eq:CIOLS} centres on the unconstrained estimate and its OLS variance, and because the studentization factor in \cref{eq:QLRstudentisation} likewise calls on $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$.
+
+For the constrained estimator $\hat{\bm{\theta}}^{\mathrm{FKRB}}$ we use the nonnegative LASSO reparametrization of \cref{sec:FKRBNNL} rather than a generic quadratic programming solver.
+We solve the reparametrized problem in two stages.
+First we drop the budget constraint $\sum_{r=1}^{R-1}\theta_r \leq 1$ and solve the resulting nonnegative least squares problem with the active-set algorithm of \citet{LawsonHanson1995}, as implemented in \texttt{scipy.optimize.nnls}.
+If that solution already satisfies the dropped constraint, we are done.
+Otherwise we trace the full nonnegative LASSO path with the coordinate descent algorithm of \citet{FriedmanHastieTibshirani2010}, as implemented in scikit-learn's \texttt{enet\_path}.
+Along this path the coefficient sum increases monotonically in the penalty parameter, so we locate the unique point where $\sum_{r=1}^{R-1}\theta_r = 1$ by linear interpolation between two consecutive grid points and recover the final coordinate as $\hat{\theta}_{R}^{\mathrm{FKRB}} = 1 - \sum_{r=1}^{R-1}\hat{\theta}_r^{\mathrm{FKRB}}$, in line with \cref{eq:FKRBNNLthetaR}.
+This avoids any call to a quadratic programming solver and follows the same strategy as \texttt{FKRB.jl} \citep{Brand2023}.
+\subsection{Variance estimation}
+\label{sec:implementation:vcov}
+We assemble the cluster-robust sandwich variance $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$ of \cref{eq:FKRBclustervcov} from the unconstrained residuals $\hat{\zeta}^{\mathrm{OLS}}_{ij}$ and the cluster scores $\bm{s}_i = \sum_{j=1}^{J}\bm{z}_{ij}\,\hat{\zeta}^{\mathrm{OLS}}_{ij}$, with the CR1 finite-sample correction of \citet[][\S2.3]{CameronMiller2015} from \cref{eq:FKRBclusterbc}.
+Both occurrences of $(\bm{Z}^\prime\bm{Z})^{-1}$ reuse the cached pseudoinverse from \Cref{sec:implementation:fkrb}.
+We use the Moore-Penrose pseudoinverse rather than an ordinary inverse because $\bm{Z}^\prime\bm{Z}$ can be severely ill-conditioned on the large grid ($R=225$), where neighbouring grid points produce nearly identical softmax weights and hence nearly collinear columns.
+The pseudoinverse coincides with the ordinary inverse when $\bm{Z}^\prime\bm{Z}$ is well-conditioned and falls back to a least-norm generalized inverse otherwise, which keeps the variance estimator from blowing up under numerical rank deficiency.
+
+For the sieve-Wald sandwich $||\hat{v}^*_n||^2_\mathrm{sd}/N$ of \cref{eq:CPsievevariance} we reuse the same computation but replace the unconstrained residuals by the constrained residuals $\hat{\zeta}^{\mathrm{FKRB}}_{ij} = y_{ij} - \bm{z}^\prime_{ij}\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
+Everything else is identical.
+
+\subsection{Wald confidence intervals}
+\label{sec:implementation:waldcis}
+For the per-support-point interval $\mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r}$ in \cref{eq:CIFKRB} we read the standard error $\mathrm{SE}(\hat{\theta}_r^{\mathrm{OLS}})$ off the diagonal of $\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})$, centre the interval at $\hat{\theta}_r^{\mathrm{OLS}}$, and clip the endpoints to $[0,1]$, exactly as in \cref{eq:CIOLS}.
+
+The functional interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta}$ in \cref{eq:CIfunctional} needs both the gradient $\nabla T$ and the feasible range $[\min_{\bm{\theta}\in\Delta_R}T(\bm{\theta}),\,\max_{\bm{\theta}\in\Delta_R}T(\bm{\theta})]$ used for clipping.
+For the linear functionals we study, the population means $\mathbb{E}(\beta_k) = \sum_{r=1}^R \theta_r\,\beta_k^{(r)}$ and the select-$r$ functional, the gradient is the constant coefficient vector and the feasible range is simply its smallest and largest entries, attained at the vertices of the simplex; we supply both in closed form.
+
+The sieve Wald interval $\mathrm{CI}^{\mathrm{CP}}_{1-\alpha, \eta}$ in \cref{eq:CIChenPouzo} uses the same code as the FKRB interval with the changes implied by the discussion below \cref{eq:CPsievevariance}.
+We centre the interval at the constrained estimate $\hat{\bm{\theta}}^{\mathrm{FKRB}}$ instead of $\hat{\bm{\theta}}^{\mathrm{OLS}}$, evaluate the gradient there, and form the sandwich from the constrained residuals.
+We do not clip the resulting interval to the feasible range $[\min_{\Delta_R}T,\,\max_{\Delta_R}T]$ or to $[0,1]$, in keeping with the construction of \citet{ChenPouzo2015}.
+Whether we clip or not does not have an impact on the empirical coverage.
+
+\subsection{Sieve QLR confidence interval}
+\label{sec:implementation:qlr}
+The sieve QLR interval $\mathrm{CI}^{\mathrm{QLR}}_{1-\alpha,\eta}$ in \cref{eq:CIQLR} inverts the studentized statistic $\|\hat{u}^*_n\|^2 \, \mathrm{QLR}_N(\eta_0)$ over the feasible range of $\eta$.
+Three numerical sub-problems arise: computing the studentization factor, evaluating the restricted SMD criterion $Q_N(F_{\hat{\bm{\theta}}^R(\eta_0)})$ at a candidate $\eta_0$, and locating the two endpoints of the acceptance region.
+
+We compute the studentization factor $\|\hat{u}^*_n\|^2$ of \cref{eq:QLRstudentisation} once per repetition and per linear coefficient $\bm{c}$.
+Its numerator $\bm{c}^\prime(\bm{Z}^\prime\bm{Z})^{-1}\bm{c}$ reuses the cached pseudoinverse and its denominator $\bm{c}^\prime\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})\bm{c}$ reuses the cluster-robust sandwich.
+We take $\bm{c} = \bm{e}_r$ for the per-support-point intervals and $\bm{c}$ equal to the $k$-th coordinate of the support grid for $\mathbb{E}(\beta_k)$.
+We keep this studentization even under the optimal weighting of \cref{sec:FKRBGLS}, where the factor tends to one asymptotically, as a finite-sample safeguard.
+
+The restricted criterion $Q_N(F_{\hat{\bm{\theta}}^R(\eta_0)})$ requires the constrained minimizer of the FKRB objective subject to the extra null restriction $T(\bm{\theta}) = \eta_0$, and the shape of this sub-problem depends on the functional.
+\begin{itemize}
+    \item For the per-support-point inversion ($\bm{c} = \bm{e}_r$ and $\eta_0 = \phi_0$), pinning $\theta_r = \phi_0$ eliminates one coordinate and leaves the remaining $R-1$ coordinates on a scaled simplex of size $1-\phi_0$.
+    Writing $\bm{\theta}_{-r} = (1-\phi_0)\bm{u}$ with $\bm{u}$ on the unit simplex of dimension $R-1$ turns the restricted objective into $\|(\bm{y} - \phi_0 \bm{z}_{\cdot,r}) - (1-\phi_0)\bm{Z}_{\cdot,-r}\bm{u}\|^2$, a standard simplex-constrained least squares problem in $\bm{u}$.
+    We solve it by reusing the nonnegative-LASSO solver of \cref{sec:implementation:fkrb}, so the restricted fit costs about as much as the unrestricted one.
+    \item For a generic linear restriction $\bm{c}^\prime\bm{\theta} = \phi_0$ that does not pin a single coordinate, such as the population-mean restriction $\sum_{r}\beta_k^{(r)}\theta_r = \phi_0$, we hand the problem to SLSQP with two equality constraints (the simplex constraint and the functional restriction) and unit-interval bounds on each coordinate.
+    SLSQP is slower than the nonnegative-LASSO solver but accommodates the general affine constraint set without further reparametrization.
+\end{itemize}
+Every restricted fit evaluates its residual sum of squares on the compact QR factor of \cref{sec:implementation:fkrb}.
+We can do this because the difference $Q_N(F_{\hat{\bm{\theta}}^R(\eta_0)}) - Q_N(F_{\hat{\bm{\theta}}^{\mathrm{FKRB}}})$ that enters the statistic is identical to the one on the full design, since the projection constant cancels.
+
+To locate the endpoints of $\mathrm{CI}^{\mathrm{QLR}}_{1-\alpha,\eta}$ we use that the studentized QLR statistic is zero at $\eta_0 = \hat{\eta}$ and grows as $\eta_0$ moves away from it.
+We bracket each endpoint between $\hat{\eta}$ and the corresponding end of the feasible range $[\min_{\Delta_R}T,\,\max_{\Delta_R}T]$ and solve $\|\hat{u}^*_n\|^2\,\mathrm{QLR}_N(\eta_0) - \chi^2_{1,1-\alpha} = 0$ with Brent's method \citep[\texttt{scipy.optimize.brentq}; see][]{Brent1973} to a tolerance of $10^{-3}$ on each side.
+For a linear functional the feasible range is again the smallest and largest entries of $\bm{c}$, available in closed form.
+If the statistic at a feasibility boundary already lies below the critical value, we accept that boundary as the endpoint without further root-finding, which realises the feasibility clip noted below \cref{eq:CIQLR} without an explicit intersection step.\footnote{The reparametrized restricted least squares solver may leave a small positive residual at $\eta_0 = \hat{\eta}$, where the true QLR is zero. We subtract the QLR value at the centre from every subsequent evaluation, which preserves the location of the root but keeps numerical noise from collapsing the bracket.}
+
+\clearpage
+\section{Figures}
+This appendix collects, for every data generating process, the true and
+estimated probability mass and cumulative distribution functions and the
+per-support-point coverage maps. Each distribution spans eight landscape pages:
+four PMF/CDF pages followed by four coverage maps, in each case ordered
+$(R,N)=(25,1{,}000),(25,10{,}000),(225,1{,}000),(225,10{,}000)$. Every page is a
+single figure of six panels; the panels are described in its caption.
+
+\clearpage
+% \newgeometry{margin=1cm}
+\begin{landscape}
+
+\distpages{beta_bimodal}{beta_bimodal_support_probs}{bimodal}{Bimodal}
+
+\distpages{beta_tight_normal}{beta_tight_normal_support_probs}{tight normal}{Tight normal}
+
+\distpages{beta_wide_normal}{beta_wide_normal_support_probs}{wide normal}{Wide normal}
+
+\distpages{beta_strictly_uniform}{beta_strictly_uniform_support_probs}{strictly uniform}{Strictly uniform}
+
+\distpages{beta_almost_single_type}{beta_almost_single_type_support_probs}{almost single type}{Almost single type}
+
+\distpages{beta_single_type}{beta_single_type_support_probs}{single type}{Single type}
+
+\distpages{beta_four_types}{beta_four_types_support_probs}{four types}{Four types}
+
+\end{landscape}
+% \restoregeometry

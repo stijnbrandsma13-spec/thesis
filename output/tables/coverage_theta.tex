@@ -1,0 +1,36 @@
+\begin{table}[htbp]
+    \centering
+    \caption{Empirical coverage of the original FKRB \citep{FoxKimRyanBajari2011}, and sieve Wald and sieve QLR \citep{ChenPouzo2015} confidence intervals for the support-point probabilities $\theta_r$, by data generating process, sample size $N$, grid size $R$ and significance level $\alpha$.}
+    \label{tab:coverage}
+    \footnotesize
+    \setlength{\tabcolsep}{1.5pt}
+    \begin{tabularx}{\textwidth}{ccc *{12}{>{\centering\arraybackslash}X}}
+        \toprule
+        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} \\
+        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15}
+        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
+        \midrule
+        0.05 & 1{,}000 & 25 & 0.951 & 0.997 & 0.979 & 0.944 & 1.000 & 0.990 & 0.942 & 1.000 & 0.992 & 0.944 & 0.999 & 0.992 \\
+        & & & {\tiny [.944\newline .958]} & {\tiny [.996\newline .999]} & {\tiny [.975\newline .983]} & {\tiny [.936\newline .952]} & {\tiny [.999\newline 1.000]} & {\tiny [.988\newline .993]} & {\tiny [.933\newline .951]} & {\tiny [.999\newline 1.000]} & {\tiny [.989\newline .994]} & {\tiny [.936\newline .951]} & {\tiny [.999\newline 1.000]} & {\tiny [.989\newline .994]} \\[0.4ex]
+        0.05 & 1{,}000 & 225 & 0.909 & 1.000 & 1.000 & 0.900 & 1.000 & 1.000 & 0.909 & 1.000 & 1.000 & 0.908 & 1.000 & 1.000 \\
+        & & & {\tiny [.903\newline .915]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} & {\tiny [.894\newline .906]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} & {\tiny [.903\newline .914]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} & {\tiny [.902\newline .914]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} \\[0.4ex]
+        0.05 & 10{,}000 & 25 & 0.952 & 0.992 & 0.969 & 0.947 & 0.998 & 0.977 & 0.949 & 0.992 & 0.970 & 0.950 & 0.991 & 0.970 \\
+        & & & {\tiny [.945\newline .958]} & {\tiny [.988\newline .994]} & {\tiny [.963\newline .974]} & {\tiny [.939\newline .955]} & {\tiny [.996\newline .999]} & {\tiny [.972\newline .981]} & {\tiny [.942\newline .957]} & {\tiny [.990\newline .995]} & {\tiny [.964\newline .975]} & {\tiny [.943\newline .957]} & {\tiny [.988\newline .993]} & {\tiny [.965\newline .975]} \\[0.4ex]
+        0.05 & 10{,}000 & 225 & 0.917 & 1.000 & 1.000 & 0.922 & 1.000 & 1.000 & 0.925 & 1.000 & 1.000 & -- & -- & -- \\
+        & & & {\tiny [.911\newline .922]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} & {\tiny [.917\newline .927]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} & {\tiny [.919\newline .930]} & {\tiny [1.000\newline 1.000]} & {\tiny [1.000\newline 1.000]} &  &  &  \\[0.4ex]
+        \cmidrule(l){1-15}
+        0.5 & 1{,}000 & 25 & 0.479 & 0.899 & 0.714 & 0.485 & 0.948 & 0.805 & 0.494 & 0.909 & 0.668 & 0.495 & 0.916 & 0.601 \\
+        & & & {\tiny [.464\newline .495]} & {\tiny [.890\newline .908]} & {\tiny [.703\newline .726]} & {\tiny [.468\newline .502]} & {\tiny [.941\newline .954]} & {\tiny [.794\newline .815]} & {\tiny [.478\newline .511]} & {\tiny [.901\newline .917]} & {\tiny [.654\newline .682]} & {\tiny [.478\newline .512]} & {\tiny [.910\newline .922]} & {\tiny [.585\newline .617]} \\[0.4ex]
+        0.5 & 1{,}000 & 225 & 0.455 & 1.000 & 0.993 & 0.454 & 1.000 & 0.988 & 0.454 & 1.000 & 0.996 & 0.452 & 1.000 & 0.996 \\
+        & & & {\tiny [.446\newline .464]} & {\tiny [1.000\newline 1.000]} & {\tiny [.992\newline .994]} & {\tiny [.446\newline .463]} & {\tiny [1.000\newline 1.000]} & {\tiny [.987\newline .989]} & {\tiny [.445\newline .462]} & {\tiny [1.000\newline 1.000]} & {\tiny [.995\newline .996]} & {\tiny [.442\newline .460]} & {\tiny [1.000\newline 1.000]} & {\tiny [.995\newline .997]} \\[0.4ex]
+        0.5 & 10{,}000 & 25 & 0.502 & 0.785 & 0.709 & 0.489 & 0.887 & 0.757 & 0.493 & 0.738 & 0.628 & 0.502 & 0.656 & 0.532 \\
+        & & & {\tiny [.485\newline .519]} & {\tiny [.772\newline .798]} & {\tiny [.694\newline .724]} & {\tiny [.473\newline .505]} & {\tiny [.879\newline .895]} & {\tiny [.742\newline .773]} & {\tiny [.476\newline .510]} & {\tiny [.725\newline .750]} & {\tiny [.609\newline .648]} & {\tiny [.486\newline .518]} & {\tiny [.644\newline .669]} & {\tiny [.517\newline .548]} \\[0.4ex]
+        0.5 & 10{,}000 & 225 & 0.476 & 1.000 & 0.980 & 0.479 & 1.000 & 0.980 & 0.477 & 1.000 & 0.980 & -- & -- & -- \\
+        & & & {\tiny [.466\newline .486]} & {\tiny [1.000\newline 1.000]} & {\tiny [.977\newline .983]} & {\tiny [.471\newline .487]} & {\tiny [1.000\newline 1.000]} & {\tiny [.978\newline .982]} & {\tiny [.468\newline .486]} & {\tiny [1.000\newline 1.000]} & {\tiny [.975\newline .984]} &  &  &  \\[0.4ex]
+        \bottomrule
+    \end{tabularx}
+    \begin{minipage}{\textwidth}
+        \vspace{0.5ex}
+        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp} and averaged over the support points $\theta_r$ on the prespecified grid $\mathcal{B}$. Brackets contain a 95\% percentile-bootstrap confidence interval for the empirical coverage, obtained by resampling the $250$ Monte Carlo repetitions with replacement (9999 bootstrap samples); resampling whole repetitions preserves the dependence of the hit indicators across the support points that are averaged over. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIFKRB}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
+    \end{minipage}
+\end{table}

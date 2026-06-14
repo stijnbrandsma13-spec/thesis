@@ -267,39 +267,42 @@ class DataGenerator:
 # Covariate sampler
 # ---------------------------------------------------------------------------
 
-def heiss_x_sampler(size: tuple[int, ...] | None = None) -> np.ndarray:
-    """Sample covariates following Heiss, Hetzenecker & Osterhaus (2022).
+def make_heiss_x_sampler(
+    rng: np.random.Generator,
+) -> Callable[[tuple[int, ...]], np.ndarray]:
+    """Build a covariate sampler following Heiss, Hetzenecker & Osterhaus (2022).
 
     Draws K=2 features independently:
 
     - feature 1 ~ U(0, 5)
     - feature 2 ~ U(-3, 1)
 
-    Note: this sampler uses ``np.random`` directly and is not seeded via a
-    :class:`DataGenerator` RNG instance.
+    All draws are routed through the supplied ``rng`` so the covariates are
+    reproducible from the simulation seed. Pass the same generator that drives
+    :class:`DataGenerator` to keep the entire DGP reproducible from one seed.
 
     Parameters
     ----------
-    size : tuple of int
-        Shape ``(N, J, K)`` as passed by :class:`DataGenerator`. ``K`` must
-        equal 2.
+    rng : np.random.Generator
+        Generator used for every covariate draw.
 
     Returns
     -------
-    np.ndarray of shape ``size``
-
-    Raises
-    ------
-    ValueError
-        If ``K != 2``.
+    Callable
+        ``draw(size)`` returning an array of shape ``size``, where ``size`` is
+        the ``(N, J, K)`` tuple passed by :class:`DataGenerator`. ``K`` (the
+        last element) must equal 2.
     """
-    *base_dims, K = size
-    if K != 2:
-        raise ValueError(f"heiss_x_sampler requires K=2, got K={K}.")
-    result = np.zeros(size)
-    result[..., 0] = np.random.uniform(0, 5, size=base_dims)
-    result[..., 1] = np.random.uniform(-3, 1, size=base_dims)
-    return result
+    def draw(size: tuple[int, ...]) -> np.ndarray:
+        *base_dims, K = size
+        if K != 2:
+            raise ValueError(f"heiss_x_sampler requires K=2, got K={K}.")
+        result = np.zeros(size)
+        result[..., 0] = rng.uniform(0, 5, size=base_dims)
+        result[..., 1] = rng.uniform(-3, 1, size=base_dims)
+        return result
+
+    return draw
 
 
 # ---------------------------------------------------------------------------
@@ -365,13 +368,13 @@ def heiss_beta_support_probs(R: int) -> tuple[np.ndarray, np.ndarray, np.ndarray
     return full_grid, full_grid, probs
 
 
-def beta_bivariate_normal_support_probs(
+def beta_tight_normal_support_probs(
     R: int,
     mean: tuple[float, float] = (0.0, 0.0),
     cov: np.ndarray | None = None,
     grid_range: tuple[float, float] = (-4.5, 3.5),
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Bivariate normal mass over the full grid (baseline DGP).
+    """Tight (identity-covariance) bivariate normal mass over the full grid (baseline DGP).
 
     All grid points receive non-trivial mass, so there is no boundary problem.
 
@@ -400,14 +403,28 @@ def beta_bivariate_normal_support_probs(
     return full_grid, full_grid, probs
 
 
-def beta_discrete_uniform_support_probs(
-    R: int,
-    k: int = 4,
-    grid_range: tuple[float, float] = (-4.5, 3.5),
-    seed: int = 0,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Exactly ``k`` grid points carry equal mass, all others are on the boundary.
+# Hardcoded locations and (unequal) masses for the four types DGP.
+# Drawn at random once and frozen, so the DGP is identical across runs,
+# repetitions, and seeds. Each location is snapped to the nearest grid point,
+# so the true distribution lives on the estimator grid for every R.
+FOUR_TYPES_POINTS = np.array([
+    [-3.2, 1.6],
+    [-1.0, -2.9],
+    [0.6, 2.3],
+    [2.4, -0.7],
+])
+FOUR_TYPES_MASSES = np.array([0.37, 0.29, 0.21, 0.13])
 
+
+def beta_four_types_support_probs(
+    R: int,
+    grid_range: tuple[float, float] = (-4.5, 3.5),
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Four fixed grid points carry unequal mass, all others are on the boundary.
+
+    The four active points (``FOUR_TYPES_POINTS`` snapped to the grid)
+    carry masses ``FOUR_TYPES_MASSES`` = (0.37, 0.29, 0.21, 0.13);
+    the remaining ``R - 4`` points have structurally zero probability.
     Provides a clean interior/boundary split to study coverage across
     structural zeros.
 
@@ -415,13 +432,8 @@ def beta_discrete_uniform_support_probs(
     ----------
     R : int
         Total number of grid points; must be a perfect square.
-    k : int, optional
-        Number of points that receive positive mass.
     grid_range : tuple of float, optional
         (min, max) range for both grid dimensions.
-    seed : int, optional
-        Seed for selecting the ``k`` active points (independent of the main
-        simulation RNG).
 
     Returns
     -------
@@ -430,10 +442,15 @@ def beta_discrete_uniform_support_probs(
     probs : np.ndarray of shape (R,)
     """
     full_grid = _make_grid(R, grid_range)
-    rng = np.random.default_rng(seed)
-    selected = rng.choice(len(full_grid), size=k, replace=False)
     probs = np.zeros(len(full_grid))
-    probs[selected] = 1.0 / k
+    for point, mass in zip(FOUR_TYPES_POINTS, FOUR_TYPES_MASSES):
+        idx = np.argmin(np.linalg.norm(full_grid - point, axis=1))
+        if probs[idx] > 0:
+            raise ValueError(
+                "Two four-types points snapped to the same grid point; "
+                "the grid is too coarse for the hardcoded locations."
+            )
+        probs[idx] = mass
     return full_grid, full_grid, probs
 
 
@@ -478,14 +495,14 @@ def beta_bimodal_support_probs(
     return full_grid, full_grid, probs
 
 
-def beta_diffuse_support_probs(
+def beta_wide_normal_support_probs(
     R: int,
     mean: tuple[float, float] = (0.0, 0.0),
     variance: float = 4.0,
     corr: float = 0.0,
     grid_range: tuple[float, float] = (-4.5, 3.5),
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Diffuse Gaussian with small positive mass everywhere (near-boundary globally).
+    """Wide (high-variance) Gaussian with small positive mass everywhere (near-boundary globally).
 
     Varying ``corr`` in {-0.7, 0.0, 0.7} allows studying grid-orientation
     effects on coverage.
@@ -516,7 +533,7 @@ def beta_diffuse_support_probs(
     return full_grid, full_grid, probs
 
 
-def beta_concentrated_spike_support_probs(
+def beta_almost_single_type_support_probs(
     R: int,
     center: tuple[float, float] = (0.0, 0.0),
     spike_mass: float = 0.9,
@@ -548,6 +565,65 @@ def beta_concentrated_spike_support_probs(
     spike_idx = np.argmin(np.linalg.norm(full_grid - np.asarray(center), axis=1))
     probs = np.full(len(full_grid), (1 - spike_mass) / (len(full_grid) - 1))
     probs[spike_idx] = spike_mass
+    return full_grid, full_grid, probs
+
+
+def beta_single_type_support_probs(
+    R: int,
+    center: tuple[float, float] = (0.0, 0.0),
+    grid_range: tuple[float, float] = (-4.5, 3.5),
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """All mass at one grid point, exactly zero mass everywhere else.
+
+    Degenerate version of the almost-single-type DGP: every individual shares
+    the same coefficient vector, so all ``R`` parameters sit exactly on a
+    boundary of the simplex (``R - 1`` at zero, one at one).
+
+    Parameters
+    ----------
+    R : int
+        Total number of grid points; must be a perfect square.
+    center : tuple of float, optional
+        Coordinates of the spike; snapped to the nearest grid point.
+    grid_range : tuple of float, optional
+        (min, max) range for both grid dimensions.
+
+    Returns
+    -------
+    full_grid : np.ndarray of shape (R, 2)
+    support : np.ndarray of shape (R, 2)
+    probs : np.ndarray of shape (R,)
+    """
+    return beta_almost_single_type_support_probs(
+        R, center=center, spike_mass=1.0, grid_range=grid_range
+    )
+
+
+def beta_strictly_uniform_support_probs(
+    R: int,
+    grid_range: tuple[float, float] = (-4.5, 3.5),
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Exactly equal mass ``1 / R`` at every grid point.
+
+    No parameter is on the boundary, but every parameter approaches it at
+    rate ``1 / R`` as the grid grows: a globally near-boundary setting with
+    no shape information in the true distribution.
+
+    Parameters
+    ----------
+    R : int
+        Total number of grid points; must be a perfect square.
+    grid_range : tuple of float, optional
+        (min, max) range for both grid dimensions.
+
+    Returns
+    -------
+    full_grid : np.ndarray of shape (R, 2)
+    support : np.ndarray of shape (R, 2)
+    probs : np.ndarray of shape (R,)
+    """
+    full_grid = _make_grid(R, grid_range)
+    probs = np.full(len(full_grid), 1.0 / len(full_grid))
     return full_grid, full_grid, probs
 
 

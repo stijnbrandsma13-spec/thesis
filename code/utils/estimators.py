@@ -15,6 +15,11 @@ def _solve_simplex_ls(Z: np.ndarray, y: np.ndarray) -> np.ndarray:
     NNLS reparametrisation: pin theta_R = 1 - sum(theta_1..R-1). If the NNLS
     solution sums to more than one, walk a LASSO path and interpolate to the
     point where the coefficients sum to exactly one.
+
+    Works on any design with R columns; in particular it accepts the compact
+    (R, R) QR factor cached by :meth:`FKRBEstimator.estimate`, which yields
+    the same minimiser as the full (N*(J-1), R) design at a fraction of the
+    cost.
     """
     R = Z.shape[1]
     if R == 1:
@@ -160,6 +165,14 @@ class FKRBEstimator:
         self._sqrt_w: np.ndarray | None = None
         self.vcov_cp: np.ndarray | None = None
         self.se_cp: np.ndarray | None = None
+        # Compact QR factorisation of Z and cached Gram quantities, set by
+        # estimate(): ||y - Z th||^2 = ||z - Rf th||^2 + const, so all LS
+        # solves and RSS differences downstream can use the (R, R) factor.
+        self._Q: np.ndarray | None = None
+        self._Rf: np.ndarray | None = None
+        self._z: np.ndarray | None = None
+        self._ZtZ: np.ndarray | None = None
+        self._ZtZ_inv: np.ndarray | None = None
 
     # def _nearest_psd(matrix: np.ndarray, epsilon: float = 0.0) -> np.ndarray:
     #     vals, vecs = np.linalg.eigh(matrix)
@@ -214,7 +227,8 @@ class FKRBEstimator:
         theta : np.ndarray of shape (R,)
             Unconstrained OLS estimate.
         """
-        theta = np.linalg.lstsq(Z, y, rcond=None)[0]
+        # Same minimiser as lstsq on the full design: pinv(Q Rf) = pinv(Rf) Q'.
+        theta = np.linalg.lstsq(self._Rf, self._z, rcond=None)[0]
         self.theta['unconstrained'] = theta
 
         u = y - Z @ theta
@@ -224,7 +238,7 @@ class FKRBEstimator:
         scores = np.einsum('ijr,ij->ir', Z_clustered, u_clustered)
         omega_hat = scores.T @ scores
 
-        ZprimeZinv = np.linalg.pinv(Z.T @ Z)
+        ZprimeZinv = self._ZtZ_inv
         bias_correction = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
         vcov = bias_correction * ZprimeZinv @ omega_hat @ ZprimeZinv
 
@@ -260,7 +274,7 @@ class FKRBEstimator:
             Constrained estimate satisfying theta >= 0 and sum(theta) = 1.
         """
         if NNL:
-            theta = _solve_simplex_ls(Z, y)
+            theta = _solve_simplex_ls(self._Rf, self._z)
             self.theta['constrained'] = theta
 
         else:
@@ -312,7 +326,8 @@ class FKRBEstimator:
         y = y[:, 1:].ravel()
 
         if self.optimal_weighting:
-            theta_first = _solve_simplex_ls(Z, y)
+            Q0, Rf0 = np.linalg.qr(Z)
+            theta_first = _solve_simplex_ls(Rf0, Q0.T @ y)
             p_hat = np.clip(Z @ theta_first, 1e-6, 1 - 1e-6)
             sqrt_w = 1.0 / np.sqrt(p_hat * (1.0 - p_hat))
             Z = sqrt_w[:, None] * Z
@@ -323,6 +338,20 @@ class FKRBEstimator:
         self._y = y
         self._N = N
         self._J = J
+
+        # Thin QR of the (possibly re-weighted) design. Every least-squares
+        # solve and RSS difference downstream uses the compact (R, R) factor
+        # Rf and projected response z instead of the (N*(J-1), R) design;
+        # the Gram matrix and its pseudo-inverse are cached so the sandwich
+        # and QLR code never recompute them.
+        Q, Rf = np.linalg.qr(Z)
+        self._Q = Q
+        self._Rf = Rf
+        self._z = Q.T @ y
+        self._ZtZ = Rf.T @ Rf
+        self._ZtZ_inv = np.linalg.pinv(self._ZtZ)
+        self.vcov_cp = None
+        self.se_cp = None
 
         if estimate_both:
             if constrained:
@@ -351,9 +380,11 @@ class FKRBEstimator:
         """Plug-in estimate of a scalar functional, with optional delta-method CI.
 
         The point estimate is ``functional(theta_constrained)``. When ``ci=True``,
-        a delta-method confidence interval is computed using the unconstrained
-        OLS covariance matrix and then clipped to the feasible range of the
-        functional over the probability simplex.
+        the confidence interval centre and width both come from the unconstrained
+        OLS estimator (eq. CIfunctional in the paper): the centre is
+        ``functional(theta_ols)`` and the width uses the delta-method standard
+        error at ``theta_ols``. The interval is then clipped to the feasible
+        range of the functional over the probability simplex.
 
         Parameters
         ----------
@@ -383,22 +414,25 @@ class FKRBEstimator:
             returned when ``ci=True``.
         """
         theta_constrained = self.theta['constrained']
-        eta = functional(theta_constrained)
+        eta_constrained = functional(theta_constrained)
 
         if not ci:
-            return eta
+            return eta_constrained
 
         R = self.beta_support.shape[0]
         if derivative is None:
             derivative = nd.Gradient(functional)
 
+        # Both centre and width of the CI come from the unconstrained OLS
+        # estimate (eq. CIfunctional in the paper).
         theta_ols = self.theta['unconstrained']
+        eta_ols = functional(theta_ols)
         nabla_T = derivative(theta_ols)
         se = sqrt(nabla_T.T @ self.vcov @ nabla_T)
         z_score = norm.ppf(1 - alpha / 2)
 
-        lower_bound = eta - z_score * se
-        upper_bound = eta + z_score * se
+        lower_bound = eta_ols - z_score * se
+        upper_bound = eta_ols + z_score * se
 
         eq_cons = {'type': 'eq', 'fun': lambda x: np.sum(x) - 1.0}
         bnds = [(0.0, 1.0)] * R
@@ -410,7 +444,7 @@ class FKRBEstimator:
             clip_upper = -minimize(lambda x: -functional(x), x0, method='SLSQP', bounds=bnds, constraints=eq_cons).fun
 
         ci_bounds = np.clip([lower_bound, upper_bound], a_min=clip_lower, a_max=clip_upper)
-        return eta, ci_bounds
+        return eta_ols, ci_bounds
 
     def _compute_cp_sandwich(self) -> np.ndarray:
         """Cluster-robust sandwich evaluated at the constrained (FKRB) residuals.
@@ -435,7 +469,7 @@ class FKRBEstimator:
         Z_clustered = Z.reshape(N, J - 1, R)
         scores = np.einsum('ijr,ij->ir', Z_clustered, u_clustered)
         omega_hat = scores.T @ scores
-        ZprimeZinv = np.linalg.pinv(Z.T @ Z)
+        ZprimeZinv = self._ZtZ_inv
         bias_correction = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
         self.vcov_cp = bias_correction * ZprimeZinv @ omega_hat @ ZprimeZinv
         self.se_cp = np.sqrt(np.diag(self.vcov_cp))
@@ -490,8 +524,9 @@ class FKRBEstimator:
     def get_confidence_interval(self, alpha: float = 0.05) -> np.ndarray:
         """Compute per-support-point confidence intervals for theta.
 
-        Uses the unconstrained OLS standard errors and clips each interval
-        to [0, 1] (the feasible range for any probability).
+        Both the centre and the width are determined by the unconstrained OLS
+        estimator (eq. CIOLS in the paper). The interval is then clipped to
+        [0, 1] (the feasible range for any probability).
 
         Parameters
         ----------
@@ -504,11 +539,11 @@ class FKRBEstimator:
             ``ci[r, 0]`` and ``ci[r, 1]`` are the lower and upper bounds for
             the r-th support point.
         """
-        theta_constrained = self.theta['constrained']
+        theta_ols = self.theta['unconstrained']
         z_score = norm.ppf(1 - alpha / 2)
 
-        lower = theta_constrained - z_score * self.se
-        upper = theta_constrained + z_score * self.se
+        lower = theta_ols - z_score * self.se
+        upper = theta_ols + z_score * self.se
 
         ci = np.clip(np.column_stack((lower, upper)), 0.0, 1.0)
         self.ci = ci
@@ -569,6 +604,13 @@ class FKRBEstimator:
         theta_hat = self.theta['constrained']
         fitted = Z @ theta_hat
         u_hat_clustered = (y - fitted).reshape(N, J - 1)
+        # Compact form: z* = Q'y* = Rf theta_hat + Q'u*, so each replication
+        # only needs one (M, R) mat-vec before the cheap (R, R) simplex solve.
+        Q = self._Q
+        Rf = self._Rf
+        z_fitted = Rf @ theta_hat
+        ZpZinv = self._ZtZ_inv
+        bc = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
 
         scalar = functional is not None
         if scalar:
@@ -586,21 +628,20 @@ class FKRBEstimator:
         for b in range(B):
             omega = _draw_multipliers(N, multiplier, rng)
             u_star = (u_hat_clustered * omega[:, None]).ravel()
-            y_star = fitted + u_star
-            theta_b = _solve_simplex_ls(Z, y_star)
+            z_star = z_fitted + Q.T @ u_star
+            theta_b = _solve_simplex_ls(Rf, z_star)
 
             if scalar:
                 boot_eta[b] = functional(theta_b)
                 if method == 'studentized':
                     # Sandwich SE on the same bootstrap sample, evaluated at
                     # the unconstrained OLS bootstrap fit.
-                    theta_b_ols = np.linalg.lstsq(Z, y_star, rcond=None)[0]
+                    theta_b_ols = np.linalg.lstsq(Rf, z_star, rcond=None)[0]
+                    y_star = fitted + u_star
                     u_b = (y_star - Z @ theta_b_ols).reshape(N, J - 1)
                     Zc = Z.reshape(N, J - 1, R)
                     scores_b = np.einsum('ijr,ij->ir', Zc, u_b)
                     omega_b = scores_b.T @ scores_b
-                    ZpZinv = np.linalg.pinv(Z.T @ Z)
-                    bc = (N / (N - 1)) * ((N * (J - 1) - 1) / (N * (J - 1) - R))
                     Vb = bc * ZpZinv @ omega_b @ ZpZinv
                     grad_b = derivative(theta_b_ols)
                     boot_se[b] = sqrt(max(grad_b @ Vb @ grad_b, 1e-300))
@@ -639,12 +680,12 @@ class FKRBEstimator:
 
     def qlr_ci(
         self,
-        alpha: float = 0.05,
+        alpha: float | tuple[float, ...] = 0.05,
         functional: Callable[[np.ndarray], float] | None = None,
         derivative: Callable[[np.ndarray], np.ndarray] | None = None,
         c: np.ndarray | None = None,
         tol: float = 1e-4,
-    ) -> np.ndarray | tuple[float, np.ndarray]:
+    ) -> np.ndarray | tuple[float, np.ndarray] | dict:
         """Studentised sieve-QLR CIs (Chen-Pouzo 2015).
 
         For per-support-point inference (``functional`` and ``c`` both
@@ -667,37 +708,59 @@ class FKRBEstimator:
         the simplex-constrained RSS subject to the functional restriction.
         Under regularity, ``T_n -> chi^2_1`` under ``H_0``.
 
+        All restricted least-squares problems run on the compact QR factor
+        cached by :meth:`estimate`; the RSS *difference* in T_n is identical
+        to the full-design one because the projection constant cancels.
+
+        Parameters
+        ----------
+        alpha : float or tuple of float, optional
+            One or several significance levels. The statistic T_n does not
+            depend on alpha, so passing all levels at once shares the entire
+            inversion setup (and memoised T evaluations) across them.
+
         Returns
         -------
         ci : np.ndarray of shape (R, 2) when no functional/c is supplied
         (eta, ci_bounds) : (float, np.ndarray of shape (2,)) otherwise
+        dict : when ``alpha`` is a sequence, a mapping from each alpha to
+            the corresponding result above.
         """
         if self._Z is None or self._y is None:
             raise RuntimeError("Call estimate() before qlr_ci().")
 
-        Z = self._Z
-        y = self._y
+        scalar_alpha = np.isscalar(alpha)
+        alphas = (alpha,) if scalar_alpha else tuple(alpha)
+        crits = {a: chi2.ppf(1 - a, df=1) for a in alphas}
+
+        Rf = self._Rf
+        z = self._z
         R = self.beta_support.shape[0]
         theta_hat = self.theta['constrained']
-        rss_hat = float(((y - Z @ theta_hat) ** 2).sum())
-        crit = chi2.ppf(1 - alpha, df=1)
-        ZtZ_inv = np.linalg.pinv(Z.T @ Z)
+        rss_hat = float(((z - Rf @ theta_hat) ** 2).sum())
+        ZtZ_inv = self._ZtZ_inv
 
         scalar = (functional is not None) or (c is not None)
 
         if not scalar:
-            ci = np.zeros((R, 2))
+            ci = {a: np.zeros((R, 2)) for a in alphas}
             for r in range(R):
-                g = np.zeros(R)
-                g[r] = 1.0
-                scale = (g @ ZtZ_inv @ g) / max(g @ self.vcov @ g, 1e-300)
+                scale = ZtZ_inv[r, r] / max(self.vcov[r, r], 1e-300)
+                memo: dict[float, float] = {}
 
-                def T(phi0: float, r=r, scale=scale) -> float:
-                    th = _solve_simplex_ls_pinned_coord(Z, y, r, phi0)
-                    return (float(((y - Z @ th) ** 2).sum()) - rss_hat) * scale
+                def T(phi0: float, r=r, scale=scale, memo=memo) -> float:
+                    if phi0 not in memo:
+                        th = _solve_simplex_ls_pinned_coord(Rf, z, r, phi0)
+                        memo[phi0] = (
+                            float(((z - Rf @ th) ** 2).sum()) - rss_hat
+                        ) * scale
+                    return memo[phi0]
 
-                ci[r] = self._invert_qlr(T, theta_hat[r], 0.0, 1.0, crit, tol)
-            return ci
+                for a in alphas:
+                    ci[a][r] = self._invert_qlr(
+                        T, theta_hat[r], 0.0, 1.0, crits[a], tol
+                    )
+            return ci[alphas[0]] if scalar_alpha else ci
 
         # Scalar functional path
         if functional is not None:
@@ -712,39 +775,50 @@ class FKRBEstimator:
 
         scale = (g @ ZtZ_inv @ g) / max(g @ self.vcov @ g, 1e-300)
 
-        eq_simplex = {'type': 'eq', 'fun': lambda t: t.sum() - 1.0}
         bnds = [(0.0, 1.0)] * R
         x0 = np.ones(R) / R
         if functional is not None:
+            eq_simplex = {'type': 'eq', 'fun': lambda t: t.sum() - 1.0}
             lo_feas = float(minimize(functional, x0, method='SLSQP',
                                      bounds=bnds, constraints=eq_simplex).fun)
             hi_feas = -float(minimize(lambda t: -functional(t), x0, method='SLSQP',
                                       bounds=bnds, constraints=eq_simplex).fun)
         else:
-            lo_feas = float(minimize(lambda t: c @ t, x0, method='SLSQP',
-                                     bounds=bnds, constraints=eq_simplex).fun)
-            hi_feas = -float(minimize(lambda t: -c @ t, x0, method='SLSQP',
-                                      bounds=bnds, constraints=eq_simplex).fun)
+            # A linear functional attains its extremes over the simplex at
+            # the vertices, so the feasible range is just [min(c), max(c)].
+            lo_feas = float(c.min())
+            hi_feas = float(c.max())
 
+        memo = {}
         if functional is not None:
             def T(phi0: float) -> float:
-                cons = [
-                    {'type': 'eq', 'fun': lambda t: t.sum() - 1.0},
-                    {'type': 'eq', 'fun': lambda t, p=phi0: functional(t) - p},
-                ]
-                res = minimize(
-                    lambda t: 0.5 * float(((y - Z @ t) ** 2).sum()),
-                    x0, method='SLSQP', bounds=bnds, constraints=cons,
-                )
-                rss = float(((y - Z @ res.x) ** 2).sum())
-                return (rss - rss_hat) * scale
+                if phi0 not in memo:
+                    cons = [
+                        {'type': 'eq', 'fun': lambda t: t.sum() - 1.0},
+                        {'type': 'eq', 'fun': lambda t, p=phi0: functional(t) - p},
+                    ]
+                    res = minimize(
+                        lambda t: 0.5 * float(((z - Rf @ t) ** 2).sum()),
+                        x0, method='SLSQP', bounds=bnds, constraints=cons,
+                    )
+                    rss = float(((z - Rf @ res.x) ** 2).sum())
+                    memo[phi0] = (rss - rss_hat) * scale
+                return memo[phi0]
         else:
             def T(phi0: float) -> float:
-                th = _solve_simplex_ls_pinned_linear(Z, y, c, phi0)
-                return (float(((y - Z @ th) ** 2).sum()) - rss_hat) * scale
+                if phi0 not in memo:
+                    th = _solve_simplex_ls_pinned_linear(Rf, z, c, phi0)
+                    memo[phi0] = (
+                        float(((z - Rf @ th) ** 2).sum()) - rss_hat
+                    ) * scale
+                return memo[phi0]
 
-        ci_bounds = self._invert_qlr(T, eta_hat, lo_feas, hi_feas, crit, tol)
-        return eta_hat, ci_bounds
+        results = {
+            a: (eta_hat, self._invert_qlr(T, eta_hat, lo_feas, hi_feas,
+                                          crits[a], tol))
+            for a in alphas
+        }
+        return results[alphas[0]] if scalar_alpha else results
 
     @staticmethod
     def _invert_qlr(

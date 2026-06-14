@@ -59,9 +59,9 @@
 \maketitle
 
 \begin{abstract}
-    \noindent The FKRB estimator, proposed by \citet{FoxKimRyanBajari2011}, provides a computationally tractable way to estimate the latent class multinomial logit model.
+    \noindent The FKRB estimator, proposed by \citet{FoxKimRyanBajari2011}, provides a computationally tractable way to estimate the mixed logit model with random coefficients.
     While its point estimates are widely used, valid inference remains challenging because the true parameter can be on or near the boundary of the parameter space, where standard asymptotic normality fails.
-    This thesis evaluates the finite-sample coverage of confidence intervals for the FKRB estimator through a Monte Carlo simulation across five data generating processes that vary the distribution of random coefficients, two sample sizes, and two grid sizes.
+    This thesis evaluates the finite-sample coverage of confidence intervals for the FKRB estimator through a Monte Carlo simulation across seven data generating processes that vary the distribution of random coefficients, two sample sizes, and two grid sizes.
     We compare the intervals originally proposed by \citet{FoxKimRyanBajari2011} to the sieve Wald and quasi-likelihood ratio (QLR) procedures of \citet{ChenPouzo2015}, applied both to individual support-point probabilities and to the mean of the mixing distribution.
     The standard FKRB procedure is found to be severely conservative, particularly near the boundary.
     The QLR-based procedure substantially improves coverage when inference targets the mean, but over-rejects when the true parameter lies deep in the interior of the constraint set.
