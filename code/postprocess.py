@@ -59,8 +59,11 @@ _NOTES_SHARED = (
     r"see \cref{@FKRBEQ@}. Wald is the sieve Wald interval from "
     r"\citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the "
     r"(studentized) sieve quasi-likelihood ratio interval, see "
-    r"\cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above "
-    r"this level reflects conservativeness."
+    r"\cref{eq:CIQLR}. The nominal coverage is $1-\alpha$. "
+    r"A star ($^{*}$) marks cells "
+    r"whose confidence interval for the empirical coverage lies entirely "
+    r"above the nominal level, and a dagger ($^{\dagger}$) marks cells "
+    r"whose interval lies entirely below it."
 )
 
 # How the 95% CI on the empirical coverage estimate itself is obtained;
@@ -69,9 +72,7 @@ _CI_NOTE_BOOTSTRAP = (
     r"Brackets contain a 95\% percentile-bootstrap confidence interval for "
     r"the empirical coverage, obtained by resampling the "
     rf"$@REPS@$ Monte Carlo repetitions with replacement ({N_BOOTSTRAP} "
-    r"bootstrap samples); resampling whole repetitions preserves the "
-    r"dependence of the hit indicators across the support points that are "
-    r"averaged over."
+    r"bootstrap samples)."
 )
 _CI_NOTE_WILSON = (
     r"Brackets contain a 95\% Wilson score confidence interval for the "
@@ -93,9 +94,9 @@ TABLE_SPECS = {
         "notes": (
             r"\textit{Notes:} Each cell reports the empirical coverage "
             r"probability of the corresponding confidence interval, computed "
-            r"across $@REPS@$ Monte Carlo repetitions of the FKRB estimator "
-            r"on data generated from the seven DGPs of \Cref{sec:dgp} and "
-            r"averaged over the support points $\theta_r$ on the "
+            r"across $@REPS@$ Monte Carlo repetitions "
+            r"on data generated from the seven DGPs of \cref{sec:dgp}."
+            r"The cells reports the average over all support points $\theta_r$ on the "
             r"prespecified grid $\mathcal{B}$. "
             + _CI_NOTE_BOOTSTRAP + " "
             + _NOTES_SHARED.replace("@FKRBEQ@", "eq:CIFKRB")
@@ -117,7 +118,7 @@ TABLE_SPECS = {
             r"linear functional $\mathbb{E}[\beta_1] = \sum_r \theta_r "
             r"\beta_1^{(r)}$, computed across $@REPS@$ Monte Carlo "
             r"repetitions of the FKRB estimator on data generated from the "
-            r"seven DGPs of \Cref{sec:dgp}. "
+            r"seven DGPs of \cref{sec:dgp}. "
             + _CI_NOTE_WILSON + " "
             + _NOTES_SHARED.replace("@FKRBEQ@", "eq:CIfunctional")
         ),
@@ -125,6 +126,11 @@ TABLE_SPECS = {
     "mean_2": {
         "filename": "coverage_mean_2.tex",
         "label": "tab:coverage_Eb2",
+        # Rendered as a non-floating block: this table lives on a landscape
+        # appendix page after a section heading, where a real float would be
+        # deferred out of the rotated region (page landscape, table upright)
+        # and split from its heading.  See make_coverage_table.
+        "float": False,
         "caption": (
             r"Empirical coverage of the original FKRB "
             r"\citep{FoxKimRyanBajari2011}, and sieve Wald and sieve QLR "
@@ -138,7 +144,7 @@ TABLE_SPECS = {
             r"linear functional $\mathbb{E}[\beta_2] = \sum_r \theta_r "
             r"\beta_2^{(r)}$, computed across $@REPS@$ Monte Carlo "
             r"repetitions of the FKRB estimator on data generated from the "
-            r"seven DGPs of \Cref{sec:dgp}. "
+            r"seven DGPs of \cref{sec:dgp}. "
             + _CI_NOTE_WILSON + " "
             + _NOTES_SHARED.replace("@FKRBEQ@", "eq:CIfunctional")
         ),
@@ -248,11 +254,20 @@ def make_coverage_table(
     def _ci_cell(bounds: tuple[float, float] | None) -> str:
         if bounds is None:
             return ""
-        # Drop leading zeros and the comma, and stack the bounds on two
-        # lines: a 21-data-column table leaves ~14pt per X column, so even
-        # in \tiny the interval does not fit on one line.
+        # Drop leading zeros and the comma.
         lo, hi = (f"{b:.3f}".replace("0.", ".") for b in bounds)
-        return rf"{{\tiny [{lo}\newline {hi}]}}"
+        return rf"{{\tiny [{lo},~{hi}]}}"
+
+    def _sig_marker(bounds: tuple[float, float] | None, nominal: float) -> str:
+        """Star if the coverage CI is fully above nominal, dagger if below."""
+        if bounds is None:
+            return ""
+        lo, hi = bounds
+        if lo > nominal:
+            return r"$^{*}$"
+        if hi < nominal:
+            return r"$^{\dagger}$"
+        return ""
 
     rows: list[str] = []
     prev_alpha = None
@@ -262,11 +277,16 @@ def make_coverage_table(
         prev_alpha = alpha
         values = []
         ci_values = []
+        nominal = 1 - alpha
         for d in dgps:
             for m in methods:
                 v = cells.get((alpha, N, R, d, m))
-                values.append("--" if v is None else f"{v:.3f}")
-                ci_values.append(_ci_cell(cells_ci.get((alpha, N, R, d, m))))
+                bounds = cells_ci.get((alpha, N, R, d, m))
+                if v is None:
+                    values.append("--")
+                else:
+                    values.append(f"{v:.3f}{_sig_marker(bounds, nominal)}")
+                ci_values.append(_ci_cell(bounds))
         rows.append(
             f"        {alpha:g} & {_latex_int(N)} & {R} & "
             + " & ".join(values) + r" \\"
@@ -281,14 +301,9 @@ def make_coverage_table(
 
     notes = spec["notes"].replace("@REPS@", str(reps) if reps else "?")
 
-    return "\n".join([
-        r"\begin{table}[htbp]",
-        r"    \centering",
-        rf"    \caption{{{spec['caption']}}}",
-        rf"    \label{{{spec['label']}}}",
-        r"    \footnotesize",
-        r"    \setlength{\tabcolsep}{1.5pt}",
-        rf"    \begin{{tabularx}}{{\textwidth}}{{ccc *{{{n_cols - 3}}}{{>{{\centering\arraybackslash}}X}}}}",
+    # The tabular core (toprule .. bottomrule) is shared by both wrappers.
+    table_core = [
+        rf"    \begin{{tabularx}}{{\linewidth}}{{ccc *{{{n_cols - 3}}}{{>{{\centering\arraybackslash}}X}}}}",
         r"        \toprule",
         rf"        & & & {dgp_header} \\",
         rf"        {cmidrules}",
@@ -297,13 +312,48 @@ def make_coverage_table(
         *rows,
         r"        \bottomrule",
         r"    \end{tabularx}",
-        r"    \begin{minipage}{\textwidth}",
-        r"        \vspace{0.5ex}",
-        rf"        \footnotesize {notes}",
-        r"    \end{minipage}",
-        r"\end{table}",
-        "",
-    ])
+    ]
+
+    if spec.get("float", True):
+        lines = [
+            r"\begin{table}[htbp]",
+            r"    \centering",
+            rf"    \caption{{{spec['caption']}}}",
+            rf"    \label{{{spec['label']}}}",
+            r"    \footnotesize",
+            r"    \setlength{\tabcolsep}{1.5pt}",
+            *table_core,
+            r"    \begin{minipage}{\linewidth}",
+            r"        \vspace{0.5ex}",
+            rf"        \footnotesize {notes}",
+            r"    \end{minipage}",
+            r"\end{table}",
+            "",
+        ]
+    else:
+        # Non-floating variant for the landscape appendix page.  A real float
+        # placed inside a \begin{landscape} block after a section heading is
+        # deferred out of the rotated region: the page keeps the landscape
+        # /Rotate but the table prints upright (sideways on screen) and is
+        # split from its heading.  Typesetting it as ordinary content keeps it
+        # on the heading's page and rotated with it.  \captionof (from the
+        # caption package, loaded via subcaption) gives a normal "Table N"
+        # caption and cross-reference without a float.
+        lines = [
+            r"\begin{center}",
+            r"    \footnotesize",
+            r"    \setlength{\tabcolsep}{1.5pt}",
+            rf"    \captionof{{table}}{{{spec['caption']}}}",
+            rf"    \label{{{spec['label']}}}",
+            *table_core,
+            r"    \par\vspace{0.5ex}",
+            r"    \begin{minipage}{\linewidth}",
+            rf"        \footnotesize {notes}",
+            r"    \end{minipage}",
+            r"\end{center}",
+            "",
+        ]
+    return "\n".join(lines)
 
 
 def generate_tables(

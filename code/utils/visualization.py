@@ -250,23 +250,36 @@ _FONT_ITALIC_PATH = _fm.findfont(
 _VTK_FONT_FILE = 4  # vtkTextProperty font-family code selecting an external TTF
 
 
-def _trim_white(path: str, pad: int = 24) -> None:
+def _trim_white(path: str, pad: int = 24) -> bool:
     """Crop uniform white margins off a saved PNG, leaving a small padding.
 
     Lets us frame the scene generously (so axis titles are never clipped) and
     then tighten to the actual content, mimicking matplotlib's ``bbox_inches``.
+
+    Returns ``True`` when a valid frame was cropped and ``False`` (leaving the
+    file untouched) when the non-white content is degenerately thin.  An
+    off-screen VTK frame is occasionally captured before the scene finishes
+    drawing, leaving only a stray axis line; cropping to that hairline produced
+    a ~50 px-wide PNG that, scaled to the paper's column width, became an
+    absurdly tall, narrow figure.  Signalling the bad capture lets the caller
+    re-render instead of silently saving the strip.  A genuine bar chart always
+    fills most of the frame (the bars tile the full grid box), so a real figure
+    never trips the threshold.
     """
     img = Image.open(path).convert('RGB')
     bg = Image.new('RGB', img.size, (255, 255, 255))
     bbox = ImageChops.difference(img, bg).getbbox()
     if bbox is None:
-        return
+        return False  # fully blank capture
     left, top, right, bottom = bbox
+    if (right - left) < 0.33 * img.width or (bottom - top) < 0.33 * img.height:
+        return False  # hairline / partial capture — let the caller retry
     left = max(0, left - pad)
     top = max(0, top - pad)
     right = min(img.width, right + pad)
     bottom = min(img.height, bottom + pad)
     img.crop((left, top, right, bottom)).save(path)
+    return True
 
 
 def _add_png_title(path: str, title: str, font_size: int = 46, pad: int = 18) -> None:
@@ -585,8 +598,22 @@ def _render_bar_chart(
     plotter.camera.zoom(1.1)
 
     if save_path is not None:
-        plotter.screenshot(save_path)
-        _trim_white(save_path)
+        # VTK's off-screen buffer is occasionally read back before the scene
+        # has finished drawing, yielding a near-blank frame that _trim_white
+        # would crop to a hairline.  Re-render and recapture until the frame
+        # is valid (bars filling the box), capped so a genuinely empty scene
+        # can't loop forever.
+        for _attempt in range(3):
+            plotter.screenshot(save_path)
+            if _trim_white(save_path):
+                break
+            plotter.render()
+        else:
+            import logging
+            logging.warning(
+                "3-D bar chart capture stayed degenerate after retries: %s",
+                save_path,
+            )
         if title:
             _add_png_title(save_path, title)
     if show:

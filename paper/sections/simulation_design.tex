@@ -9,17 +9,17 @@ All DGPs place the random coefficients in two dimensions, which keeps interpreta
 We compare the three interval constructions of \cref{sec:Inference}: the original FKRB interval \cref{eq:CIFKRB,eq:CIfunctional}, the sieve Wald interval \cref{eq:CIChenPouzo}, and the studentized sieve QLR interval \cref{eq:CIQLR}.
 We build all three for every support-point probability $\theta_r$ and for the two coordinate means $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$, forming the mean intervals separately for each coordinate.
 
-We fit every construction under the feasible GLS weighting of \cref{sec:FKRBGLS} rather than the identity weighting of the original FKRB criterion.
-The FKRB regression is heteroskedastic by construction, because the error $\zeta_{ij}$ carries the variance of a binary choice indicator, and the feasible GLS weights recover this efficiency at no asymptotic cost \citep{Greene2019}.
-The same weighting makes the estimator the optimally-weighted sieve estimator of \citet{ChenPouzo2015}, which is the setting under which the sieve Wald and QLR intervals are designed to be valid.
+We fit every construction under a feasible GLS weighting (\cref{sec:FKRBGLS}) rather than the identity weighting of the original FKRB criterion.
+The FKRB regression is heteroskedastic by construction, because the error $\zeta_{ij}$ carries the variance of a binary choice indicator, so reweighting improves efficiency over the identity-weighted criterion \citep{Greene2019}.
+The sieve Wald and QLR intervals of \citet{ChenPouzo2015} attain their simplest form under optimal weighting; because the weighting we use is feasible but not optimal (see \cref{sec:implementation}), we rely on the studentized QLR statistic of \cref{eq:QLRnonoptimal}, which remains asymptotically pivotal under non-optimal weighting.
 Standard errors throughout come from the individual-clustered, heteroskedasticity-robust sandwich of \cref{eq:FKRBclustervcov}.
 
 We evaluate every interval at two significance levels, $\alpha = 0.05$ and $\alpha = 0.5$.
 The former matches the level most common in the literature.
-The latter is deliberately large; as \cref{sec:results} shows, coverage at $\alpha = 0.05$ is often close to one, and the higher level gives a more complete picture on how severe the conservativeness is.
+The latter is deliberately large; as \cref{sec:results} shows, coverage at $\alpha = 0.05$ is often close to one, and the higher level gives a more complete picture of how severe the conservativeness is.
 
 The details on the numerical implementation of the simulation can be found in \cref{sec:implementation}.
-We highlight a couple things here.
+We highlight a couple of things here.
 We use a suboptimal GLS weighting, even though the optimal weighting is known.
 The suboptimal weighting matrix is a diagonal matrix, which simplifies the matrix inversion of \cref{eq:FKRBGLSest}.
 
@@ -28,10 +28,10 @@ We first try solving it with only the nonnegative constraint \eqref{eq:FKRBNNLco
 This allows us to use the fast active-set algorithm \citep{LawsonHanson1995}.
 If this solution does not satisfy the sum-to-one constraint we trace the full path of the coordinate descent algorithm of \citet{FriedmanHastieTibshirani2010}.
 We estimate the unique point where constraint \eqref{eq:FKRBNNLconstraint1} is binding by linear interpolation between the two points on the path that cross the constraint.
-This strategy is the same as \citet{Brand2023}.
+This strategy is the same as in \citet{Brand2023}.
 
 Especially on the bigger grid $R=225$, some matrices can be severely ill-conditioned.
-Therefore, when there is a risk of ill-conditionedness we we use the Moore-Penrose pseudoinverse instead of a regular inverse.
+Therefore, when there is a risk of ill-conditioning, we use the Moore-Penrose pseudoinverse instead of a regular inverse.
 
 To invert the QLR statistic we use Brent's method \citep{Brent1973}.
 This part is the most expensive of the simulation.
@@ -41,22 +41,22 @@ In each iteration of Brent's algorithm we call the nonnegative LASSO solver, whi
 \label{sec:dgp}
 We generate data according to the random coefficient discrete choice model from \cref{sec:mxl}.
 The DGPs are partially inspired by \citet{HeissHetzeneckerOsterhaus2022}.
-We copy their sampling of the exogenous $\bm{x}_{ij}$ uniformly from $[0,5]\times[-3,1]$, i.e. $\bm{x}_{ij} \sim \mathcal{U}([0,5]\times[-3,1])$.
+We adopt their sampling of the exogenous $\bm{x}_{ij}$ uniformly from $[0,5]\times[-3,1]$, i.e. $\bm{x}_{ij} \sim \mathcal{U}([0,5]\times[-3,1])$.
 This is the same across all DGPs.
-Furthermore, we copy $N \in \{1\,000,10\,000\}$.
-That means that we run our analysis on two sample sizes.
+Furthermore, we adopt $N \in \{1\,000, 10\,000\}$.
+We thus run our analysis on two sample sizes.
 We differ in our choice of $R \in \{25, 225\}$.
-In contrast to \citeauthor{HeissHetzeneckerOsterhaus2022} we only repeat our analysis for two grid sizes, where our big grid size is slightly smaller than theirs because of numerical instability issues.
+In contrast to \citeauthor{HeissHetzeneckerOsterhaus2022}, we only repeat our analysis for two grid sizes, and our large grid size is slightly smaller than theirs because of numerical instability issues.
 
-The biggest difference with \citeauthor{HeissHetzeneckerOsterhaus2022} is the choice of distributions for the random coefficients.
+The main difference with \citeauthor{HeissHetzeneckerOsterhaus2022} is the choice of distributions for the random coefficients.
 We consider seven different distributions for $\bm{\beta}_{i}$.
-Each of them is a discrete distribution supported on the same regular equally-spaced $\sqrt{R}\times\sqrt{R}$ grid $\tilde{\mathcal{B}}\subset[-4.5, 3.5]^2$.
+Each of them is a discrete distribution supported on the same regular, equally spaced $\sqrt{R}\times\sqrt{R}$ grid $\tilde{\mathcal{B}}\subset[-4.5, 3.5]^2$.
 This is also the same grid that we feed to the FKRB estimator as the prespecified support.
 That means $\tilde{\mathcal{B}} = \mathcal{B}$ holds by construction, so any conservativeness we observe is not driven by grid misspecification.
 
 The seven distributions are chosen to vary the prevalence of the boundary problem mentioned in \cref{sec:Inference}.
 Whenever the true mass $\theta_r$ at a support point is zero, the parameter sits on the boundary of $\Delta_R$.
-By picking distributions ranging from ``no support point on the boundary'' to ``every support point on the boundary'', we get a more complete picture of the conservativeness of the FKRB confidence intervals.
+By picking distributions ranging from ``no support point on the boundary'' to ``every support point on the boundary'', we obtain a more complete picture of the conservativeness of the FKRB confidence intervals.
 
 \paragraph{Bimodal}
 \label{sec:dgp:bimodal}
@@ -112,9 +112,9 @@ See \cref{fig:dgp:tight}.
 The third distribution is a discretized bivariate normal distribution with mean $\bm{0}$ and covariance matrix $4\bm{I}$.
 The increased variance spreads the mass over the entire grid, which is why we call this distribution the wide normal.
 Compared to the tight normal, the renormalized probabilities at each grid point are more uniform and smaller in magnitude.
-In constrast to the tight normal, there are more grid points decently away from the boundary, but fewer grid points far away from the boundary.
-The structure is the same however.
-This distribution allows us to compare two structurally-identical distributions with different boundary problems.
+In contrast to the tight normal, there are more grid points moderately far from the boundary, but fewer grid points far from the boundary.
+The structure is the same, however.
+This distribution allows us to compare two structurally identical distributions with different boundary problems.
 See \cref{fig:dgp:wide}.
 
 \begin{figure}[htbp]
@@ -182,7 +182,7 @@ See \cref{fig:dgp:ast}.
 The sixth distribution is the degenerate version of the almost single type: it puts all mass on the same grid point near $\bm{0}$ and zero mass on every other grid point.
 Every individual now has the same coefficient vector, so no heterogeneity remains and the population consists of a single type.
 All $R$ parameters lie exactly on the boundary of $\Delta_R$: $R-1$ of them at $\theta_r = 0$ and the spike itself at $\theta_r = 1$.
-The point of this distribution is to study the behaviour of the confidence intervals when every single parameter is on the boundary.
+The point of this distribution is to study the behavior of the confidence intervals when every single parameter is on the boundary.
 See \cref{fig:dgp:singletype}.
 
 \begin{figure}[htbp]
@@ -257,7 +257,7 @@ Resampling at the repetition level preserves the within-repetition dependence ac
 For the two means we do not have to resort to bootstrapping methods.
 We use the analytical Wilson score interval \citep{Wilson1927}.
 Each repetition now contributes a single Bernoulli hit, so the estimate in \cref{eq:mc_coverage} is a genuine binomial proportion from $M$ independent draws, for which a binomial interval is appropriate.
-Writing $\hat{c}$ for the hit frequency \cref{eq:mc_coverage} and $z = \Phi^{-1}(0.975)$, the Wilson interval centres on the shrunken proportion $\tilde{c}$ and extends by the half-width $w$,
+Writing $\hat{c}$ for the hit frequency \cref{eq:mc_coverage} and $z = \Phi^{-1}(0.975)$, the Wilson interval centers on the shrunken proportion $\tilde{c}$ and extends by the half-width $w$,
 \begin{equation}
 \label{eq:wilson_parts}
     \tilde{c} = \frac{\hat{c} + z^{2}/(2M)}{1 + z^{2}/M},

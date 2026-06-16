@@ -5,7 +5,7 @@
 \label{sec:mxl}
 We start by introducing the mixed logit model in detail.
 This is the model of interest for this thesis.
-The mixwd logit can be derived from various behaviour specifications \citep{Train2009}.
+The mixed logit can be derived from various behavior specifications \citep{Train2009}.
 We will show the derivation from a random coefficient discrete choice model.
 
 In the model we assume that individual $i$, where $i = 1,\ldots,N$, makes a choice $j$ between $J$ alternatives and one outside good ($j=0$).
@@ -18,7 +18,7 @@ where $\bm{x}_{ij} \in \mathbb{R}^K$ denotes the column vector with observed exo
 Furthermore, $\bm{\beta}_{i}\in \mathcal{B} \subset \mathbb{R}^K$ denotes the unobserved column vector of individual-specific random coefficients, for individual $i$. 
 Here, $\mathcal{B}$ denotes the support of the random coefficients.
 When the random coefficients have finite support some speak of a latent class model, specifically the latent class multinomial logit model \citep{Train2009}.
-In this model the elements of the support are often called ``types'', refering to the different types of individuals in the population.
+In this model the elements of the support are often called ``types'', referring to the different types of individuals in the population.
 The random coefficient vectors are independent and identically distributed (i.i.d.) draws from a cumulative distribution function $F_0$.\footnote{This means that for each individual $i$, the random coefficient vector $\bm{\beta}_{i}$ as a whole is jointly distributed as $F_0$. This does not mean that each element of a random coefficient vector is marginally distributed as $F_0$.}
 The distribution function is not observed.
 Next, $\varepsilon_{ij}\in \mathbb{R}$ denotes the unobserved idiosyncratic error term for individual $i$, choice $j$. 
@@ -28,13 +28,13 @@ That is, $\mathbb{E}[\varepsilon_{ij}\mid \bm{x}_{i1}, \ldots,\bm{x}_{iJ}] = 0$ 
 At last, for $j=0$ (the outside good) we impose $u_{i0} = \varepsilon_{i0}$.
 
 Let $y_{ij} \in \{0,1\}$ denote the indicator of the event that individual $i$ chooses the $j$th alternative. 
-We assume individuals maximize utility. Then this implies
+Assuming individuals maximize utility implies
 \begin{equation}
 \label{eq:mxlydef}
     y_{ij} = \mathds{1}\{u_{ij} > u_{ik}, \text{ for all } j \neq k\} = \prod_{\substack{k=1; \\ k\neq j}}^{J}\mathds{1}\{u_{ij} > u_{ik}\}.
 \end{equation}
 
-As a researcher, the goal is often to estimate $F_0$ by $\hat{F}_0$, and possibly to conduct inference on this.
+As a researcher, one often aims to estimate $F_0$ by $\hat{F}_0$, and possibly to conduct inference on this.
 Sometimes the researcher is only interested in a parameter $\bm{\eta}$ that is specified by a (possibly vector-valued) functional $T$ of $F_0$, i.e. $\bm{\eta} = T(F_0)$.
 A common estimator for $\bm{\eta}$ is the plug-in estimator $\hat{\bm{\eta}}$ defined by $\hat{\bm{\eta}} = T(\hat{F}_0)$ \citep[see][chap.~23]{vanderVaart1998}.
 An example of such a parameter that is specified by a functional of $F_0$ is the population mean $\bm{\mu} = \mathbb{E}[\bm{\beta}]$.\footnote{Technically, we should specify that $\bm{\beta}\overset{\mathrm{d}}{=}\bm{\beta}_i$.}\footnote{To see that $\mu$ is indeed a parameter specified by a functional we notice that $\mu = T(F_0)$, where the functional $T: \mathcal{F} \to \mathbb{R}$ maps the distribution to the real line continuously via the integration $T(F) = \int_{\mathcal{X}_F} x \, \mathrm{d}F(x)$, where $\mathcal{F}$ denotes the space of all distribution functions and $\mathcal{X}_F$ denotes the support of $x$ distributed by $F$.}
@@ -71,7 +71,7 @@ Then they show that these can be consistently estimated by means of (constrained
 \label{sec:FKRBderivation}
 For completeness, we first show the derivation of the estimator. 
 For some $R \in \mathbb{N}_+$, let $\tilde{\mathcal{B}} = \{\bm{\beta}^{(1)}, \bm{\beta}^{(2)}, \ldots, \bm{\beta}^{(R)}\}$.
-Both $R$ and $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified.\footnote{There exists an extension of the estimator where these do not have to be prespecified, but depend on the sample size $N$. This is dicussed in \cref{sec:nonparametricFKRB}.} 
+Both $R$ and $\bm{\beta}^{(r)}$ should not be parameters of the model; they should be prespecified.\footnote{There exists an extension of the estimator where these do not have to be prespecified, but depend on the sample size $N$. This is discussed in \cref{sec:nonparametricFKRB}.} 
 We let $\theta_r$ denote the value of the probability mass function of $\bm{\beta}_{i}$ at $\bm{\beta}^{(r)}$, i.e. $\theta_r = \mathbb{P}(\bm{\beta}_{i} = \bm{\beta}^{(r)})$.
 Then under the assumption $\tilde{\mathcal{B}} = \mathcal{B}$ we have that \cref{eq:mxlcondprob} boils down to
 \begin{equation}
@@ -120,7 +120,7 @@ It is a clipped hyperplane in $\mathbb{R}^R$, see \Cref{fig:unit_simplex}.
     \label{fig:unit_simplex}
 \end{figure}
 
-In practice one often wants to abide to these constraints. 
+In practice one often wants to abide by these constraints. 
 Therefore, \citet{FoxKimRyanBajari2011} suggest the following constrained least squares estimator
 \begin{equation}
 \label{eq:FKRBCLSest}
@@ -133,7 +133,7 @@ One then tries to reconstruct $F_{0}$ according to
     \hat{F}_{0}^{\mathrm{FKRB}}(\bm{b}) = \sum_{r=1}^R \left[\hat{\theta}^{\mathrm{FKRB}}_r \prod_{k=1}^{K}\mathds{1}{\{\beta^{r}_k < b_k\}}\right].
 \end{equation}
 We call this the FKRB estimator.\footnote{In the literature, the estimators in \cref{eq:FKRBCLSest,eq:FKRBest} are interchangeably called the FKRB estimator.}
-The original FKRB estimator can be seen as a parametric estimator, since the estimator is determined merely by an $R$-dimensonial parameter vector, with prespecified $R < \infty$.
+The original FKRB estimator can be seen as a parametric estimator, since the estimator is determined merely by an $R$-dimensional parameter vector, with prespecified $R < \infty$.
 \subsubsection{Nonnegative LASSO estimator}
 \label{sec:FKRBNNL}
 \citet{HeissHetzeneckerOsterhaus2022} show the FKRB estimator can also be expressed as a nonnegative LASSO (NNL) estimator \citep[see][]{WuYangLiu2014,EfronHastieJohnstoneTibshirani2004}.
@@ -176,17 +176,17 @@ We can now reformulate \cref{eq:FKRBCLSest} into
             &\text{ subject to constraints \eqref{eq:FKRBNNLconstraint1} and \eqref{eq:FKRBNNLconstraint2}}.
     \end{split}
 \end{equation}
-This is a NNL estimator with a pre-specified tuning parameter.
+This is an NNL estimator with a prespecified tuning parameter.
 Unfortunately, \cref{eq:FKRBNNLSestpart} is formulated in the constrained optimization form, whereas most of the literature is specified in the Lagrangian form \citep[e.g.][]{WuYangLiu2014}.
 Most solving algorithms are running on the Lagrangian formulation as well, such as the algorithms in scikit-learn \citep{scikitlearn2011} or glmnet \citep{FriedmanHastieTibshirani2010}.
-Although, the tuning parameter in the constrained optimization form does have a one-to-one correspondence to the tuning parameter in the Lagrangian form, this correspondence is dependent on the data and not straightforward to calculate.
+Although the tuning parameter in the constrained optimization form does have a one-to-one correspondence to the tuning parameter in the Lagrangian form, this correspondence is dependent on the data and not straightforward to calculate.
 
 Note that $\hat{\bm{\theta}}^{\mathrm{NNL*}}$ only estimates the first $R-1$ terms. Therefore the complete estimator reads as
 \begin{equation}
 \label{FKRBNLSest}
     \hat{\bm{\theta}}^{\mathrm{NNL}} = \left(\hat{\bm{\theta}}^{\mathrm{NNL*}}, 1 - \sum_{r=1}^{R-1}\hat{\theta}^{\mathrm{NNL*}}_r\right).
 \end{equation}
-Since all we did was just rewriting the FKRB estimator, we have that $\hat{\bm{\theta}}^{\mathrm{FKRB}} = \hat{\bm{\theta}}^{\mathrm{NNL}}$.
+Since we merely the FKRB estimator, we have that $\hat{\bm{\theta}}^{\mathrm{FKRB}} = \hat{\bm{\theta}}^{\mathrm{NNL}}$.
 \subsubsection{Feasible Generalized Least Squares}
 \label{sec:FKRBGLS}
 Up to this point the FKRB criterion has weighted each regression observation equally.
@@ -235,11 +235,11 @@ However, it is not reasonable to assume the researcher knows the true support $\
 When the researcher misspecifies the support, the fixed grid FKRB estimator becomes biased \citep{FoxKimYang2016}.
 
 Intuitively, the researcher might tackle this problem by letting the grid become finer, which decreases the bias.
-However, with a too fine grid the variance of the estimator will explode.
+However, if the grid is too fine, the variance of the estimator will explode.
 This is, at least partly, caused by the ``random'' weight selecting behavior of the estimator, which is observed in many empirical studies using the FKRB estimator \citep[such as][]{NevoTurnerWilliams2016,IllanesPadi2019,BlundellGowrisankaranLanger2020}.
 This can be explained by the nonnegative LASSO specification of the estimator.
 The LASSO estimator tends to ``randomly'' assign a positive probability mass to only one grid point in a cluster of highly correlated grid points \citep{HeissHetzeneckerOsterhaus2022}.
-Since the grid points are closer to each other in a finer grid, the correlation between the points are also higher.
+Since the grid points are closer to each other in a finer grid, the correlation between the points is also higher.
 This increases the severity of the ``random'' selection problem, which in turn increases the variance.
 This creates a classic bias-variance tradeoff.
 However, since variance decreases at a higher rate than bias when $N \to \infty$, the optimal $R$ in a bias-variance sense increases with $N$.
@@ -254,7 +254,7 @@ This means that for their extension, the $R$ grid points are chosen \textit{a po
 The difference between these two versions is merely the theoretical paradigm on which these estimators rest.
 After the choice of the $R$ grid points the estimators behave exactly the same.
 The nonparametric estimator allows for new theoretical asymptotic results.
-This estimator is namely a sieve estimator \citep[see][]{Chen2007}.
+This estimator is because the estimator a sieve estimator \citep[see][]{Chen2007}.
 Here the grid of points, becoming increasingly dense in the true support as $N \to \infty$, induces the sieve basis.
 The sieve approach for asymptotic theory is explored by \citet{FoxKimYang2016}.
 To accentuate the dependence on $N$, we denote the nonparametric FKRB estimator as $\hat{\bm{\theta}}^{\mathrm{FKRB}}(N)$.
@@ -383,12 +383,12 @@ This consistency is what underpins the sieve Wald and QLR result in \citet[theor
 
 \subsection{Inference}
 \label{sec:Inference}
-After having done the estimation procedure, the researcher often wants to conduct inference on $\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
-However it turns out that this is not at all trivial for this estimator.
+After estimation, the researcher often wants to conduct inference on $\hat{\bm{\theta}}^{\mathrm{FKRB}}$.
+However, it turns out that this is not at all trivial for this estimator.
 Because of the constrained nature of the estimator, it is hard to establish an asymptotic distribution, let alone a finite-sample distribution.
 For many estimators, central limit theorems can do a lot of heavy lifting in establishing at least the asymptotic distribution, which is then often Gaussian.
 However, when the true parameter is on the boundary, asymptotic normality breaks down \citep{Andrews1999}.
-These results however are unfortunately not general enough to also apply to the FKRB estimator \citep{FoxKimRyanBajari2011}.
+These results, however, are unfortunately not general enough to also apply to the FKRB estimator \citep{FoxKimRyanBajari2011}.
 
 A seemingly related problem is the Hauck-Donner effect \citep{HauckDonner1977}, which is observed in the binary logit model.
 This effect describes that the variance of the estimator for the probability parameter blows up near the boundary.
@@ -399,7 +399,7 @@ This subsection will focus on inference procedures for the FKRB estimator.
 
 \subsubsection{Confidence intervals}
 \label{sec:confidenceintervals}
-Inference on the FKRB estimator is done with confidence intervals.
+We conduct inference on the FKRB estimator with confidence intervals.
 We will first need a rigorous framework to analyze empirical confidence intervals in the upcoming sections.
 This subsection presents such a framework.
 
@@ -459,13 +459,13 @@ Formally, we have
     \mathrm{CI}^{*}_{1-\alpha,\theta_r} = \left[\hat{\theta}_{r}^{\mathrm{OLS}} - z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}_{r}^{\mathrm{OLS}}\right),\hat{\theta}_{r}^{\mathrm{OLS}} + z_{1-\frac{\alpha}{2}}\mathrm{SE}\left(\hat{\theta}_{r}^{\mathrm{OLS}}\right)\right],
 \end{equation}
 where $z_{1-\frac{\alpha}{2}} = \Phi^{-1}(1-\frac{\alpha}{2})$ denotes the $1-\frac{\alpha}{2}$ quantile of the standard normal distribution and $\mathrm{SE}(\hat{\theta}_{r}^{\mathrm{OLS}})$ denotes the clustered heteroskedasticity-robust standard error of $\hat{\theta}_{r}^{\mathrm{OLS}}$.
-Note that both the centre point and the width of the interval is determined by the OLS estimator and its clustered heteroskedasticity-robust standard errors.
+Note that both the center point and the width of the interval are determined by the OLS estimator and its clustered heteroskedasticity-robust standard errors.
 However, the interval has correct coverage for both the unconstrained OLS estimator and the constrained FKRB estimator \citep{AndrewsGuggenberger2010Applications,FoxKimRyanBajari2011}.
 
 It is also good to note that this method acts as if the estimator is asymptotically normally distributed. 
 Although this is wrong at the boundary \citep{Andrews1999}, asymptotic normality in the interior has been proven for broad classes of PSMD estimators \citep{ChenPouzo2015}, but unfortunately these classes exclude the FKRB estimator.
 However, \citet[page~241]{FoxKimYang2016} conjecture that asymptotic normality does hold in the interior. 
-Of course \cref{eq:CIOLS} allows for confidence intervals that cross outside the $[0,1]$ region, while this is clearly not possible for the real parameters as illustrated by \cref{eq:FKRBconstraint1,eq:FKRBconstraint2}.
+\Cref{eq:CIOLS} allows for confidence intervals that cross outside the $[0,1]$ region, while this is not possible for the real parameters as illustrated by \cref{eq:FKRBconstraint1,eq:FKRBconstraint2}.
 The final interval that \citet{FoxKimRyanBajari2011} arrive at is therefore clipped to this region, i.e. 
 \begin{equation}
 \label{eq:CIFKRB}
@@ -479,8 +479,8 @@ Even though the coverage may be correct, it can still be highly conservative.
 In fact, it is.
 \citet{FoxKimRyanBajari2011} noticed that the confidence intervals had a much higher empirical coverage than their nominal coverage.
 Tikhonov regularization reduced this somewhat.
-\citet{HeissHetzeneckerOsterhaus2022} show that much less grid points are estimated to have a probability mass of zero when regularization is applied.
-This results in less grid points that are estimated to be on the boundary.
+\citet{HeissHetzeneckerOsterhaus2022} show that much fewer grid points are estimated to have a probability mass of zero when regularization is applied.
+This results in fewer grid points that are estimated to be on the boundary.
 This hints in the direction that the conservativeness is higher on or close to the boundary.
 
 When the researcher is interested in inference on a parameter $\eta$ determined by a single-valued functional $T$ on $\bm{\theta}$, i.e. $\eta = T(\bm{\theta})$, \citet{FoxKimRyanBajari2011} propose an adjusted procedure.
@@ -501,13 +501,13 @@ where $\hat{\eta} = T(\hat{\bm{\theta}}^\mathrm{OLS})$ denotes the plug-in estim
 
 Notice that $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta} = \mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r}$ when $\eta = T(\bm{\theta})$ is the select-$r$ functional.\footnote{This functional is denoted by $T: \mathbb{R}^R \to \mathbb{R}$ with $T(\bm{\theta}) = \bm{e}'_r \bm{\theta}$. Here $\bm{e}_r$ denotes the $r$th standard basis vector.}
 Hence, you can see $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta}$ as the generalized version of $\mathrm{CI}^{\mathrm{FKRB}}_{1-\alpha,\theta_r}$.
-\citet{ChenPouzo2015} is written in a similar generalized framework.
+\citet{ChenPouzo2015} adopt a similar generalized framework.
 Therefore, we will use the generalized version to compare with \citet{ChenPouzo2015}.
 
 \subsubsection{FKRB confidence intervals in the PSMD framework}
 The interval $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta}$ is similar to the sieve Wald confidence interval for the functional $\eta = T(F_{\bm{\theta}})$ that can be constructed from the results of \citet[][theorem~4.2]{ChenPouzo2015}.
 \citet{ChenPouzo2015} provide a way to estimate the variance of the FKRB estimator in the sense of the sieve variance $\|v^*_n\|_{\mathrm{sd}}$.
-Therefore both the center and the width of the interval can be determined by the constrained FKRB estimator, in constrast to the FKRB confidence intervals which use the unconstrained OLS estimators for both the center and the width.
+Therefore both the center and the width of the interval can be determined by the constrained FKRB estimator, in contrast to the FKRB confidence intervals which use the unconstrained OLS estimators for both the center and the width.
 Their construction takes the form
 \begin{equation}
 \label{eq:CIChenPouzo}
@@ -516,7 +516,7 @@ Their construction takes the form
 where $\hat{\eta} = T(\hat{\bm{\theta}}^{\mathrm{PSMD}}) = T(\hat{\bm{\theta}}^{\mathrm{FKRB}})$ is the plug-in PSMD estimator and $\|\hat{v}^*_n\|^2_{\mathrm{sd}}$ is the estimated sieve variance of \citet[][eq.~2.10]{ChenPouzo2015}, see \cref{eq:sievevariance}.
 We can decrease the width of the interval, while keeping coverage equal, by clipping the interval to $[\min_{\bm{\theta}\in \Delta_R}{T(\bm{\theta})},\max_{\bm{\theta}\in \Delta_R}{T(\bm{\theta})}]$.
 
-Specializing \cref{eq:sievevariance} to the FKRB setting amounts to evaluating each of its three ingredients --- the moment-residual sensitivity $\hat{\bm{D}}_i$, the weighting $\hat{\bm{\Sigma}}_i^{-1}$, and the residual $\hat{\bm{m}}(\bm{x}_i, F_{\hat{\bm{\theta}}^{\mathrm{PSMD}}})$ --- and then substituting back.
+Specializing \cref{eq:sievevariance} to the FKRB setting amounts to evaluating each of its three ingredients (the moment-residual sensitivity $\hat{\bm{D}}_i$, the weighting $\hat{\bm{\Sigma}}_i^{-1}$, and the residual $\hat{\bm{m}}(\bm{x}_i, F_{\hat{\bm{\theta}}^{\mathrm{PSMD}}})$) and then substituting back.
 Collect the rows $\bm{z}_{ij}^\prime$ of \cref{eq:FKRBzetadef} for $j=1,\ldots,J$ into a per-individual block $\bm{Z}_i \in \mathbb{R}^{J\times R}$.
 Stacking these blocks vertically across $i=1,\ldots,N$ recovers the full $NJ\times R$ design matrix $\bm{Z}$ of \cref{eq:FKRBOLSest}.
 Because $\hat{\bm{m}}$ is the trivial estimator in \cref{eq:FKRBPSMDcrit}, the moment $\hat{\bm{m}}(\bm{x}_i, F_{\bm{\theta}})$ coincides with the per-individual residual vector $\bm{\rho}_i(\bm{\theta}) = \bm{y}_i - \bm{Z}_i\bm{\theta}$, where $\bm{y}_i = (y_{i1},\ldots,y_{iJ})^\prime$.
@@ -537,7 +537,7 @@ Evaluating $\hat{\bm{m}}$ at the PSMD estimate $\hat{\bm{\theta}}^{\mathrm{PSMD}
     \bm{s}_i = \hat{\bm{D}}_i^\prime\, \hat{\bm{\Sigma}}_i^{-1}\,\hat{\bm{m}}\bigl(\bm{x}_i,F_{\hat{\bm{\theta}}^{\mathrm{FKRB}}}\bigr) = -\bm{Z}_i^\prime\,\hat{\bm{\zeta}}_i^{\mathrm{FKRB}} = -\sum_{j=1}^J \bm{z}_{ij}\,\hat{\zeta}_{ij}^{\mathrm{FKRB}}.
 \end{equation}
 The overall sign of $\bm{s}_i$ enters the sandwich only through the outer product $\bm{s}_i\bm{s}_i^\prime$ and is therefore immaterial; absorbing it, we redefine $\bm{s}_i \coloneq \sum_{j=1}^J \bm{z}_{ij}\,\hat{\zeta}_{ij}^{\mathrm{FKRB}}$ for the remainder.
-Plugging $\hat{\bm{H}} = \bm{Z}^\prime\bm{Z}$ and $\hat{\bm{V}} = \sum_{i=1}^N \bm{s}_i\bm{s}_i^\prime$ into \cref{eq:sievevariance} and dividing by $N$ --- recall from the discussion below \cref{eq:sievevariance} that $\|\hat{v}_n^*\|^2_{\mathrm{sd}}/N$ is the relevant estimator of $\mathrm{Avar}(\hat{\eta})$ under \citet[][theorem~4.2]{ChenPouzo2015} --- yields the cluster-robust delta-method sandwich
+Plugging $\hat{\bm{H}} = \bm{Z}^\prime\bm{Z}$ and $\hat{\bm{V}} = \sum_{i=1}^N \bm{s}_i\bm{s}_i^\prime$ into \cref{eq:sievevariance} and dividing by $N$ (recall from the discussion below \cref{eq:sievevariance} that $\|\hat{v}_n^*\|^2_{\mathrm{sd}}/N$ is the relevant estimator of $\mathrm{Avar}(\hat{\eta})$ under \citet[][theorem~4.2]{ChenPouzo2015}) yields the cluster-robust delta-method sandwich
 \begin{equation}
 \label{eq:CPsievevariance}
     \frac{\|\hat{v}^*_n\|^2_{\mathrm{sd}}}{N} = \nabla T\!\bigl(\hat{\bm{\theta}}^{\mathrm{FKRB}}\bigr)^\prime (\bm{Z}^\prime\bm{Z})^{-1}\!\left(\sum_{i=1}^N \bm{s}_i\bm{s}_i^\prime\right)\!(\bm{Z}^\prime\bm{Z})^{-1}\, \nabla T\!\bigl(\hat{\bm{\theta}}^{\mathrm{FKRB}}\bigr).
@@ -551,7 +551,7 @@ When the true $\bm{\theta}_0$ lies in the interior of $\Delta_R$, the constraint
 On the boundary, however, the constrained and unconstrained estimators have different limiting distributions \citep{Andrews1999}.
 The equivalence claimed here is therefore an interior statement only.
 The second major difference between the two intervals is the center point.
-Where FKRB use the unconstrained OLS estimator as center point, \citet{ChenPouzo2015} allows for the constrained FKRB estimator as center point.
+Where FKRB use the unconstrained OLS estimator as center point, \citet{ChenPouzo2015} allow for the constrained FKRB estimator as center point.
 Asymptotically, both the width and the center of the interval are equal, and therefore the intervals are asymptotically equal.
 
 We repeat the comment that FKRB does not satisfy the regularity conditions of \citet{ChenPouzo2015}.
@@ -561,12 +561,12 @@ In fact, we may expect that the asymptotic normality does not hold at the bounda
 \label{sec:QLRCI}
 Both $\widetilde{\mathrm{CI}}^{\mathrm{FKRB}}_{1-\alpha,\eta}$ and its sieve Wald counterpart $\mathrm{CI}^{\mathrm{CP}}_{1-\alpha,\eta}$ require an explicit estimate of the asymptotic variance of $\hat{\eta}$ and must be intersected with the feasible range of $T$ in order to respect the simplex constraint.
 An alternative construction that avoids both of these requirements is the sieve quasi-likelihood ratio (QLR) interval of \citet[][sec.~4.3]{ChenPouzo2015}, which inverts a test statistic that, under the suitable regularity conditions and optimal weighting, is asymptotically pivotal against a $\chi^2_1$ distribution and whose inversion is automatically confined to the feasible range of $T$.
-Specifically the regularity conditions are again not met for the FKRB estimator, but the $\chi_1^2$-result possibly remains a good approximation.
+Specifically, the regularity conditions are again not met for the FKRB estimator, but the $\chi_1^2$-result possibly remains a good approximation.
 For the fixed grid $R$ and a regular functional, $\mathrm{QLR}_N$ is nothing other than the classical criterion-difference (distance-metric) statistic of parametric minimum distance/GMM \citep[see][sec.~9]{NeweyMcFadden1994}, and the limit results \cref{eq:QLRoptimal,eq:QLRnonoptimal} below are the corresponding Wilks and studentized-Wilks theorems.
 The sieve formulation of \citet{ChenPouzo2015} becomes essential only when the grid grows with $N$ or the functional is irregular.
 The former only occurs in the nonparametric case.
 The latter only occurs in special cases, not in the cases we will study.
-A regular parametric QLR interval in the sense of \citet{NeweyMcFadden1994} is therefore not merely an adequate substitute here --- for the fixed grid it is exactly what \cref{eq:CIQLR} computes.
+A regular parametric QLR interval in the sense of \citet{NeweyMcFadden1994} is therefore not merely an adequate substitute here; for the fixed grid it is exactly what \cref{eq:CIQLR} computes.
 
 The construction compares the unrestricted minimum of the SMD criterion to its minimum subject to the null restriction $T(F_{\bm{\theta}}) = \eta_0$.
 Let $Q_N$ denote the SMD criterion in \cref{eq:SMDcrit}, let
@@ -596,7 +596,7 @@ Theorem~4.3(1) of \citet{ChenPouzo2015} shows that the appropriate pivotal stati
     \|\hat{u}^*_n\|^2 \mathrm{QLR}_N(\eta_0) \overset{d}{\longrightarrow} \chi^2_1,
 \end{equation}
 in which the studentization factor $\|\hat{u}^*_n\|^2$ rescales the criterion-difference back to the sandwich scale.
-For the linear functional $T(\bm{\theta}) = \bm{c}^\prime\bm{\theta}$ — which covers both the select-$r$ functional and the population mean $T(\bm{\theta}) = \sum_{r=1}^R \theta_r \bm{\beta}^{(r)}$ — the studentization factor admits the closed form
+For the linear functional $T(\bm{\theta}) = \bm{c}^\prime\bm{\theta}$ (which covers both the select-$r$ functional and the population mean $T(\bm{\theta}) = \sum_{r=1}^R \theta_r \bm{\beta}^{(r)}$), the studentization factor admits the closed form
 \begin{equation}
 \label{eq:QLRstudentisation}
     \|\hat{u}^*_n\|^2 = \frac{\bm{c}^\prime (\bm{Z}^\prime\bm{Z})^{-1}\bm{c}}{\bm{c}^\prime\widehat{\mathrm{Var}}(\hat{\bm{\theta}}^{\mathrm{OLS}})\bm{c}}.
@@ -608,7 +608,7 @@ A $(1-\alpha)$ confidence interval for $\eta$ is then obtained by inverting the 
     \mathrm{CI}^{\mathrm{QLR}}_{1-\alpha, \eta} = \left\{\eta_0 \in \left[\min_{\bm{\theta}\in\Delta_R} T(\bm{\theta}),\ \max_{\bm{\theta}\in\Delta_R} T(\bm{\theta})\right] \,:\, \|\hat{u}^*_n\|^2\,\mathrm{QLR}_N(\eta_0) \leq \chi^2_{1, 1-\alpha}\right\},
 \end{equation}
 where $\chi^2_{1, 1-\alpha}$ is the $(1-\alpha)$-quantile of the $\chi^2_1$ distribution.
-A major disadvantage of this interval is that inverting the QLR test can be numerically quite expensive.
+A major disadvantage of this interval is that inverting the QLR test can be numerically expensive.
 
 Two features of $\mathrm{CI}^{\mathrm{QLR}}_{1-\alpha, \eta}$ distinguish it from the Wald construction in \cref{eq:CIfunctional}.
 First, the inversion is naturally confined to the feasible range $[\min_{\Delta_R}T, \max_{\Delta_R}T]$, since $\mathrm{QLR}_N(\eta_0)$ is defined only for $\eta_0$ admitting a restricted minimizer in $\Delta_R$.

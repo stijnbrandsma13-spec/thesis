@@ -1,122 +1,104 @@
 \section{Results}
 \label{sec:results}
-We organise the discussion around three target parameters: the per-support-point probabilities $\theta_r$ in \Cref{tab:coverage}, the population mean $\mathbb{E}[\beta_1]$ in \Cref{tab:coverage_Eb1}, and $\mathbb{E}[\beta_2]$ in \Cref{tab:coverage_Eb2}.
-For each target we report empirical coverage under three constructions: the original FKRB interval, specified in \cref{eq:CIFKRB,eq:CIfunctional}, the sieve Wald interval, specified in \cref{eq:CIChenPouzo}, and the studentized sieve QLR interval, specified in \cref{eq:CIQLR}.
-All cells in these tables would, under correct coverage, be exactly $1-\alpha$.
+The results are mixed.
+We notice intervals that have correct empirical coverage, but we also see intervals with incorrect empirical coverage.
+Among those with correct empirical coverage, we see intervals that are statistically indistinguishable from exactly correct, but we also see intervals that are conservatively correct.
+By ``statistically indistinguishable from exactly correct'' we mean the situation where the bootstrap/Wilson 95\% confidence interval on the empirical coverage estimate contains the nominal coverage.
+We classify an interval as having incorrect empirical coverage when the 95\% confidence interval on the empirical coverage estimate lies completely below the nominal coverage.
+Similarly, we classify an interval as having conservatively correct coverage when the 95\% confidence interval on the empirical coverage estimate lies completely above the nominal coverage.\footnote{Technically, for every claim of incorrect, exactly correct, or conservatively correct coverage we should add the words ``statistically indistinguishable from''. For brevity we will omit these words from now on.}
 
-The overall picture is that all three intervals over-cover, often by a large margin.
-The FKRB interval is the most conservative throughout: at $\alpha=0.05$ its coverage for $\theta_r$ never falls below $0.994$, and in roughly half of the $\alpha=0.05$ cells it equals $1.000$.
-Sieve Wald tracks FKRB almost exactly; the two never differ by more than one thousandth in any cell we report.
-This is consistent with the theoretical equivalence in \Cref{sec:FKRBconfidence}: in the linear, identity-weighted sieve specialization the sieve variance (see \cref{eq:CPsievevariance}) reduces to the FKRB delta-method variance (see \cref{eq:FKRBdeltamethod}), so the two constructions only differ by whether they evaluate at the constrained or unconstrained fit and by the post-hoc feasible-range clip.
-At interior coordinates these differences vanish and only show up in finite samples through a handful of thousandth-level perturbations.
+We show two tables here: \cref{tab:coverage} on the empirical coverage of the intervals on $\theta_r$ averaged over $r$, and \cref{tab:coverage_Eb1} on the empirical coverage of the intervals on $\mathbb{E}[\beta_1]$.
+The empirical coverage of intervals on $\mathbb{E}[\beta_2]$ can be found in \cref{tab:coverage_Eb2} in \cref{sec:app:tab}.
+It is excluded here because it is very similar to \cref{tab:coverage_Eb1}.
+We include clarifying figures in \cref{sec:app:fig}.
+This includes figures of a single estimated PMF/CDF for both the OLS and FKRB estimators, for all DGPs, and it includes figures that specify the empirical coverage of individual $\theta_r$ over the whole grid.
+These coverage plots allow us to identify any spots in the grid where the empirical coverage deviates from other points.
 
-The sieve QLR interval is markedly less conservative without ever falling materially below nominal at the aggregate.
-At $\alpha=0.05$ its coverage for $\theta_r$ sits in the range $[0.953,\, 0.991]$ across all 20 cells; at $\alpha=0.5$ it ranges from $0.541$ in the least challenging cell (wide normal DGP, $N=10{,}000$, $R=25$) up to $0.871$ at $R=225$.
-However we should note that the QLR interval does sometimes slightly fall below nominal at individual points that lie deep in the interior.\footnote{The figures that support this were not timely available because of the simulation. These will be added in the final version.}
-This does not only increase the probability of type I errors at that points, which is undesirable, but it also distorts the aggregate results presented in \cref{tab:coverage}.
+For the FKRB intervals for $\theta_r$ we see that the coverage is exactly correct on average for practically all off-boundary DGPs that have $R=25$.
+It does not seem to depend much on the nature of the off-boundary DGP; near-boundary and far-from-boundary random coefficient distributions show similar behavior.
+For the off-boundary DGPs with $R=225$ we notice something interesting: the FKRB intervals have incorrect coverage on average.
+We suspect this stems from the OLS nature of the FKRB interval.
+We do not know fully why, but the OLS estimator consistently has trouble estimating $\theta_r$ around the point $(-3,1)$.
+See for example \cref{fig:olsnature}.
+This is consistent across all distributions; see \cref{sec:app:fig} to see that this behavior is seen for all DGPs with $R=225$.
+It is therefore unlikely that any distributional properties play a role in this.
+It is more likely that the design matrices in the OLS estimator become ill-conditioned in a densely correlated grid. 
+As a result of this behavior, the empirical coverage is extremely low around the point $(-3,1)$.
+This skews the average result displayed in \cref{tab:coverage}.
+As can also be seen in \cref{fig:olsnature}, the FKRB interval seems to behave fine in the other part of the grid.
+The behavior is similar for both $\alpha=0.05$ and $\alpha=0.5$.
 
-Three qualitative patterns are visible across all three tables.
-First, increasing the grid size from $R=25$ to $R=225$ uniformly increases conservativeness, with virtually every FKRB and Wald cell at $R=225$ collapsing to $1.000$.
-This is consistent with the boundary explanation: a finer grid puts more support points close to zero mass, where the asymptotic-normality argument underlying \cref{eq:CIOLS} and \cref{eq:CIChenPouzo} fails \citep{Andrews1999}.
-QLR coverage also rises with $R$, but more gently: even at $R=225$ it stays in the $[0.75, 0.88]$ band at $\alpha=0.5$ rather than saturating at $1$.
-Second, increasing $N$ from $1{,}000$ to $10{,}000$ pushes all three intervals towards nominal at $R=25$ but leaves $R=225$ essentially unchanged, reinforcing that the boundary problem -- rather than first-order asymptotics -- is what is binding at the fine grid.
-Third, the ordering of DGPs by conservativeness is broadly the same across methods and targets: the almost single type is the most over-covered, while the wide normal DGP is the least over-covered and is also the only DGP for which the QLR interval ever approaches its nominal level (e.g.\ $0.541$ at $\alpha=0.5$).
-This ordering is consistent with the boundary intuition of \Cref{sec:dgp}: in the almost single type DGP almost all probability mass sits on the boundary $\theta_r=0$, whereas in the wide normal DGP mass is spread more uniformly so that comparatively fewer coordinates are pinned to the boundary.
-
-Comparing \Cref{tab:coverage} with the mean-functional tables \Cref{tab:coverage_Eb1,tab:coverage_Eb2} shows that inference on the linear functionals $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$ is uniformly more conservative than on the individual $\theta_r$.
-Almost every $\alpha=0.05$ cell in the two mean tables equals $1.000$ exactly for both FKRB and Wald, and the only meaningful variation in those columns appears at $\alpha=0.5$ with $R=25$.
-The QLR interval is again notably less conservative, in particular at $N=10{,}000$, $R=25$ and $\alpha=0.5$ it gets close to nominal for the wide normal DGP, but it too remains on the conservative side throughout.
-
-Taken together, the simulations are consistent with the theoretical message of \Cref{sec:Inference}.
-At interior coordinates the FKRB and Wald intervals are numerically indistinguishable, both are heavily over-conservative, and switching to the studentized QLR construction recovers a non-trivial amount of length without inducing material under-coverage.
-The remaining gap to nominal, particularly at $R=225$, is attributable to the boundary issue that lies outside the regularity conditions of \citet{ChenPouzo2015}.
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
     \centering
-    \caption{Empirical coverage of the original FKRB \citep{FoxKimRyanBajari2011}, and sieve Wald and sieve QLR \citep{ChenPouzo2015} confidence intervals for the support-point probabilities $\theta_r$, by data generating process, sample size $N$, grid size $R$ and significance level $\alpha$.}
-    \label{tab:coverage}
-    \footnotesize
-    \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
-        \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
-        \midrule
-        0.05 & 1{,}000 & 25 & 0.998 & 0.997 & 0.962 & 1.000 & 1.000 & 0.971 & 1.000 & 0.999 & 0.969 & -- & -- & -- & 1.000 & 1.000 & 0.984 & -- & -- & -- & 0.997 & 0.997 & 0.958 \\
-        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.984 & 1.000 & 1.000 & 0.982 & 1.000 & 1.000 & 0.985 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.980 \\
-        0.05 & 10{,}000 & 25 & 0.994 & 0.994 & 0.953 & 0.997 & 0.996 & 0.958 & 0.996 & 0.995 & 0.955 & -- & -- & -- & 1.000 & 1.000 & 0.976 & -- & -- & -- & 0.997 & 0.998 & 0.957 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.973 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.974 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.972 \\
-        \cmidrule(l){1-24}
-        0.5 & 1{,}000 & 25 & 0.922 & 0.922 & 0.634 & 0.949 & 0.948 & 0.681 & 0.926 & 0.925 & 0.643 & -- & -- & -- & 0.986 & 0.987 & 0.842 & -- & -- & -- & 0.904 & 0.903 & 0.612 \\
-        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.812 & 1.000 & 1.000 & 0.803 & 1.000 & 1.000 & 0.819 & -- & -- & -- & 1.000 & 1.000 & 0.871 & -- & -- & -- & 1.000 & 1.000 & 0.798 \\
-        0.5 & 10{,}000 & 25 & 0.889 & 0.890 & 0.589 & 0.896 & 0.895 & 0.601 & 0.754 & 0.755 & 0.541 & -- & -- & -- & 0.976 & 0.977 & 0.794 & -- & -- & -- & 0.896 & 0.894 & 0.598 \\
-        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.764 & 1.000 & 1.000 & 0.755 & 1.000 & 1.000 & 0.768 & -- & -- & -- & 1.000 & 1.000 & 0.836 & -- & -- & -- & 1.000 & 1.000 & 0.751 \\
-        \bottomrule
-    \end{tabularx}
-    \begin{minipage}{\textwidth}
-        \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp} and averaged over the support points $\theta_r$ on the prespecified grid $\mathcal{B}$. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIFKRB}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
-        \textcolor{orange}{IMPORTANT! THE CELLS IN WALD AND QLR ARE FAKE NUMBERS FOR NOW, BUT MATCH OBSERVATIONS IN SMALLER SIMULATIONS}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/estimated/pmf_ols_beta_bimodal_N10000_R225.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/coverage/coverage_beta_bimodal_support_probs_alpha0p05_N10000_R225_fkrb.png}
     \end{minipage}
-\end{table}
+    \caption{Estimated OLS PMF of the bimodal DGP ($N=10{,}000$, $R=225$) on the left, with the corresponding grid plot of the empirical coverage of the FKRB interval at $\alpha=0.05$ on the right.}
+    \label{fig:olsnature}
+\end{figure}
 
-\begin{table}[htbp]
-    \centering
-    \caption{Empirical coverage of the original FKRB \citep{FoxKimRyanBajari2011}, and sieve Wald and sieve QLR \citep{ChenPouzo2015} confidence intervals for $\mathbb{E}[\beta_1]$, by data generating process, sample size $N$, grid size $R$ and significance level $\alpha$.}
-    \label{tab:coverage_Eb1}
-    \footnotesize
-    \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
-        \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
-        \midrule
-        0.05 & 1{,}000 & 25 & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.978 & 1.000 & 1.000 & 0.974 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 0.999 & 0.969 \\
-        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.987 & 1.000 & 1.000 & 0.985 & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.993 & -- & -- & -- & 1.000 & 1.000 & 0.984 \\
-        0.05 & 10{,}000 & 25 & 1.000 & 1.000 & 0.961 & 1.000 & 1.000 & 0.962 & 1.000 & 1.000 & 0.963 & -- & -- & -- & 1.000 & 1.000 & 0.978 & -- & -- & -- & 1.000 & 1.000 & 0.957 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.974 & 1.000 & 1.000 & 0.978 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.971 \\
-        \cmidrule(l){1-24}
-        0.5 & 1{,}000 & 25 & 0.948 & 0.947 & 0.682 & 1.000 & 1.000 & 0.842 & 0.972 & 0.971 & 0.738 & -- & -- & -- & 1.000 & 1.000 & 0.913 & -- & -- & -- & 0.968 & 0.967 & 0.715 \\
-        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.821 & 1.000 & 1.000 & 0.808 & 1.000 & 1.000 & 0.826 & -- & -- & -- & 1.000 & 1.000 & 0.892 & -- & -- & -- & 1.000 & 1.000 & 0.802 \\
-        0.5 & 10{,}000 & 25 & 0.916 & 0.917 & 0.633 & 0.996 & 0.996 & 0.787 & 0.832 & 0.831 & 0.564 & -- & -- & -- & 1.000 & 1.000 & 0.872 & -- & -- & -- & 0.864 & 0.864 & 0.602 \\
-        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.776 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.780 & -- & -- & -- & 1.000 & 1.000 & 0.851 & -- & -- & -- & 1.000 & 1.000 & 0.753 \\
-        \bottomrule
-    \end{tabularx}
-    \begin{minipage}{\textwidth}
-        \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_1] = \sum_r \theta_r \beta_1^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
-        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE WIDE NORMAL/FOUR TYPES $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
-    \end{minipage}
-\end{table}
+The sieve Wald intervals for $\theta_r$ are highly conservative.
+For $R=225$, not a single DGP generates an interval with an empirical coverage of less than 100\%.
+For $R=25$ it is slightly better, but still highly conservative.
+We do notice that boundary issues play a predominant role in the conservativeness.
+For example, for the far-from-boundary strictly uniform DGP with $N=10{,}000$, $R=25$, $\alpha=0.5$, we see an empirical coverage of $0.656$.
+This contrasts sharply with the exactly-on-boundary single type DGP with $N=10{,}000$, $R=25$, $\alpha=0.5$, which has an empirical coverage of $0.969$.
+In \cref{fig:waldcovergage} we see that the interval is more conservative on grid points which are close to the boundary.
+We also make an interesting observation on the single type DGP, where each grid point lies exactly on the boundary: the grid point that has a true probability mass of $1$ has a corresponding confidence interval that is not conservative.
+We would expect that grid points close to $1$ have the same problems as grid points close to $0$, but this observation suggests otherwise.
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
     \centering
-    \caption{Empirical coverage of the original FKRB \citep{FoxKimRyanBajari2011}, and sieve Wald and sieve QLR \citep{ChenPouzo2015} confidence intervals for $\mathbb{E}[\beta_2]$, by data generating process, sample size $N$, grid size $R$ and significance level $\alpha$.}
-    \label{tab:coverage_Eb2}
-    \footnotesize
-    \setlength{\tabcolsep}{1.5pt}
-    \begin{tabularx}{\textwidth}{ccc *{21}{>{\centering\arraybackslash}X}}
-        \toprule
-        & & & \multicolumn{3}{c}{Bimodal} & \multicolumn{3}{c}{Tight normal} & \multicolumn{3}{c}{Wide normal} & \multicolumn{3}{c}{Strictly uniform} & \multicolumn{3}{c}{Almost single type} & \multicolumn{3}{c}{Single type} & \multicolumn{3}{c}{Four types} \\
-        \cmidrule(lr){4-6} \cmidrule(lr){7-9} \cmidrule(lr){10-12} \cmidrule(lr){13-15} \cmidrule(lr){16-18} \cmidrule(lr){19-21} \cmidrule(lr){22-24}
-        $\alpha$ & $N$ & $R$ & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR & FKRB & Wald & QLR \\
-        \midrule
-        0.05 & 1{,}000 & 25 & 1.000 & 1.000 & 0.971 & 1.000 & 1.000 & 0.976 & 1.000 & 1.000 & 0.973 & -- & -- & -- & 1.000 & 1.000 & 0.987 & -- & -- & -- & 1.000 & 1.000 & 0.967 \\
-        0.05 & 1{,}000 & 225 & 1.000 & 1.000 & 0.986 & 1.000 & 1.000 & 0.983 & 1.000 & 1.000 & 0.987 & -- & -- & -- & 1.000 & 1.000 & 0.991 & -- & -- & -- & 1.000 & 1.000 & 0.982 \\
-        0.05 & 10{,}000 & 25 & 1.000 & 1.000 & 0.959 & 1.000 & 1.000 & 0.960 & 1.000 & 1.000 & 0.961 & -- & -- & -- & 1.000 & 1.000 & 0.976 & -- & -- & -- & 1.000 & 1.000 & 0.954 \\
-        0.05 & 10{,}000 & 225 & 1.000 & 1.000 & 0.975 & 1.000 & 1.000 & 0.972 & 1.000 & 1.000 & 0.976 & -- & -- & -- & 1.000 & 1.000 & 0.989 & -- & -- & -- & 1.000 & 1.000 & 0.969 \\
-        \cmidrule(l){1-24}
-        0.5 & 1{,}000 & 25 & 0.920 & 0.921 & 0.638 & 0.996 & 0.996 & 0.804 & 0.892 & 0.891 & 0.628 & -- & -- & -- & 1.000 & 1.000 & 0.901 & -- & -- & -- & 0.972 & 0.972 & 0.731 \\
-        0.5 & 1{,}000 & 225 & 1.000 & 1.000 & 0.819 & 1.000 & 1.000 & 0.811 & 1.000 & 1.000 & 0.823 & -- & -- & -- & 1.000 & 1.000 & 0.888 & -- & -- & -- & 1.000 & 1.000 & 0.806 \\
-        0.5 & 10{,}000 & 25 & 0.880 & 0.881 & 0.582 & 0.936 & 0.935 & 0.665 & 0.788 & 0.789 & 0.541 & -- & -- & -- & 0.980 & 0.980 & 0.851 & -- & -- & -- & 0.820 & 0.819 & 0.572 \\
-        0.5 & 10{,}000 & 225 & 1.000 & 1.000 & 0.768 & 1.000 & 1.000 & 0.762 & 1.000 & 1.000 & 0.776 & -- & -- & -- & 1.000 & 1.000 & 0.842 & -- & -- & -- & 1.000 & 1.000 & 0.748 \\
-        \bottomrule
-    \end{tabularx}
-    \begin{minipage}{\textwidth}
-        \vspace{0.5ex}
-        \footnotesize \textit{Notes:} Each cell reports the empirical coverage probability of the corresponding confidence interval for the linear functional $\mathbb{E}[\beta_2] = \sum_r \theta_r \beta_2^{(r)}$, computed across $250$ Monte Carlo repetitions of the FKRB estimator on data generated from the seven DGPs of \Cref{sec:dgp}. FKRB denotes the interval proposed by \citet{FoxKimRyanBajari2011}, see \cref{eq:CIfunctional}. Wald is the sieve Wald interval from \citet{ChenPouzo2015}, see \cref{eq:CIChenPouzo}, and QLR is the (studentized) sieve quasi-likelihood ratio interval, see \cref{eq:CIQLR}. The nominal coverage is $1-\alpha$; coverage above this level reflects conservativeness.
-        \textcolor{orange}{IMPORTANT! ALL WALD AND QLR CELLS, AND THE WIDE NORMAL/FOUR TYPES $\alpha=0.5$ FKRB CELLS, ARE FAKE NUMBERS FOR NOW they match the patterns observed in smaller simulations.}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/coverage/coverage_beta_single_type_support_probs_alpha0p50_N10000_R25_cp_wald.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/coverage/coverage_beta_bimodal_support_probs_alpha0p50_N10000_R25_cp_wald.png}
     \end{minipage}
-\end{table}
+    \caption{Empirical coverage plots for the sieve Wald intervals of the single type and bimodal DGPs ($N=10{,}000$, $R=25$, $\alpha=0.5$).}
+    \label{fig:waldcovergage}
+\end{figure}
+
+In general, the QLR intervals for $\theta_r$ behave similarly to the sieve Wald intervals, in the sense that they are quite conservative, although considerably less so.
+They also exhibit the phenomenon where points with a probability mass equal or close to $1$ have a corresponding interval that is incorrect.
+See for example \cref{fig:QLRcoverage}.
+Interestingly, DGPs with more boundary issues are less conservative than DGPs with fewer boundary issues.
+This possibly arises because, for these DGPs, grid points with positive probability mass have incorrect empirical coverage, which skews the average down.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/coverage/coverage_beta_single_type_support_probs_alpha0p50_N10000_R225_qlr.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../output/figures/coverage/coverage_beta_four_types_support_probs_alpha0p50_N10000_R225_qlr.png}
+    \end{minipage}
+    \caption{Empirical coverage plots for the QLR intervals of the single type and four types DGPs ($N=10{,}000$, $R=225$, $\alpha=0.5$).}
+    \label{fig:QLRcoverage}
+\end{figure}
+
+For the intervals on $\mathbb{E}[\beta_1]$ and $\mathbb{E}[\beta_2]$ we see results similar to those for the $\theta_r$ intervals.
+The uncertainty in the empirical coverage estimates is somewhat larger.
+The FKRB intervals seem somewhat more robust across grid sizes, but overall they remain statistically indistinguishable from exactly correct.
+Some DGPs have slightly lower empirical coverage than nominal, others slightly higher.
+DGPs with more boundary issues are generally the ones with higher empirical coverage.
+
+The sieve Wald intervals on the means are again highly conservative.
+In fact, they are even more conservative than the ones on the individual $\theta_r$, with every interval at the $\alpha=0.05$ significance level having an empirical coverage of $1$.
+
+The QLR intervals on the means are generally still conservative, but less so than the QLR intervals for the individual $\theta_r$.
+We again see that the QLR intervals are less conservative for DGPs with a high degree of boundary problems.
+
+\begin{landscape}
+\input{../output/tables/coverage_theta.tex}
+\input{../output/tables/coverage_mean_1.tex}
+\end{landscape}

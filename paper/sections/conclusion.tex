@@ -1,11 +1,48 @@
 % !TEX root = ../main.tex
 \section{Conclusion}
 \label{sec:conclusion}
+We performed a Monte Carlo study on the empirical coverage of three confidence intervals based on the FKRB estimator for random coefficient discrete choice models.
+We repeated the analysis for seven different distributional specifications of the random coefficients.
+The analysis reveals that the empirical coverage of all three intervals on distributions that are on the boundary of the space of valid distributions is generally considerably higher than nominal.
+The difference between nominal and empirical coverage is much smaller for distributions that are off the boundary, even for near-boundary distributions.
+This result is in line with the theory of \citet{Andrews1999} and the observations of \citet{FoxKimRyanBajari2011}.
 
-We studied the finite-sample coverage of three confidence intervals for the FKRB estimator of the mixed logit model: the original FKRB interval, the sieve Wald interval, and the studentized sieve QLR interval.
-Across all cells we report that the FKRB and Wald intervals are numerically indistinguishable, which mirrors the theoretical equivalence in \Cref{sec:FKRBconfidence}.
-Both are heavily conservative throughout, with coverage saturating at or close to one for every DGP and every $R, N$.
-The QLR interval is meaningfully less conservative without falling materially below nominal in aggregate.
-Across all three methods we also confirm the qualitative boundary pattern of \citet{Andrews1999}: conservativeness grows with $R$ and does not vanish in $N$, suggesting that the boundary problem, rather than first-order asymptotics, is what is binding at the fine grid.
+Among the three different intervals, the one suggested by \citet{FoxKimRyanBajari2011} has the best coverage in general, in the sense that the empirical coverage is closest to the nominal for this interval.
+It is fairly consistent across different distributions, although we do see a noticeable difference between on- and off-boundary distributions.
+However, this interval tends to undercover somewhat, especially for larger grids.
+The sieve Wald and quasi-likelihood ratio intervals overcover, and in contrast to the FKRB interval, this is especially pronounced for larger grids.
+The sieve Wald interval is the most conservative of the three; the QLR interval falls between the FKRB and sieve Wald intervals in terms of conservativeness.
 
-Will write this up later but cannot now because of time constraints.
+All in all this thesis shows that inference on the FKRB estimator is shaky.
+Researchers should be cautious when drawing any conclusions from inference in empirical applications.
+With that in mind, the original FKRB interval is probably the best choice in most cases.
+In situations where type I errors are costly, the QLR interval may be the better choice.
+
+The conclusion comes with some nuances, however.
+First, the results for the FKRB interval at the larger grid seem to be heavily influenced by a poorly behaved OLS estimator.
+This has not been observed in other studies on the FKRB estimator, as far as the author is aware.
+Whether this phenomenon is an inherent property of the unconstrained FKRB estimator or an unfortunate consequence of our DGPs would be good to know for further research.
+
+Second, in our study we provide the correct support to the FKRB estimator.
+In most applications, the support is likely misspecified.
+Such misspecification can severely impact the results.
+For this reason, our results may not generalize to grid-misspecified FKRB estimators.
+
+Third, the DGPs in our simulation represent only a small fraction of all possible DGPs.
+Further research might cover different distributions, different sample and grid sizes $N, R$, more (or fewer) dimensions, more (or fewer) choices $J$, or a different covariate distribution.
+However, it is impossible to cover all cases in a simulation study.
+The only way to address this is by developing theory.
+
+This also brings us to the fourth nuance in our study.
+None of our results are based on sound theory.
+We even deliberately made some incorrect assumptions about the asymptotic distribution of test statistics on the boundary, for lack of better options.
+Such theory can build on many existing studies.
+\citet{Li2025Inference,Li2025The} provides theory on inference for constrained extremum estimators.
+The sieve approach that we take can be a route as well, although the framework of \citet{ChenPouzo2015} is possibly excessive; \citet{ChenLintonVanKeilegom2003} might already provide much of what is needed.
+The framework of \citet{ChenPouzo2015} is mostly useful for ill-posed inverse problems and functionals that are not root-$n$ estimable.
+The FKRB estimator of the random coefficient model is relatively well behaved in that sense, as it is not ill-posed and is root-$n$ estimable.
+However, the PSMD approach might be an interesting framework for inference on a regularized version of the FKRB estimator, such as the elastic net of \citet{HeissHetzeneckerOsterhaus2022}.
+
+We end by stressing that our Monte Carlo study uses a limited number of repetitions ($M=250$).
+One unfortunate repetition that produces an interval that does not cover the true parameter already lowers the empirical coverage by $1/250 = 0.004$.
+The precision of our empirical coverage estimates is therefore limited.

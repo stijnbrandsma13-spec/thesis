@@ -202,7 +202,15 @@ For a linear functional the feasible range is again the smallest and largest ent
 If the statistic at a feasibility boundary already lies below the critical value, we accept that boundary as the endpoint without further root-finding, which realises the feasibility clip noted below \cref{eq:CIQLR} without an explicit intersection step.\footnote{The reparametrized restricted least squares solver may leave a small positive residual at $\eta_0 = \hat{\eta}$, where the true QLR is zero. We subtract the QLR value at the centre from every subsequent evaluation, which preserves the location of the root but keeps numerical noise from collapsing the bracket.}
 
 \clearpage
+\begin{landscape}
+\section{Tables}
+\label{sec:app:tab}
+\input{../output/tables/coverage_mean_2.tex}
+\end{landscape}
+
+\clearpage
 \section{Figures}
+\label{sec:app:fig}
 This appendix collects, for every data generating process, the true and
 estimated probability mass and cumulative distribution functions and the
 per-support-point coverage maps. Each distribution spans eight landscape pages:
